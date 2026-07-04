@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Website Pertama Saya</title>
     <link rel="stylesheet" href="style.css">
@@ -7,53 +8,46 @@
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <div class="sidebar">
-        <h2>Dashboard</h2>
+        <div class="sidebar">
+            <h2>Dashboard</h2>
 
-        <ul>
-    <li onclick="tampilHome()">🏠 Home</li>
-    <li onclick="tampilDataStaff()">👥 Data Staff</li>
-    <li onclick="tampilJadwalShift()">📅 Jadwal Shift</li>
-    <li onclick="tampilPengajuanCuti()">📝 Pengajuan Cuti</li>
-    <li onclick="tampilLaporan()">📊 Laporan</li>
-    <li onclick="tampilDataKasir()">💰 Data Kasir</li>
-</ul>
-    </div>
+            <ul>
+                <li onclick="tampilHome()">🏠 Home</li>
+                <li onclick="tampilDataStaff()">👥 Data Staff</li>
+                <li onclick="tampilJadwalShift()">🗓️ Jadwal Shift</li>
+                <li onclick="tampilPengajuanCuti()">📝 Pengajuan Cuti</li>
+                <li onclick="tampilLaporan()">📊 Laporan</li>
+                <li onclick="tampilDataKasir()">💰 Data Kasir</li>
+            </ul>
 
-
-    <div class="content" id="content">
-
-        <h1>Selamat Datang, Karuna</h1>
-
-        <div class="card">
-            <h3>Total Staff</h3>
-            <p>14 Orang</p>
         </div>
 
-        <div class="card">
-            <h3>Staff Cuti</h3>
-            <p>2 Orang</p>
+        <div class="content" id="content">
+
+            <h1>Selamat Datang, Karuna</h1>
+
+            <div class="card">
+                <h3>Total Staff</h3>
+                <p>14 Orang</p>
+            </div>
+
+            <div class="card">
+                <h3>Staff Cuti</h3>
+                <p>2 Orang</p>
+            </div>
+
+            <div class="card">
+                <h3>Kasir Aktif</h3>
+                <p>3 Orang</p>
+            </div>
+
         </div>
-        
-        <div class="card">
-    <h3>Kasir Aktif</h3>
-    <p>3 Orang</p>
-</div>
-
-        <button onclick="lihatData()">
-    Lihat Data
-
-</button>
-
-<div id="data-staff"></div>
 
     </div>
 
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 
