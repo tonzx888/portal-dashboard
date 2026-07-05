@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pengajuan Cuti</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+
+        <ul>
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="staff.html">👥 Data Staff</a></li>
+            <li><a href="shift.html">🗓️ Jadwal Shift</a></li>
+            <li><a href="cuti.html">📝 Pengajuan Cuti</a></li>
+            <li><a href="laporan.html">📊 Laporan</a></li>
+            <li><a href="kasir.html">💰 Data Kasir</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+
+        <h1>Data Cuti Staff</h1>
+
+        <div class="card table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Pengajuan Cuti</th>
+                        <th>Start Cuti</th>
+                        <th>End Cuti</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="dataCuti">
+                    <tr>
+                        <td colspan="6">Memuat data cuti...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="cuti.js"></script>
+
+</body>
+</html>
