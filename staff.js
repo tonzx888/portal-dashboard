@@ -21,4 +21,10 @@ fetch(API_URL)
   })
   .catch(error => {
     console.error("Gagal mengambil data staff:", error);
+
+    document.getElementById("dataStaff").innerHTML = `
+      <tr>
+        <td colspan="5">Gagal memuat data staff.</td>
+      </tr>
+    `;
   });

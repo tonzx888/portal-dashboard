@@ -1,11 +1,10 @@
-alert("cuti.js berjalan");
-
-const API_CUTI = "https://script.google.com/macros/s/AKfycbzfXgGREpLHqMC_UWswMbQgEg59TrS5nfcRo8FKuoZFBFjSx2WBRzj-TjQkAg30fiVFNw/exec?type=cuti";
+const API_CUTI = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?type=cuti";
 
 fetch(API_CUTI)
   .then(response => response.json())
   .then(data => {
     const tbody = document.getElementById("dataCuti");
+
     tbody.innerHTML = "";
 
     data.forEach(cuti => {
@@ -20,4 +19,13 @@ fetch(API_CUTI)
         </tr>
       `;
     });
+  })
+  .catch(error => {
+    console.error("Gagal mengambil data cuti:", error);
+
+    document.getElementById("dataCuti").innerHTML = `
+      <tr>
+        <td colspan="6">Gagal memuat data cuti.</td>
+      </tr>
+    `;
   });
