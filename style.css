@@ -95,3 +95,89 @@ td {
 th {
     background: #0f172a;
 }
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.sidebar a:visited {
+    color: white;
+}
+
+.sidebar li {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
+.sidebar li:hover {
+    background: #334155;
+}
+
+.content {
+    width: calc(100vw - 250px);
+    overflow-x: hidden;
+}
+
+.table-card {
+    width: 100%;
+    max-width: 1100px;
+    overflow-x: auto;
+}
+
+.table-card table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+}
+
+.table-card th,
+.table-card td {
+    padding: 12px 14px;
+    border: 1px solid #334155;
+    white-space: nowrap;
+}
+
+.table-card th {
+    background: #0f172a;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+}
+
+#pesanSubmit {
+    margin-top: 12px;
+    font-weight: bold;
+}

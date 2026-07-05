@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Data Offday</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+
+        <ul>
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="staff.html">👥 Data Staff</a></li>
+            <li><a href="shift.html">🗓️ Jadwal Shift</a></li>
+            <li><a href="cuti.html">📝 Jadwal Cuti</a></li>
+            <li><a href="offday.html">📅 Data Offday</a></li>
+            <li><a href="kasir.html">💰 Data Kasir</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+
+        <h1>Data Offday Staff</h1>
+
+        <div class="card">
+            <h3>Submit Pengajuan Offday</h3>
+
+            <div class="form-group">
+                <label>Nama</label>
+                <input type="text" id="nama" placeholder="Masukkan nama staff">
+            </div>
+
+            <div class="form-group">
+                <label>Role</label>
+                <select id="role">
+                    <option value="">Pilih Role</option>
+                    <option value="CS">CS</option>
+                    <option value="KAPTEN">KAPTEN</option>
+                    <option value="KASIR">KASIR</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Tanggal Offday</label>
+                <input type="date" id="tanggal">
+            </div>
+
+            <div class="form-group">
+                <label>Keterangan</label>
+                <input type="text" id="keterangan" placeholder="Opsional">
+            </div>
+
+            <button onclick="submitOffday()">Ajukan Offday</button>
+
+            <p id="pesanSubmit"></p>
+        </div>
+
+        <div class="card table-card">
+            <h3>Jadwal Offday</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Tanggal Offday</th>
+                        <th>Status</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+
+                <tbody id="dataOffday">
+                    <tr>
+                        <td colspan="5">Memuat data offday...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="offday.js"></script>
+
+</body>
+</html>
