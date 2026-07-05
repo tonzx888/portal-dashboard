@@ -215,3 +215,24 @@ body {
 .login-card button {
     width: 100%;
 }
+
+.topbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+}
+
+.topbar button {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.topbar button:hover {
+    background: #dc2626;
+}
