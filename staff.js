@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxF6-6uiTcR16VECQcxdkZ37l4cwZcnsq9hmyyhffOY7mD0hNkO10xKnYugQdshp2qiiw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?type=staff";
 
 fetch(API_URL)
   .then(response => response.json())
@@ -20,10 +20,5 @@ fetch(API_URL)
     });
   })
   .catch(error => {
-    document.getElementById("dataStaff").innerHTML = `
-      <tr>
-        <td colspan="5">Gagal memuat data staff.</td>
-      </tr>
-    `;
-    console.error(error);
+    console.error("Gagal mengambil data staff:", error);
   });
