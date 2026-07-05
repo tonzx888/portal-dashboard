@@ -181,3 +181,37 @@ body {
     margin-top: 12px;
     font-weight: bold;
 }
+
+.login-page {
+    min-height: 100vh;
+    background: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    width: 360px;
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 14px;
+    color: white;
+}
+
+.login-card h1 {
+    margin-bottom: 20px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+}
+
+.login-card button {
+    width: 100%;
+}
