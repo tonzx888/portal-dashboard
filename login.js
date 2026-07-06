@@ -20,7 +20,8 @@ function login() {
             if (result.success === true) {
                 localStorage.setItem("loginUser", JSON.stringify({
                     username: result.username,
-                    role: result.role
+                    role: result.role,
+                    loginTime: new Date().toISOString()
                 }));
 
                 window.location.href = "index.html";
@@ -35,15 +36,10 @@ function login() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-
     const form = document.getElementById("loginForm");
 
     form.addEventListener("submit", function (e) {
-
         e.preventDefault();
-
         login();
-
     });
-
 });
