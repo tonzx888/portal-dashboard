@@ -12,14 +12,9 @@
     <div class="sidebar">
         <h2>Dashboard</h2>
 
-        <ul>
-            <li><a href="index.html">🏠 Home</a></li>
-            <li><a href="staff.html">👥 Data Staff</a></li>
-            <li><a href="shift.html">🗓️ Jadwal Shift</a></li>
-            <li><a href="cuti.html">📝 Jadwal Cuti</a></li>
-            <li><a href="offday.html">📅 Data Offday</a></li>
-            <li><a href="kasir.html">💰 Data Kasir</a></li>
-        </ul>
+<ul id="sidebarMenu">
+
+</ul>
     </div>
 
     <div class="content">
@@ -30,27 +25,38 @@
 
         <h1>Selamat Datang</h1>
 
-        <div class="card">
-            <h3>Total Staff</h3>
-            <p>41 Orang</p>
-        </div>
+    <div class="dashboard-grid">
 
-        <div class="card">
-            <h3>Staff Cuti</h3>
-            <p>Belum tersedia</p>
-        </div>
+    <div class="card">
+        <h3>Total Staff</h3>
+        <p id="totalStaff">Memuat...</p>
+    </div>
 
-        <div class="card">
-            <h3>Kasir Aktif</h3>
-            <p>Belum tersedia</p>
-        </div>
+    <div class="card">
+        <h3>Staff Cuti</h3>
+        <p id="staffCuti">Memuat...</p>
+    </div>
 
+    <div class="card">
+        <h3>Offday Hari Ini</h3>
+        <p id="offdayHariIni">Memuat...</p>
+    </div>
+
+    <div class="card">
+        <h3>Passport Warning</h3>
+        <p id="passportWarning">Memuat...</p>
+    </div>
+
+    <div class="card">
+        <h3>Visa Warning</h3>
+        <p id="visaWarning">Memuat...</p>
     </div>
 
 </div>
 
 <script src="auth.js"></script>
-<script src="script.js"></script>
+<script src="menu.js"></script>
+<script src="dashboard.js"></script>
 
 </body>
 </html>
