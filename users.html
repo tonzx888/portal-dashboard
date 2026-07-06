@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>User Management</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -9,48 +14,90 @@
 
 <div class="container">
 
+    <!-- Sidebar -->
     <div class="sidebar">
+
         <h2>Dashboard</h2>
-        <ul id="sidebarMenu"></ul>
+
+        <ul id="sidebarMenu">
+            <!-- Dibuat otomatis oleh menu.js -->
+        </ul>
+
     </div>
 
+    <!-- Content -->
     <div class="content">
 
+        <!-- Topbar -->
         <div class="topbar">
-            <button class="logout-btn" onclick="logout()">Logout</button>
+
+            <span id="userInfo"></span>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
         </div>
 
         <h1>User Management</h1>
 
+        <!-- Tombol Tambah -->
         <div class="card">
-            <button class="btn-primary" onclick="alert('Fitur tambah user akan dibuat di step berikutnya')">
+
+            <button
+                class="btn-primary"
+                onclick="alert('Fitur tambah user akan dibuat pada Step berikutnya.')">
+
                 + Tambah User
+
             </button>
+
         </div>
 
+        <!-- Table -->
         <div class="card table-card">
-            <table>
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
 
-    <tbody id="userTable">
-        <tr>
-            <td colspan="4">Memuat data user...</td>
-        </tr>
-    </tbody>
-</table>
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th width="180">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="userTable">
+
+                    <tr>
+
+                        <td colspan="4" style="text-align:center">
+
+                            Memuat data user...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
 
-<script src="auth.js"></script>
-<script src="menu.js"></script>
-<script src="users.js"></script>
+<script src="auth.js?v=4"></script>
+<script src="menu.js?v=4"></script>
+<script src="users.js?v=4"></script>
 
 </body>
+
 </html>
