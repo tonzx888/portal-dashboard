@@ -4,3 +4,46 @@ if (!loginUser || loginUser.role !== "MASTER") {
     alert("Akses ditolak. Halaman ini hanya untuk MASTER.");
     window.location.href = "index.html";
 }
+
+const API_URL = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec";
+
+async function loadUsers() {
+    const tbody = document.getElementById("userTable");
+    tbody.innerHTML = `<tr><td colspan="4">Memuat data user...</td></tr>`;
+
+    try {
+        const res = await fetch(API_URL + "?type=users");
+        const data = await res.json();
+
+        let html = "";
+
+        data.forEach((user, index) => {
+            html += `
+                <tr>
+                    <td>${user.username}</td>
+                    <td>${user.role}</td>
+                    <td>${user.status}</td>
+                    <td>
+                        <button class="btn-small" onclick="editUser(${index})">Edit</button>
+                        <button class="btn-small danger" onclick="deleteUser(${index})">Hapus</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html || `<tr><td colspan="4">Data user kosong.</td></tr>`;
+    } catch (error) {
+        console.error(error);
+        tbody.innerHTML = `<tr><td colspan="4">Gagal memuat data user.</td></tr>`;
+    }
+}
+
+function editUser(index) {
+    alert("Fitur edit user dibuat di step berikutnya.");
+}
+
+function deleteUser(index) {
+    alert("Fitur hapus user dibuat di step berikutnya.");
+}
+
+loadUsers();
