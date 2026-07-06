@@ -33,3 +33,23 @@ function login() {
             pesan.innerText = "Gagal menghubungkan ke server login.";
         });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.getElementById("username")
+        .addEventListener("keypress", enterLogin);
+
+    document.getElementById("password")
+        .addEventListener("keypress", enterLogin);
+
+});
+
+function enterLogin(e){
+
+    if(e.key==="Enter"){
+
+        login();
+
+    }
+
+}
