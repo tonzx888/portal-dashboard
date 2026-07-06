@@ -9,7 +9,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdR
 
 async function loadUsers() {
     const tbody = document.getElementById("userTable");
-    tbody.innerHTML = `<tr><td colspan="4">Memuat data user...</td></tr>`;
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="4" style="text-align:center;">Memuat data user...</td>
+        </tr>
+    `;
 
     try {
         const res = await fetch(API_URL + "?type=users");
@@ -20,9 +25,9 @@ async function loadUsers() {
         data.forEach((user, index) => {
             html += `
                 <tr>
-                    <td>${user.username}</td>
-                    <td>${user.role}</td>
-                    <td>${user.status}</td>
+                    <td>${String(user.username || "").trim()}</td>
+                    <td>${String(user.role || "").trim()}</td>
+                    <td>${String(user.status || "").trim()}</td>
                     <td>
                         <button class="btn-small" onclick="editUser(${index})">Edit</button>
                         <button class="btn-small danger" onclick="deleteUser(${index})">Hapus</button>
@@ -31,10 +36,20 @@ async function loadUsers() {
             `;
         });
 
-        tbody.innerHTML = html || `<tr><td colspan="4">Data user kosong.</td></tr>`;
+        tbody.innerHTML = html || `
+            <tr>
+                <td colspan="4" style="text-align:center;">Data user kosong.</td>
+            </tr>
+        `;
+
     } catch (error) {
-        console.error(error);
-        tbody.innerHTML = `<tr><td colspan="4">Gagal memuat data user.</td></tr>`;
+        console.error("Gagal load users:", error);
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align:center;">Gagal memuat data user.</td>
+            </tr>
+        `;
     }
 }
 
