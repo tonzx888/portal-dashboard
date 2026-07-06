@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul id="sidebarMenu"></ul>
+    </div>
+
+    <div class="content">
+
+        <div class="topbar">
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <h1>User Management</h1>
+
+        <div class="card">
+            <button class="btn-primary" onclick="alert('Fitur tambah user akan dibuat di step berikutnya')">
+                + Tambah User
+            </button>
+        </div>
+
+        <div class="card table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="userTable">
+                    <tr>
+                        <td>master</td>
+                        <td>MASTER</td>
+                        <td>AKTIF</td>
+                        <td>
+                            <button class="btn-small">Edit</button>
+                            <button class="btn-small danger">Hapus</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>staff01</td>
+                        <td>STAFF</td>
+                        <td>AKTIF</td>
+                        <td>
+                            <button class="btn-small">Edit</button>
+                            <button class="btn-small danger">Hapus</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="menu.js"></script>
+<script src="users.js"></script>
+
+</body>
+</html>
