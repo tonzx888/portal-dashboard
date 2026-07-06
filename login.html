@@ -10,14 +10,25 @@
     <div class="login-card">
         <h1>Login Dashboard</h1>
 
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
+        <form id="loginForm">
 
-        <button onclick="login()">Login</button>
+    <input type="text"
+           id="username"
+           placeholder="Username"
+           autocomplete="username">
 
-        <p id="pesanLogin"></p>
-    </div>
-</div>
+    <input type="password"
+           id="password"
+           placeholder="Password"
+           autocomplete="current-password">
+
+    <button type="submit">
+        Login
+    </button>
+
+</form>
+
+<p id="pesanLogin"></p>
 
 <script src="login.js"></script>
 

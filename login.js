@@ -34,22 +34,16 @@ function login() {
         });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
-    document.getElementById("username")
-        .addEventListener("keypress", enterLogin);
+    const form = document.getElementById("loginForm");
 
-    document.getElementById("password")
-        .addEventListener("keypress", enterLogin);
+    form.addEventListener("submit", function (e) {
 
-});
-
-function enterLogin(e){
-
-    if(e.key==="Enter"){
+        e.preventDefault();
 
         login();
 
-    }
+    });
 
-}
+});
