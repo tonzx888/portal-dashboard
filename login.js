@@ -1,33 +1,35 @@
 const API_LOGIN = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec";
 
 function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const pesan = document.getElementById("pesanLogin");
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const pesan = document.getElementById("pesanLogin");
 
-  if (!username || !password) {
-    pesan.innerText = "Username dan password wajib diisi.";
-    return;
-  }
+    pesan.innerText = "Memproses login...";
 
-  const url = `${API_LOGIN}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+    if (!username || !password) {
+        pesan.innerText = "Username dan password wajib diisi.";
+        return;
+    }
 
-  fetch(url)
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        localStorage.setItem("loginUser", JSON.stringify({
-          username: result.username,
-          role: result.role
-        }));
+    const url = `${API_LOGIN}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
-        window.location.href = "index.html";
-      } else {
-        pesan.innerText = result.message;
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      pesan.innerText = "Gagal login. Cek koneksi atau Apps Script.";
-    });
+    fetch(url)
+        .then(response => response.json())
+        .then(result => {
+            if (result.success === true) {
+                localStorage.setItem("loginUser", JSON.stringify({
+                    username: result.username,
+                    role: result.role
+                }));
+
+                window.location.href = "index.html";
+            } else {
+                pesan.innerText = result.message || "Username atau password salah.";
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            pesan.innerText = "Gagal menghubungkan ke server login.";
+        });
 }
