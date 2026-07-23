@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <title>Data Staff</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -10,48 +12,192 @@
 
 <div class="container">
 
-<div class="sidebar">
+    <div class="sidebar">
         <h2>Dashboard</h2>
-
-     <ul id="sidebarMenu"></ul>
-</div>
+        <ul id="sidebarMenu"></ul>
+    </div>
 
     <div class="content">
 
-      <div class="topbar">
-    <span id="userInfo"></span>
-    <button onclick="logout()">Logout</button>
-</div>
+        <div class="topbar">
+            <span id="userInfo"></span>
+            <button onclick="logout()">Logout</button>
+        </div>
 
-        <h1>Data Staff</h1>
+        <div class="page-header">
+
+            <div>
+                <h1>Data Staff</h1>
+                <p>Total seluruh staff perusahaan.</p>
+            </div>
+
+            <button class="btn-primary" onclick="openTambahStaff()">
+                + Tambah Staff
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <input
+                type="text"
+                id="searchStaff"
+                placeholder="Cari nama / passport / jabatan..."
+                class="search-input"
+            >
+
+        </div>
+
 
         <div class="card table-card">
+
             <table>
+
                 <thead>
+
                     <tr>
+
+                        <th width="60">No</th>
+
                         <th>Nama Staff</th>
+
                         <th>No Passport</th>
+
                         <th>Jabatan</th>
+
                         <th>Exp Passport</th>
+
                         <th>Exp Visa</th>
+
+                        <th width="170">Action</th>
+
                     </tr>
+
                 </thead>
 
                 <tbody id="dataStaff">
+
                     <tr>
-                        <td colspan="5">Memuat data...</td>
+
+                        <td colspan="7">
+
+                            Memuat data...
+
+                        </td>
+
                     </tr>
+
                 </tbody>
+
             </table>
+
         </div>
 
     </div>
 
 </div>
 
+
+<!-- ========================= MODAL ========================= -->
+
+
+<div id="modalStaff" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+
+                Tambah Staff
+
+            </h2>
+
+            <span class="close" onclick="closeModal()">
+
+                &times;
+
+            </span>
+
+        </div>
+
+
+        <input type="hidden" id="rowStaff">
+
+
+        <label>Nama Staff</label>
+
+        <input
+            type="text"
+            id="nama"
+        >
+
+
+        <label>No Passport</label>
+
+        <input
+            type="text"
+            id="passport"
+        >
+
+
+        <label>Jabatan</label>
+
+        <input
+            type="text"
+            id="jabatan"
+        >
+
+
+        <label>Exp Passport</label>
+
+        <input
+            type="date"
+            id="expPassport"
+        >
+
+
+        <label>Exp Visa</label>
+
+        <input
+            type="date"
+            id="expVisa"
+        >
+
+
+        <div class="modal-footer">
+
+            <button
+                class="btn-secondary"
+                onclick="closeModal()"
+            >
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn-primary"
+                id="btnSave"
+            >
+
+                Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <script src="auth.js"></script>
+<div id="toast" class="toast"></div>
 <script src="menu.js"></script>
 <script src="staff.js"></script>
 
 </body>
+
 </html>
