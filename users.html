@@ -1,103 +1,295 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management</title>
+  <link rel="stylesheet" href="style.css">
 
-    <title>User Management</title>
+  <style>
+    .user-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-    <link rel="stylesheet" href="style.css">
+    .user-search {
+      width: min(320px, 100%);
+      padding: 10px 12px;
+      border: 1px solid #d9dee7;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-aktif {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-nonaktif {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn-small {
+      border: 0;
+      border-radius: 7px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-edit { background: #e0e7ff; color: #3730a3; }
+    .btn-reset { background: #fef3c7; color: #92400e; }
+    .btn-status { background: #dbeafe; color: #1d4ed8; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(520px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .modal-close {
+      border: 0;
+      background: transparent;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid #d9dee7;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-secondary {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      background: #e5e7eb;
+    }
+
+    .message-box {
+      display: none;
+      margin-bottom: 14px;
+      padding: 11px 13px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .message-box.show { display: block; }
+    .message-success { background: #dcfce7; color: #166534; }
+    .message-error { background: #fee2e2; color: #991b1b; }
+
+    @media (max-width: 768px) {
+      .table-card {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 760px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-
 <div class="container">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
+  <div class="sidebar">
+    <h2>Dashboard</h2>
+    <ul id="sidebarMenu"></ul>
+  </div>
 
-        <h2>Dashboard</h2>
+  <div class="content">
 
-        <ul id="sidebarMenu">
-            <!-- Dibuat otomatis oleh menu.js -->
-        </ul>
-
+    <div class="topbar">
+      <span id="userInfo"></span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
-    <!-- Content -->
-    <div class="content">
+    <h1>User Management</h1>
 
-        <!-- Topbar -->
-        <div class="topbar">
+    <div id="pageMessage" class="message-box"></div>
 
-            <span id="userInfo"></span>
+    <div class="card">
+      <div class="user-toolbar">
+        <button class="btn-primary" onclick="openAddModal()">+ Tambah User</button>
 
-            <button class="logout-btn" onclick="logout()">
-                Logout
-            </button>
-
-        </div>
-
-        <h1>User Management</h1>
-
-        <!-- Tombol Tambah -->
-        <div class="card">
-
-            <button
-                class="btn-primary"
-                onclick="alert('Fitur tambah user akan dibuat pada Step berikutnya.')">
-
-                + Tambah User
-
-            </button>
-
-        </div>
-
-        <!-- Table -->
-        <div class="card table-card">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th width="180">Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="userTable">
-
-                    <tr>
-
-                        <td colspan="4" style="text-align:center">
-
-                            Memuat data user...
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
+        <input
+          id="searchUser"
+          class="user-search"
+          type="search"
+          placeholder="Cari username, role, atau status..."
+          oninput="filterUsers()"
+        >
+      </div>
     </div>
 
+    <div class="card table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th width="360">Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="userTable">
+          <tr>
+            <td colspan="4" style="text-align:center">Memuat data user...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div id="userModal" class="modal-backdrop" onclick="closeModalFromBackdrop(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modalTitle">Tambah User</h3>
+      <button class="modal-close" type="button" onclick="closeUserModal()">&times;</button>
+    </div>
+
+    <form id="userForm">
+      <input type="hidden" id="formMode" value="add">
+      <input type="hidden" id="oldUsername">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" class="form-control" type="text" minlength="3" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" class="form-control" type="password" minlength="6" required>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" class="form-control" required>
+          <option value="">Pilih role</option>
+          <option value="MASTER">MASTER</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="STAFF">STAFF</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" class="form-control" required>
+          <option value="AKTIF">AKTIF</option>
+          <option value="NONAKTIF">NONAKTIF</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeUserModal()">Batal</button>
+        <button id="saveUserButton" type="submit" class="btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="resetModal" class="modal-backdrop" onclick="closeResetFromBackdrop(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Reset Password</h3>
+      <button class="modal-close" type="button" onclick="closeResetModal()">&times;</button>
+    </div>
+
+    <form id="resetForm">
+      <input type="hidden" id="resetUsername">
+
+      <div class="form-group">
+        <label for="newPassword">Password baru</label>
+        <input id="newPassword" class="form-control" type="password" minlength="6" required>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeResetModal()">Batal</button>
+        <button id="resetPasswordButton" type="submit" class="btn-primary">Reset Password</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script src="auth.js?v=4"></script>
 <script src="menu.js?v=4"></script>
-<script src="users.js?v=5"></script>
-
+<script src="users.js?v=6"></script>
 </body>
-
 </html>
