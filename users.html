@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>User Management</title>
+
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -18,9 +20,10 @@
     .user-search {
       width: min(320px, 100%);
       padding: 10px 12px;
-      border: 1px solid #d9dee7;
+      border: 1px solid #374151;
       border-radius: 8px;
       font-size: 14px;
+      box-sizing: border-box;
     }
 
     .status-badge {
@@ -53,17 +56,38 @@
       padding: 7px 10px;
       cursor: pointer;
       font-size: 12px;
+      font-weight: 600;
     }
 
-    .btn-edit { background: #e0e7ff; color: #3730a3; }
-    .btn-reset { background: #fef3c7; color: #92400e; }
-    .btn-status { background: #dbeafe; color: #1d4ed8; }
-    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-small:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-edit {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .btn-reset {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .btn-status {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.55);
+      background: rgba(15, 23, 42, 0.65);
       display: none;
       align-items: center;
       justify-content: center;
@@ -79,10 +103,11 @@
       width: min(520px, 100%);
       max-height: 90vh;
       overflow-y: auto;
-      background: white;
+      background: #ffffff;
+      color: #111827;
       border-radius: 14px;
       padding: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
 
     .modal-header {
@@ -102,6 +127,7 @@
       background: transparent;
       font-size: 24px;
       cursor: pointer;
+      color: #111827;
     }
 
     .form-group {
@@ -119,9 +145,11 @@
       width: 100%;
       box-sizing: border-box;
       padding: 10px 12px;
-      border: 1px solid #d9dee7;
+      border: 1px solid #d1d5db;
       border-radius: 8px;
       font-size: 14px;
+      background: #ffffff;
+      color: #111827;
     }
 
     .modal-actions {
@@ -137,6 +165,7 @@
       padding: 10px 14px;
       cursor: pointer;
       background: #e5e7eb;
+      color: #111827;
     }
 
     .message-box {
@@ -145,11 +174,22 @@
       padding: 11px 13px;
       border-radius: 8px;
       font-size: 14px;
+      font-weight: 600;
     }
 
-    .message-box.show { display: block; }
-    .message-success { background: #dcfce7; color: #166534; }
-    .message-error { background: #fee2e2; color: #991b1b; }
+    .message-box.show {
+      display: block;
+    }
+
+    .message-success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message-error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
     @media (max-width: 768px) {
       .table-card {
@@ -164,132 +204,208 @@
 </head>
 
 <body>
-<div class="container">
+  <div class="container">
 
-  <div class="sidebar">
-    <h2>Dashboard</h2>
-    <ul id="sidebarMenu"></ul>
+    <div class="sidebar">
+      <h2>Dashboard</h2>
+      <ul id="sidebarMenu"></ul>
+    </div>
+
+    <div class="content">
+
+      <div class="topbar">
+        <span id="userInfo"></span>
+
+        <button class="logout-btn" type="button" onclick="logout()">
+          Logout
+        </button>
+      </div>
+
+      <h1>User Management</h1>
+
+      <div id="pageMessage" class="message-box"></div>
+
+      <div class="card">
+        <div class="user-toolbar">
+
+          <button
+            class="btn-primary"
+            type="button"
+            onclick="openAddModal()">
+            + Tambah User
+          </button>
+
+          <input
+            id="searchUser"
+            class="user-search"
+            type="search"
+            placeholder="Cari username, role, atau status..."
+            oninput="filterUsers()">
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th width="360">Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="userTable">
+            <tr>
+              <td colspan="4" style="text-align:center;">
+                Memuat data user...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
   </div>
 
-  <div class="content">
+  <div
+    id="userModal"
+    class="modal-backdrop"
+    onclick="closeModalFromBackdrop(event)">
 
-    <div class="topbar">
-      <span id="userInfo"></span>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
+    <div class="modal-box">
 
-    <h1>User Management</h1>
+      <div class="modal-header">
+        <h3 id="modalTitle">Tambah User</h3>
 
-    <div id="pageMessage" class="message-box"></div>
-
-    <div class="card">
-      <div class="user-toolbar">
-        <button class="btn-primary" onclick="openAddModal()">+ Tambah User</button>
-
-        <input
-          id="searchUser"
-          class="user-search"
-          type="search"
-          placeholder="Cari username, role, atau status..."
-          oninput="filterUsers()"
-        >
+        <button
+          class="modal-close"
+          type="button"
+          onclick="closeUserModal()">
+          &times;
+        </button>
       </div>
+
+      <form id="userForm">
+
+        <input id="formMode" type="hidden" value="add">
+        <input id="oldUsername" type="hidden">
+
+        <div class="form-group">
+          <label for="username">Username</label>
+
+          <input
+            id="username"
+            class="form-control"
+            type="text"
+            minlength="3"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+
+          <input
+            id="password"
+            class="form-control"
+            type="password"
+            minlength="6"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role</label>
+
+          <select id="role" class="form-control" required>
+            <option value="">Pilih role</option>
+            <option value="MASTER">MASTER</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="STAFF">STAFF</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status</label>
+
+          <select id="status" class="form-control" required>
+            <option value="AKTIF">AKTIF</option>
+            <option value="NONAKTIF">NONAKTIF</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="closeUserModal()">
+            Batal
+          </button>
+
+          <button
+            id="saveUserButton"
+            type="submit"
+            class="btn-primary">
+            Simpan
+          </button>
+        </div>
+      </form>
     </div>
-
-    <div class="card table-card">
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th width="360">Action</th>
-          </tr>
-        </thead>
-
-        <tbody id="userTable">
-          <tr>
-            <td colspan="4" style="text-align:center">Memuat data user...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
   </div>
-</div>
 
-<div id="userModal" class="modal-backdrop" onclick="closeModalFromBackdrop(event)">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3 id="modalTitle">Tambah User</h3>
-      <button class="modal-close" type="button" onclick="closeUserModal()">&times;</button>
+  <div
+    id="resetModal"
+    class="modal-backdrop"
+    onclick="closeResetFromBackdrop(event)">
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <h3>Reset Password</h3>
+
+        <button
+          class="modal-close"
+          type="button"
+          onclick="closeResetModal()">
+          &times;
+        </button>
+      </div>
+
+      <form id="resetForm">
+
+        <input id="resetUsername" type="hidden">
+
+        <div class="form-group">
+          <label for="newPassword">Password baru</label>
+
+          <input
+            id="newPassword"
+            class="form-control"
+            type="password"
+            minlength="6"
+            required>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="closeResetModal()">
+            Batal
+          </button>
+
+          <button
+            id="resetPasswordButton"
+            type="submit"
+            class="btn-primary">
+            Reset Password
+          </button>
+        </div>
+      </form>
     </div>
-
-    <form id="userForm">
-      <input type="hidden" id="formMode" value="add">
-      <input type="hidden" id="oldUsername">
-
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input id="username" class="form-control" type="text" minlength="3" required>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input id="password" class="form-control" type="password" minlength="6" required>
-      </div>
-
-      <div class="form-group">
-        <label for="role">Role</label>
-        <select id="role" class="form-control" required>
-          <option value="">Pilih role</option>
-          <option value="MASTER">MASTER</option>
-          <option value="ADMIN">ADMIN</option>
-          <option value="STAFF">STAFF</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="status">Status</label>
-        <select id="status" class="form-control" required>
-          <option value="AKTIF">AKTIF</option>
-          <option value="NONAKTIF">NONAKTIF</option>
-        </select>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" onclick="closeUserModal()">Batal</button>
-        <button id="saveUserButton" type="submit" class="btn-primary">Simpan</button>
-      </div>
-    </form>
   </div>
-</div>
 
-<div id="resetModal" class="modal-backdrop" onclick="closeResetFromBackdrop(event)">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>Reset Password</h3>
-      <button class="modal-close" type="button" onclick="closeResetModal()">&times;</button>
-    </div>
-
-    <form id="resetForm">
-      <input type="hidden" id="resetUsername">
-
-      <div class="form-group">
-        <label for="newPassword">Password baru</label>
-        <input id="newPassword" class="form-control" type="password" minlength="6" required>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" onclick="closeResetModal()">Batal</button>
-        <button id="resetPasswordButton" type="submit" class="btn-primary">Reset Password</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script src="auth.js?v=4"></script>
-<script src="menu.js?v=4"></script>
-<script src="users.js?v=6"></script>
+  <script src="auth.js?v=4"></script>
+  <script src="menu.js?v=4"></script>
+  <script src="users.js?v=8"></script>
 </body>
 </html>
