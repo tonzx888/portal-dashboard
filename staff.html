@@ -3,116 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Staff</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Data Staff | Operation Center</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="component.css">
+  <link rel="stylesheet" href="animation.css">
+  <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="staff.css">
 </head>
-<body>
-<div class="container">
-  <aside class="sidebar">
-    <h2>Dashboard</h2>
-    <ul id="sidebarMenu"></ul>
-  </aside>
-
-  <main class="content">
-    <div class="topbar">
-      <span id="userInfo"></span>
-      <button type="button" onclick="logout()">Logout</button>
-    </div>
-
-    <section class="staff-page-header">
-      <div>
-        <p class="staff-eyebrow">MASTER DATA</p>
-        <h1>Data Staff</h1>
-        <p class="staff-subtitle">Kelola identitas, jabatan, domisili, masa kerja, passport, dan visa staff.</p>
+<body class="oc-dashboard-body staff-body">
+  <div class="oc-shell">
+    <aside class="oc-sidebar">
+      <div class="oc-brand">
+        <div class="oc-brand-mark" aria-hidden="true"><span>OC</span></div>
+        <div class="oc-brand-copy">
+          <strong>OPERATION CENTER</strong>
+          <small>Pusat Operasional</small>
+        </div>
       </div>
-      <button type="button" class="btn-primary" id="btnTambahStaff" onclick="openTambahStaff()">+ Tambah Staff</button>
-    </section>
 
-    <section class="staff-summary-grid">
-      <article class="staff-summary-card"><span>Total Staff</span><strong id="summaryTotal">0</strong><small>Semua staff aktif</small></article>
-      <article class="staff-summary-card"><span>CS</span><strong id="summaryCS">0</strong><small>Customer Service</small></article>
-      <article class="staff-summary-card"><span>Kapten</span><strong id="summaryKapten">0</strong><small>Koordinator shift</small></article>
-      <article class="staff-summary-card"><span>Kasir</span><strong id="summaryKasir">0</strong><small>Tim kasir</small></article>
-    </section>
+      <div class="oc-sidebar-label">MENU UTAMA</div>
+      <ul id="sidebarMenu" class="oc-nav"></ul>
 
-    <section class="staff-toolbar">
-      <input type="search" id="searchStaff" placeholder="Cari nama, passport, jabatan, domisili..." autocomplete="off">
-      <select id="filterJabatan">
-        <option value="">Semua Jabatan</option>
-        <option value="CS">CS</option>
-        <option value="KAPTEN">KAPTEN</option>
-        <option value="KASIR">KASIR</option>
-      </select>
-      <select id="filterDomisili"><option value="">Semua Domisili</option></select>
-      <button type="button" class="btn-secondary" id="btnRefreshStaff">Perbarui</button>
-    </section>
-
-    <section class="staff-table-card">
-      <div class="staff-table-wrap">
-        <table class="staff-table">
-          <thead>
-            <tr>
-              <th>No</th><th>Nama Staff</th><th>Jabatan</th><th>Usia</th><th>Domisili</th>
-              <th>No Passport</th><th>Exp Passport</th><th>Exp Visa</th>
-              <th>Tanggal Join</th><th>Masa Kerja</th><th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="dataStaff"><tr><td colspan="11">Memuat data...</td></tr></tbody>
-        </table>
+      <div class="oc-sidebar-footer">
+        <div class="oc-system-card">
+          <div class="oc-system-head">
+            <span class="oc-system-pulse"></span>
+            <strong>Sistem Aktif</strong>
+          </div>
+          <small>Seluruh layanan berjalan normal</small>
+        </div>
       </div>
-    </section>
-  </main>
-</div>
+    </aside>
 
-<div id="modalStaff" class="modal staff-modal">
-  <div class="modal-content staff-modal-content">
-    <div class="modal-header">
-      <div><p class="staff-eyebrow">FORM STAFF</p><h2 id="modalTitle">Tambah Staff</h2></div>
-      <button type="button" class="staff-modal-close" onclick="closeModal()">&times;</button>
-    </div>
-    <input type="hidden" id="rowStaff">
+    <main class="oc-main">
+      <header class="oc-topbar">
+        <div>
+          <span class="oc-topbar-eyebrow">OPERATION CENTER</span>
+          <strong class="oc-topbar-title">Data Staff</strong>
+        </div>
 
-    <div class="staff-form-grid">
-      <div class="staff-field staff-field-wide"><label>Nama Staff</label><input type="text" id="nama"></div>
-      <div class="staff-field"><label>No Passport</label><input type="text" id="passport"></div>
-      <div class="staff-field"><label>Jabatan</label>
-        <select id="jabatan">
-          <option value="">Pilih Jabatan</option><option value="CS">CS</option>
-          <option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option>
-        </select>
+        <div class="oc-topbar-actions">
+          <button type="button" id="btnRefreshStaff" class="oc-btn oc-btn-secondary oc-refresh-btn">Perbarui Data</button>
+
+          <div class="oc-user-chip">
+            <div id="userInitial" class="oc-avatar">OC</div>
+            <div class="oc-user-copy">
+              <strong id="userInfo">Memuat pengguna...</strong>
+              <small>Sesi pengguna aktif</small>
+            </div>
+          </div>
+
+          <button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button>
+        </div>
+      </header>
+
+      <section class="oc-page-heading oc-enter staff-heading">
+        <div>
+          <span class="oc-section-kicker">MASTER DATA</span>
+          <h1>Data Staff</h1>
+          <p>Kelola identitas, jabatan, domisili, masa kerja, passport, dan visa staff.</p>
+        </div>
+        <button type="button" class="oc-btn oc-btn-primary" id="btnTambahStaff" onclick="openTambahStaff()">+ Tambah Staff</button>
+      </section>
+
+      <section class="oc-stat-grid staff-stat-grid oc-enter">
+        <article class="oc-stat-card oc-stat-personnel oc-hover-lift">
+          <div class="oc-stat-top"><span class="oc-stat-label">TOTAL STAFF</span><span class="oc-stat-symbol">01</span></div>
+          <strong id="summaryTotal" class="oc-stat-number">0</strong>
+          <small class="oc-stat-caption">Semua staff terdaftar</small>
+        </article>
+        <article class="oc-stat-card oc-stat-leave oc-hover-lift">
+          <div class="oc-stat-top"><span class="oc-stat-label">CUSTOMER SERVICE</span><span class="oc-stat-symbol">02</span></div>
+          <strong id="summaryCS" class="oc-stat-number">0</strong>
+          <small class="oc-stat-caption">Staff dengan jabatan CS</small>
+        </article>
+        <article class="oc-stat-card oc-stat-offday oc-hover-lift">
+          <div class="oc-stat-top"><span class="oc-stat-label">KAPTEN</span><span class="oc-stat-symbol">03</span></div>
+          <strong id="summaryKapten" class="oc-stat-number">0</strong>
+          <small class="oc-stat-caption">Koordinator operasional</small>
+        </article>
+        <article class="oc-stat-card oc-stat-alert oc-hover-lift">
+          <div class="oc-stat-top"><span class="oc-stat-label">KASIR</span><span class="oc-stat-symbol">04</span></div>
+          <strong id="summaryKasir" class="oc-stat-number">0</strong>
+          <small class="oc-stat-caption">Staff pada tim kasir</small>
+        </article>
+      </section>
+
+      <section class="staff-workspace oc-enter">
+        <div class="staff-workspace-head">
+          <div>
+            <span class="oc-section-kicker">DIREKTORI PERSONEL</span>
+            <h2>Daftar Staff</h2>
+            <p>Gunakan pencarian dan filter untuk menemukan data dengan cepat.</p>
+          </div>
+          <span id="staffResultCount" class="oc-badge oc-badge-info">0 data</span>
+        </div>
+
+        <div class="staff-toolbar">
+          <label class="staff-control staff-search-control">
+            <span>Pencarian</span>
+            <input class="oc-input" type="search" id="searchStaff" placeholder="Cari nama, passport, jabatan, atau domisili..." autocomplete="off">
+          </label>
+          <label class="staff-control">
+            <span>Jabatan</span>
+            <select class="oc-select" id="filterJabatan">
+              <option value="">Semua Jabatan</option>
+              <option value="CS">CS</option>
+              <option value="KAPTEN">KAPTEN</option>
+              <option value="KASIR">KASIR</option>
+            </select>
+          </label>
+          <label class="staff-control">
+            <span>Domisili</span>
+            <select class="oc-select" id="filterDomisili"><option value="">Semua Domisili</option></select>
+          </label>
+          <button type="button" class="oc-btn oc-btn-secondary staff-reset-btn" id="btnResetFilter">Reset Filter</button>
+        </div>
+
+        <div class="staff-table-wrap">
+          <table class="staff-table">
+            <thead>
+              <tr>
+                <th>No</th><th>Nama Staff</th><th>Jabatan</th><th>Usia</th><th>Domisili</th>
+                <th>No Passport</th><th>Exp Passport</th><th>Exp Visa</th>
+                <th>Tanggal Join</th><th>Masa Kerja</th><th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="dataStaff"><tr><td colspan="11"><div class="staff-empty-state">Memuat data staff...</div></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalStaff" class="oc-modal" aria-hidden="true">
+    <div class="oc-modal-panel staff-modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="oc-modal-head">
+        <div><span class="oc-section-kicker">FORM STAFF</span><h2 id="modalTitle">Tambah Staff</h2><p>Lengkapi data utama staff dengan benar.</p></div>
+        <button type="button" class="oc-btn oc-btn-ghost staff-modal-close" onclick="closeModal()" aria-label="Tutup">&times;</button>
       </div>
-      <div class="staff-field"><label>Tanggal Lahir</label><input type="date" id="tanggalLahir"></div>
-      <div class="staff-field"><label>Domisili</label><input type="text" id="domisili"></div>
-      <div class="staff-field"><label>Tanggal Join Team</label><input type="date" id="tanggalJoin"></div>
-<div class="staff-auto-info"><span>Usia</span><strong id="previewUsia">-</strong></div>
-      <div class="staff-auto-info"><span>Masa Kerja</span><strong id="previewMasaKerja">-</strong></div>
-    </div>
-
-    <div class="modal-footer">
-      <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
-      <button type="button" class="btn-primary" id="btnSave">Simpan</button>
+      <div class="oc-modal-body">
+        <input type="hidden" id="rowStaff">
+        <div class="staff-form-grid">
+          <label class="staff-field staff-field-wide"><span>Nama Staff</span><input class="oc-input" type="text" id="nama" autocomplete="off"></label>
+          <label class="staff-field"><span>No Passport</span><input class="oc-input" type="text" id="passport" autocomplete="off"></label>
+          <label class="staff-field"><span>Jabatan</span><select class="oc-select" id="jabatan"><option value="">Pilih Jabatan</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></label>
+          <label class="staff-field"><span>Tanggal Lahir</span><input class="oc-input" type="date" id="tanggalLahir"></label>
+          <label class="staff-field"><span>Domisili</span><input class="oc-input" type="text" id="domisili" autocomplete="off"></label>
+          <label class="staff-field"><span>Tanggal Join Team</span><input class="oc-input" type="date" id="tanggalJoin"></label>
+          <div class="staff-auto-info"><span>Usia</span><strong id="previewUsia">-</strong></div>
+          <div class="staff-auto-info"><span>Masa Kerja</span><strong id="previewMasaKerja">-</strong></div>
+        </div>
+      </div>
+      <div class="oc-modal-foot">
+        <button type="button" class="oc-btn oc-btn-secondary" onclick="closeModal()">Batal</button>
+        <button type="button" class="oc-btn oc-btn-primary" id="btnSave">Simpan</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="modalDetailStaff" class="modal staff-modal">
-  <div class="modal-content staff-detail-content">
-    <div class="modal-header">
-      <div><p class="staff-eyebrow">DETAIL STAFF</p><h2 id="detailNama">-</h2></div>
-      <button type="button" class="staff-modal-close" onclick="closeDetailModal()">&times;</button>
-    </div>
-    <div id="detailStaffBody" class="staff-detail-grid"></div>
-    <div class="modal-footer">
-      <button type="button" class="btn-secondary" onclick="closeDetailModal()">Tutup</button>
-      <button type="button" class="btn-warning" id="btnDetailEdit">Edit</button>
+  <div id="modalDetailStaff" class="oc-modal" aria-hidden="true">
+    <div class="oc-modal-panel staff-detail-content" role="dialog" aria-modal="true" aria-labelledby="detailNama">
+      <div class="oc-modal-head">
+        <div><span class="oc-section-kicker">DETAIL STAFF</span><h2 id="detailNama">-</h2><p>Informasi personel yang tersimpan pada sistem.</p></div>
+        <button type="button" class="oc-btn oc-btn-ghost staff-modal-close" onclick="closeDetailModal()" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="oc-modal-body"><div id="detailStaffBody" class="staff-detail-grid"></div></div>
+      <div class="oc-modal-foot">
+        <button type="button" class="oc-btn oc-btn-secondary" onclick="closeDetailModal()">Tutup</button>
+        <button type="button" class="oc-btn staff-edit-btn" id="btnDetailEdit">Edit</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="toast" class="toast"></div>
-<script src="auth.js"></script>
-<script src="menu.js"></script>
-<script src="staff.js"></script>
+  <div id="toast" class="staff-legacy-toast" aria-live="polite"></div>
+  <script src="auth.js"></script>
+  <script src="menu.js"></script>
+  <script src="ui.js"></script>
+  <script src="staff.js"></script>
 </body>
 </html>

@@ -7,6 +7,11 @@ const loginUserStaff = getLoginUser();
 const currentStaffSystemRole = String(loginUserStaff?.role || "").toUpperCase();
 
 function showToast(message, type = "success") {
+  if (typeof window.ocToast === "function") {
+    const title = type === "error" ? "Proses gagal" : "Proses berhasil";
+    window.ocToast(title, message || "Proses selesai.", { duration: 3400 });
+    return;
+  }
   const toast = document.getElementById("toast");
   if (!toast) return console.warn(message);
   clearTimeout(toastTimer);
@@ -70,12 +75,15 @@ function isExpiryWarning(value, days = 180) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  setupStaffHeader();
   if (currentStaffSystemRole !== "MASTER") document.getElementById("btnTambahStaff").style.display = "none";
   loadStaff();
   document.getElementById("searchStaff")?.addEventListener("input", applyStaffFilters);
   document.getElementById("filterJabatan")?.addEventListener("change", applyStaffFilters);
   document.getElementById("filterDomisili")?.addEventListener("change", applyStaffFilters);
   document.getElementById("btnRefreshStaff")?.addEventListener("click", loadStaff);
+  document.getElementById("btnResetFilter")?.addEventListener("click", resetStaffFilters);
+  document.getElementById("btnLogout")?.addEventListener("click", logout);
   document.getElementById("btnSave")?.addEventListener("click", saveStaff);
   document.getElementById("tanggalLahir")?.addEventListener("change", updateComputedPreview);
   document.getElementById("tanggalJoin")?.addEventListener("change", updateComputedPreview);
@@ -85,9 +93,32 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+function setupStaffHeader() {
+  const username = String(loginUserStaff?.username || "").trim();
+  const role = String(loginUserStaff?.role || "").trim();
+  const info = document.getElementById("userInfo");
+  const initial = document.getElementById("userInitial");
+  if (info) info.textContent = [username, role].filter(Boolean).join(" · ") || "Pengguna aktif";
+  if (initial) {
+    initial.textContent = username.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join("") || "OC";
+  }
+}
+
+function resetStaffFilters() {
+  const search = document.getElementById("searchStaff");
+  const role = document.getElementById("filterJabatan");
+  const domicile = document.getElementById("filterDomisili");
+  if (search) search.value = "";
+  if (role) role.value = "";
+  if (domicile) domicile.value = "";
+  applyStaffFilters();
+}
+
 async function loadStaff() {
   const tbody = document.getElementById("dataStaff");
-  tbody.innerHTML = `<tr><td colspan="11">Memuat data...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="11"><div class="staff-empty-state">Memuat data staff...</div></td></tr>`;
+  const button = document.getElementById("btnRefreshStaff");
+  if (typeof ocSetLoading === "function") ocSetLoading(button, true, "Memuat...");
   try {
     const response = await fetch(`${BASE_URL}?type=staff`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -99,8 +130,10 @@ async function loadStaff() {
     applyStaffFilters();
   } catch (error) {
     console.error(error);
-    tbody.innerHTML = `<tr><td colspan="11">Gagal memuat data staff.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11"><div class="staff-empty-state">Gagal memuat data staff.</div></td></tr>`;
     showToast("Gagal memuat data staff.","error");
+  } finally {
+    if (typeof ocSetLoading === "function") ocSetLoading(button, false);
   }
 }
 
@@ -130,23 +163,25 @@ function applyStaffFilters() {
       (!role || String(x.jabatan||"").toUpperCase()===role) &&
       (!domisili || String(x.domisili||"").toLowerCase()===domisili);
   });
+  const count = document.getElementById("staffResultCount");
+  if (count) count.textContent = `${filtered.length} data`;
   renderTable(filtered);
 }
 
 function renderTable(data) {
   const tbody = document.getElementById("dataStaff");
-  if (!data.length) return tbody.innerHTML = `<tr><td colspan="11">Tidak ada data yang sesuai.</td></tr>`;
+  if (!data.length) return tbody.innerHTML = `<tr><td colspan="11"><div class="staff-empty-state">Tidak ada data yang sesuai.</div></td></tr>`;
   tbody.innerHTML = data.map((x,i)=>{
     const row = Number(x.row);
     const actions = currentStaffSystemRole==="MASTER" ? `
       <div class="staff-action-group">
-        <button class="btn-warning" onclick="editStaffByRow(${row})">Edit</button>
-        <button class="btn-danger" onclick="deleteStaff(${row})">Hapus</button>
+        <button class="oc-btn staff-edit-btn" onclick="editStaffByRow(${row})">Edit</button>
+        <button class="oc-btn staff-delete-btn" onclick="deleteStaff(${row})">Hapus</button>
       </div>` : `<span class="staff-muted">Lihat saja</span>`;
     return `<tr>
       <td>${i+1}</td>
       <td><button class="staff-name-button" onclick="showStaffDetail(${row})">${escapeHtml(x.nama||"-")}</button></td>
-      <td>${escapeHtml(x.jabatan||"-")}</td>
+      <td><span class="oc-badge oc-badge-info staff-role-badge">${escapeHtml(x.jabatan||"-")}</span></td>
       <td>${escapeHtml(x.usia||calculateAge(x.tanggalLahir))}</td>
       <td>${escapeHtml(x.domisili||"-")}</td>
       <td>${escapeHtml(x.passport||"-")}</td>
@@ -164,7 +199,8 @@ function openTambahStaff() {
   modalTitle.textContent="Tambah Staff";
   ["rowStaff","nama","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
   updateComputedPreview();
-  modalStaff.style.display="flex";
+  if (typeof ocOpenModal === "function") ocOpenModal("modalStaff");
+  else modalStaff.style.display="flex";
   nama.focus();
 }
 
@@ -186,7 +222,8 @@ function editStaff(x) {
   tanggalJoin.value=convertDate(x.tanggalJoin);
   updateComputedPreview();
   closeDetailModal();
-  modalStaff.style.display="flex";
+  if (typeof ocOpenModal === "function") ocOpenModal("modalStaff");
+  else modalStaff.style.display="flex";
 }
 
 function updateComputedPreview() {
@@ -194,8 +231,14 @@ function updateComputedPreview() {
   previewMasaKerja.textContent=calculateServicePeriod(tanggalJoin.value);
 }
 
-function closeModal(){modalStaff.style.display="none"}
-function closeDetailModal(){modalDetailStaff.style.display="none"}
+function closeModal(){
+  if (typeof ocCloseModal === "function") ocCloseModal("modalStaff");
+  else modalStaff.style.display="none";
+}
+function closeDetailModal(){
+  if (typeof ocCloseModal === "function") ocCloseModal("modalDetailStaff");
+  else modalDetailStaff.style.display="none";
+}
 
 function showStaffDetail(row) {
   const x = staffData.find(v=>Number(v.row)===Number(row));
@@ -210,7 +253,8 @@ function showStaffDetail(row) {
   detailStaffBody.innerHTML=fields.map(([a,b])=>`<div class="staff-detail-item"><span>${escapeHtml(a)}</span><strong>${escapeHtml(b||"-")}</strong></div>`).join("");
   btnDetailEdit.style.display=currentStaffSystemRole==="MASTER"?"inline-flex":"none";
   btnDetailEdit.onclick=()=>editStaffByRow(row);
-  modalDetailStaff.style.display="flex";
+  if (typeof ocOpenModal === "function") ocOpenModal("modalDetailStaff");
+  else modalDetailStaff.style.display="flex";
 }
 
 async function saveStaff() {
@@ -222,7 +266,8 @@ async function saveStaff() {
   };
   if (!payload.nama||!payload.passport||!payload.jabatan) return showToast("Nama, passport, dan jabatan wajib diisi.","error");
   if (!payload.tanggalLahir||!payload.domisili||!payload.tanggalJoin) return showToast("Tanggal lahir, domisili, dan tanggal join wajib diisi.","error");
-  btnSave.disabled=true;btnSave.textContent="Menyimpan...";
+  if (typeof ocSetLoading === "function") ocSetLoading(btnSave, true, "Menyimpan...");
+  else { btnSave.disabled=true; btnSave.textContent="Menyimpan..."; }
   try{
     const params=new URLSearchParams({...payload,type:payload.row?"editStaff":"addStaff"});
     const response=await fetch(`${BASE_URL}?${params.toString()}`);
@@ -231,7 +276,10 @@ async function saveStaff() {
     showToast(result.message||"Proses selesai.",result.success?"success":"error");
     if(result.success){closeModal();await loadStaff();}
   }catch(error){console.error(error);showToast("Terjadi kesalahan saat menyimpan data.","error")}
-  finally{btnSave.disabled=false;btnSave.textContent="Simpan"}
+  finally{
+    if (typeof ocSetLoading === "function") ocSetLoading(btnSave, false);
+    else { btnSave.disabled=false; btnSave.textContent="Simpan"; }
+  }
 }
 
 async function deleteStaff(row) {
