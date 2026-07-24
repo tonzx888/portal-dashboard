@@ -1,4 +1,5 @@
 const DASHBOARD_API_BASE = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec";
+const EXPECTED_DASHBOARD_API_VERSION = "dashboard-v2.1";
 
 const dashboardUser = getLoginUser();
 
@@ -14,39 +15,34 @@ function setupDashboardHeader() {
     const username = String(dashboardUser?.username || "").trim();
     const role = String(dashboardUser?.role || "").trim();
 
-    const welcomeTitle = document.getElementById("welcomeTitle");
-    const dashboardDate = document.getElementById("dashboardDate");
-    const userInfo = document.getElementById("userInfo");
+    setText(
+        "welcomeTitle",
+        username ? `Selamat Datang, ${username}` : "Selamat Datang"
+    );
 
-    if (welcomeTitle) {
-        welcomeTitle.textContent = username
-            ? `Selamat Datang, ${username}`
-            : "Selamat Datang";
-    }
+    setText(
+        "userInfo",
+        [username, role].filter(Boolean).join(" · ")
+    );
 
-    if (userInfo) {
-        userInfo.textContent = [username, role]
-            .filter(Boolean)
-            .join(" · ");
-    }
-
-    if (dashboardDate) {
-        dashboardDate.textContent = new Intl.DateTimeFormat("id-ID", {
+    setText(
+        "dashboardDate",
+        new Intl.DateTimeFormat("id-ID", {
             weekday: "long",
             day: "2-digit",
             month: "long",
             year: "numeric"
-        }).format(new Date());
-    }
+        }).format(new Date())
+    );
 }
 
 async function loadDashboard() {
-    const refreshButton = document.getElementById("btnRefreshDashboard");
+    const button = document.getElementById("btnRefreshDashboard");
     const errorBox = document.getElementById("dashboardError");
 
-    if (refreshButton) {
-        refreshButton.disabled = true;
-        refreshButton.textContent = "Memuat...";
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Memuat...";
     }
 
     if (errorBox) {
@@ -55,7 +51,12 @@ async function loadDashboard() {
     }
 
     try {
-        const response = await fetch(`${DASHBOARD_API_BASE}?type=dashboard`);
+        const cacheBuster = Date.now();
+
+        const response = await fetch(
+            `${DASHBOARD_API_BASE}?type=dashboard&_=${cacheBuster}`,
+            { cache: "no-store" }
+        );
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -67,19 +68,24 @@ async function loadDashboard() {
             throw new Error(data.message || "Dashboard gagal dimuat.");
         }
 
+        if (data.apiVersion !== EXPECTED_DASHBOARD_API_VERSION) {
+            throw new Error(
+                `Backend dashboard belum versi terbaru. Versi terbaca: ${data.apiVersion || "lama/tidak ada"}.`
+            );
+        }
+
         renderDashboard(data);
     } catch (error) {
         console.error("Gagal mengambil data dashboard:", error);
 
         if (errorBox) {
             errorBox.hidden = false;
-            errorBox.textContent =
-                "Gagal memuat dashboard. Pastikan Dashboard.gs sudah dipasang dan Web App sudah di-deploy ulang.";
+            errorBox.textContent = error.message;
         }
     } finally {
-        if (refreshButton) {
-            refreshButton.disabled = false;
-            refreshButton.textContent = "↻ Perbarui Data";
+        if (button) {
+            button.disabled = false;
+            button.textContent = "↻ Perbarui Data";
         }
     }
 }
@@ -93,21 +99,29 @@ function renderDashboard(data) {
         ? data.visaWarnings
         : [];
 
-    setText("totalStaff", data.totalStaff || 0);
-    setText("staffCuti", data.staffCuti || 0);
-    setText("offdayHariIni", data.offdayHariIni || 0);
+    const totalStaff = Number(data.totalStaff || 0);
+    const staffCuti = Number(data.staffCuti || 0);
+    const offdayHariIni = Number(data.offdayHariIni || 0);
+    const activeToday = Number(data.activeToday || 0);
+
+    const passportCount = Number(
+        data.passportWarning ?? passportWarnings.length
+    );
+
+    const visaCount = Number(
+        data.visaWarning ?? visaWarnings.length
+    );
+
+    setText("totalStaff", totalStaff);
+    setText("staffCuti", staffCuti);
+    setText("offdayHariIni", offdayHariIni);
+    setText("documentWarning", passportCount + visaCount);
 
     setText(
         "roleSummary",
         `CS ${roles.cs || 0} · Kapten ${roles.kapten || 0} · Kasir ${roles.kasir || 0}`
     );
 
-    const passportCount =
-        Number(data.passportWarning ?? passportWarnings.length ?? 0);
-    const visaCount =
-        Number(data.visaWarning ?? visaWarnings.length ?? 0);
-
-    setText("documentWarning", passportCount + visaCount);
     setText(
         "documentWarningText",
         `Passport ${passportCount} · Visa ${visaCount}`
@@ -115,13 +129,12 @@ function renderDashboard(data) {
 
     setText("passportWarningBadge", passportCount);
     setText("visaWarningBadge", visaCount);
-
     setText("averageAge", `${data.averageAge || 0} Tahun`);
-    setText("activeToday", data.activeToday || 0);
+    setText("activeToday", activeToday);
     setText("topDomicile", data.topDomicile || "-");
     setText("longestServing", data.longestServing || "-");
 
-    renderRoleChart(roles, data.totalStaff || 0);
+    renderRoleChart(roles, totalStaff);
     renderActivity(data);
     renderWarningList("passportWarningList", passportWarnings);
     renderWarningList("visaWarningList", visaWarnings);
@@ -130,7 +143,6 @@ function renderDashboard(data) {
 
 function renderRoleChart(roles, totalStaff) {
     const container = document.getElementById("roleChart");
-
     if (!container) return;
 
     const items = [
@@ -147,14 +159,9 @@ function renderRoleChart(roles, totalStaff) {
         return `
             <div class="role-row">
                 <span class="role-label">${escapeDashboardHtml(item.label)}</span>
-
                 <div class="role-track">
-                    <div
-                        class="role-fill"
-                        style="width:${Math.min(percent, 100)}%"
-                    ></div>
+                    <div class="role-fill" style="width:${Math.min(percent, 100)}%"></div>
                 </div>
-
                 <strong class="role-value">${item.value}</strong>
             </div>
         `;
@@ -163,8 +170,11 @@ function renderRoleChart(roles, totalStaff) {
 
 function renderActivity(data) {
     const container = document.getElementById("todayActivity");
-
     if (!container) return;
+
+    const birthdayNames = Array.isArray(data.birthdayNames)
+        ? data.birthdayNames
+        : [];
 
     const activities = [
         {
@@ -184,8 +194,8 @@ function renderActivity(data) {
         },
         {
             title: "Ulang Tahun",
-            subtitle: data.birthdayNames?.length
-                ? data.birthdayNames.join(", ")
+            subtitle: birthdayNames.length
+                ? birthdayNames.join(", ")
                 : "Tidak ada ulang tahun hari ini",
             value: Number(data.birthdayCount || 0)
         }
@@ -197,7 +207,6 @@ function renderActivity(data) {
                 <strong>${escapeDashboardHtml(item.title)}</strong>
                 <small>${escapeDashboardHtml(item.subtitle)}</small>
             </div>
-
             <span class="activity-count">${item.value}</span>
         </div>
     `).join("");
@@ -205,10 +214,9 @@ function renderActivity(data) {
 
 function renderWarningList(containerId, items) {
     const container = document.getElementById(containerId);
-
     if (!container) return;
 
-    if (!Array.isArray(items) || items.length === 0) {
+    if (!items.length) {
         container.innerHTML = `
             <div class="dashboard-empty">
                 Tidak ada dokumen dalam periode warning.
@@ -233,7 +241,6 @@ function renderWarningList(containerId, items) {
                     <strong>${escapeDashboardHtml(item.nama || "-")}</strong>
                     <small>${escapeDashboardHtml(item.expiryDate || "-")}</small>
                 </div>
-
                 <span class="warning-days ${expired ? "expired" : ""}">
                     ${escapeDashboardHtml(daysText)}
                 </span>
@@ -244,10 +251,9 @@ function renderWarningList(containerId, items) {
 
 function renderNewStaff(items) {
     const container = document.getElementById("newStaffList");
-
     if (!container) return;
 
-    if (!Array.isArray(items) || items.length === 0) {
+    if (!Array.isArray(items) || !items.length) {
         container.innerHTML = `
             <div class="dashboard-empty">
                 Belum ada data tanggal join.
@@ -262,7 +268,6 @@ function renderNewStaff(items) {
                 <strong>${escapeDashboardHtml(item.nama || "-")}</strong>
                 <small>Join ${escapeDashboardHtml(item.tanggalJoin || "-")}</small>
             </div>
-
             <span class="new-staff-role">
                 ${escapeDashboardHtml(item.jabatan || "-")}
             </span>
