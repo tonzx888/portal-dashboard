@@ -5,24 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="component.css">
+    <link rel="stylesheet" href="animation.css">
+    <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="users.css">
 </head>
 
-<body>
-<div class="container">
+<body class="oc-dashboard-body">
+<div class="oc-shell">
 
-    <aside class="sidebar">
-        <h2>Dashboard</h2>
-        <ul id="sidebarMenu"></ul>
+    <aside class="oc-sidebar">
+        <div class="oc-brand"><div class="oc-brand-mark"><span>OC</span></div><div class="oc-brand-copy"><strong>OPERATION CENTER</strong><small>Pusat Operasional</small></div></div>
+        <div class="oc-sidebar-label">MENU UTAMA</div><ul id="sidebarMenu" class="oc-nav"></ul>
+        <div class="oc-sidebar-footer"><div class="oc-system-card"><div class="oc-system-head"><span class="oc-system-pulse"></span><strong>Sistem Aktif</strong></div><small>Seluruh layanan berjalan normal</small></div></div>
     </aside>
 
-    <main class="content users-page">
+    <main class="oc-main users-page">
 
-        <div class="topbar">
-            <span id="userInfo"></span>
-            <button type="button" class="logout-btn" onclick="logout()">Logout</button>
-        </div>
+        <header class="oc-topbar"><div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Manajemen User</strong></div><div class="oc-topbar-actions"><button type="button" id="btnRefreshUsersTop" class="oc-btn oc-btn-secondary oc-refresh-btn">Perbarui Data</button><div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div><button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button></div></header>
 
         <section class="users-heading">
             <div>
@@ -217,6 +218,7 @@
 
 <script src="auth.js"></script>
 <script src="menu.js"></script>
+<script src="ui.js"></script>
 <script src="users.js"></script>
 </body>
 </html>

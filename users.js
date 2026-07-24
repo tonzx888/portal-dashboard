@@ -553,3 +553,10 @@ function setUserText(id, value) {
     const element = document.getElementById(id);
     if (element) element.textContent = value;
 }
+
+// Dashboard V2 topbar bridge
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnRefreshUsersTop")?.addEventListener("click", () => {
+    document.getElementById("btnRefreshUsers")?.click();
+  });
+});

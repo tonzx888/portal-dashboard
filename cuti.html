@@ -1,58 +1,30 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="id">
 <head>
-    <title>Pengajuan Cuti</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Cuti | Operation Center</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="component.css">
+  <link rel="stylesheet" href="animation.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="cuti.css">
 </head>
-
-<body>
-
-<div class="container">
-
-    <div class="sidebar">
-        <h2>Dashboard</h2>
-
-    <ul id="sidebarMenu"></ul>
+<body class="oc-dashboard-body">
+<div class="oc-shell">
+  <aside class="oc-sidebar">
+    <div class="oc-brand"><div class="oc-brand-mark"><span>OC</span></div><div class="oc-brand-copy"><strong>OPERATION CENTER</strong><small>Pusat Operasional</small></div></div>
+    <div class="oc-sidebar-label">MENU UTAMA</div><ul id="sidebarMenu" class="oc-nav"></ul>
+    <div class="oc-sidebar-footer"><div class="oc-system-card"><div class="oc-system-head"><span class="oc-system-pulse"></span><strong>Sistem Aktif</strong></div><small>Seluruh layanan berjalan normal</small></div></div>
+  </aside>
+  <main class="oc-main">
+    <header class="oc-topbar"><div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Jadwal Cuti</strong></div><div class="oc-topbar-actions"><div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div><button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button></div></header>
+    <section class="oc-page-heading oc-enter"><div><span class="oc-section-kicker">MANAJEMEN CUTI</span><h1>Jadwal Cuti Staff</h1><p>Daftar pengajuan, periode, dan status cuti seluruh staff.</p></div><div class="oc-live-status"><span class="oc-system-pulse"></span><div><strong>Data Terhubung</strong><small>Google Sheets aktif</small></div></div></section>
+    <section class="cuti-panel oc-enter">
+      <div class="cuti-panel-head"><div><span class="oc-section-kicker">DAFTAR CUTI</span><h2>Data Cuti Staff</h2><p>Status diperbarui berdasarkan tanggal mulai dan berakhir.</p></div></div>
+      <div class="cuti-table-wrap"><table class="cuti-table"><thead><tr><th>Nama</th><th>Role</th><th>Pengajuan Cuti</th><th>Start Cuti</th><th>End Cuti</th><th>Status</th></tr></thead><tbody id="dataCuti"><tr><td colspan="6" class="cuti-loading">Memuat data cuti...</td></tr></tbody></table></div>
+    </section>
+  </main>
 </div>
-
-    <div class="content">
-
-        <div class="topbar">
-    <span id="userInfo"></span>
-    <button onclick="logout()">Logout</button>
-</div>
-
-        <h1>Data Cuti Staff</h1>
-
-        <div class="card table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nama</th>
-                        <th>Role</th>
-                        <th>Pengajuan Cuti</th>
-                        <th>Start Cuti</th>
-                        <th>End Cuti</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody id="dataCuti">
-                    <tr>
-                        <td colspan="6">Memuat data cuti...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-</div>
-
-<script src="auth.js"></script>
-<script src="menu.js"></script>
-<script src="cuti.js?v=3"></script>
-
-</body>
-</html>
+<script src="auth.js"></script><script src="menu.js"></script><script src="ui.js"></script><script src="cuti.js?v=3"></script>
+</body></html>

@@ -95,3 +95,18 @@
     }
   });
 })();
+
+// Shared Operation Center topbar helpers
+window.addEventListener("DOMContentLoaded", () => {
+  const user = typeof getLoginUser === "function" ? getLoginUser() : null;
+  const username = String(user?.username || "").trim();
+  const role = String(user?.role || "").trim();
+  const initials = username.split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0]?.toUpperCase()).join("") || "OC";
+  const initialNode = document.getElementById("userInitial");
+  if (initialNode) initialNode.textContent = initials;
+  const loginName = document.getElementById("loginUserName");
+  if (loginName && username) loginName.textContent = [username, role].filter(Boolean).join(" · ");
+  document.getElementById("btnLogout")?.addEventListener("click", () => {
+    if (typeof logout === "function") logout();
+  });
+});
