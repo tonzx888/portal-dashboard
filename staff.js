@@ -162,7 +162,7 @@ function renderTable(data) {
 function openTambahStaff() {
   if (currentStaffSystemRole!=="MASTER") return;
   modalTitle.textContent="Tambah Staff";
-  ["rowStaff","nama","passport","jabatan","expPassport","expVisa","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
+  ["rowStaff","nama","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
   updateComputedPreview();
   modalStaff.style.display="flex";
   nama.focus();
@@ -181,8 +181,6 @@ function editStaff(x) {
   nama.value=x.nama||"";
   passport.value=x.passport||"";
   jabatan.value=String(x.jabatan||"").toUpperCase();
-  expPassport.value=convertDate(x.expPassport);
-  expVisa.value=convertDate(x.expVisa);
   tanggalLahir.value=convertDate(x.tanggalLahir);
   domisili.value=x.domisili||"";
   tanggalJoin.value=convertDate(x.tanggalJoin);
@@ -219,7 +217,7 @@ async function saveStaff() {
   if (currentStaffSystemRole!=="MASTER") return;
   const payload={
     row:rowStaff.value.trim(),nama:nama.value.trim(),passport:passport.value.trim(),
-    jabatan:jabatan.value.trim(),expPassport:expPassport.value,expVisa:expVisa.value,
+    jabatan:jabatan.value.trim(),
     tanggalLahir:tanggalLahir.value,domisili:domisili.value.trim(),tanggalJoin:tanggalJoin.value
   };
   if (!payload.nama||!payload.passport||!payload.jabatan) return showToast("Nama, passport, dan jabatan wajib diisi.","error");
