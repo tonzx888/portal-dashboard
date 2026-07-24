@@ -1,0 +1,62 @@
+@keyframes ocFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ocModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ocToastProgress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@keyframes ocShimmer {
+  to { transform: translateX(100%); }
+}
+
+.oc-enter {
+  animation: ocFadeUp 420ms var(--oc-ease) both;
+}
+
+.oc-modal.is-open .oc-modal-panel {
+  animation: ocModalIn 240ms var(--oc-ease) both;
+}
+
+.oc-hover-lift {
+  transition:
+    transform var(--oc-speed) var(--oc-ease),
+    border-color var(--oc-speed) var(--oc-ease),
+    box-shadow var(--oc-speed) var(--oc-ease);
+}
+
+.oc-hover-lift:hover {
+  transform: translateY(-2px);
+  border-color: var(--oc-line-strong);
+  box-shadow: var(--oc-shadow-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
