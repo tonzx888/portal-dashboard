@@ -1,63 +1,196 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Dashboard Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard HR</title>
+
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 
 <body>
-
 <div class="container">
 
-    <div class="sidebar">
+    <aside class="sidebar">
         <h2>Dashboard</h2>
         <ul id="sidebarMenu"></ul>
-    </div>
+    </aside>
 
-    <div class="content">
+    <main class="content dashboard-page">
 
         <div class="topbar">
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <span id="userInfo"></span>
+            <button type="button" class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
-        <h1>Selamat Datang</h1>
-
-        <div class="dashboard-grid">
-
-            <div class="card">
-                <h3>Total Staff</h3>
-                <p id="totalStaff">Memuat...</p>
+        <section class="dashboard-heading">
+            <div>
+                <p class="dashboard-eyebrow">HR COMMAND CENTER</p>
+                <h1 id="welcomeTitle">Selamat Datang</h1>
+                <p id="dashboardDate" class="dashboard-date">Memuat tanggal...</p>
             </div>
 
-            <div class="card">
-                <h3>Staff Cuti</h3>
-                <p id="staffCuti">Memuat...</p>
-            </div>
+            <button type="button" id="btnRefreshDashboard" class="dashboard-refresh">
+                ↻ Perbarui Data
+            </button>
+        </section>
 
-            <div class="card">
-                <h3>Offday Hari Ini</h3>
-                <p id="offdayHariIni">Memuat...</p>
-            </div>
+        <section class="dashboard-summary-grid">
+            <article class="dashboard-summary-card blue">
+                <div class="dashboard-summary-icon">👥</div>
+                <div>
+                    <span>Total Staff</span>
+                    <strong id="totalStaff">0</strong>
+                    <small id="roleSummary">CS 0 · Kapten 0 · Kasir 0</small>
+                </div>
+            </article>
 
-            <div class="card">
-                <h3>Passport Warning</h3>
-                <p id="passportWarning">Memuat...</p>
-            </div>
+            <article class="dashboard-summary-card purple">
+                <div class="dashboard-summary-icon">📝</div>
+                <div>
+                    <span>Cuti Hari Ini</span>
+                    <strong id="staffCuti">0</strong>
+                    <small>Staff sedang cuti</small>
+                </div>
+            </article>
 
-            <div class="card">
-                <h3>Visa Warning</h3>
-                <p id="visaWarning">Memuat...</p>
-            </div>
+            <article class="dashboard-summary-card orange">
+                <div class="dashboard-summary-icon">📅</div>
+                <div>
+                    <span>Offday Hari Ini</span>
+                    <strong id="offdayHariIni">0</strong>
+                    <small>Offday disetujui</small>
+                </div>
+            </article>
 
-        </div>
+            <article class="dashboard-summary-card red">
+                <div class="dashboard-summary-icon">⚠️</div>
+                <div>
+                    <span>Dokumen Warning</span>
+                    <strong id="documentWarning">0</strong>
+                    <small id="documentWarningText">Passport 0 · Visa 0</small>
+                </div>
+            </article>
+        </section>
 
-    </div>
+        <section class="dashboard-main-grid">
 
+            <article class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <p class="dashboard-panel-kicker">KOMPOSISI TEAM</p>
+                        <h2>Staff Berdasarkan Jabatan</h2>
+                    </div>
+                </div>
+
+                <div id="roleChart" class="role-chart">
+                    <div class="dashboard-empty">Memuat komposisi staff...</div>
+                </div>
+            </article>
+
+            <article class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <p class="dashboard-panel-kicker">RINGKASAN HARI INI</p>
+                        <h2>Aktivitas Operasional</h2>
+                    </div>
+                </div>
+
+                <div id="todayActivity" class="activity-list">
+                    <div class="dashboard-empty">Memuat aktivitas...</div>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="dashboard-warning-grid">
+
+            <article class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <p class="dashboard-panel-kicker">PASSPORT</p>
+                        <h2>Akan Habis</h2>
+                    </div>
+                    <span id="passportWarningBadge" class="dashboard-badge">0</span>
+                </div>
+
+                <div id="passportWarningList" class="warning-list">
+                    <div class="dashboard-empty">Memuat data passport...</div>
+                </div>
+            </article>
+
+            <article class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <p class="dashboard-panel-kicker">VISA</p>
+                        <h2>Akan Habis</h2>
+                    </div>
+                    <span id="visaWarningBadge" class="dashboard-badge">0</span>
+                </div>
+
+                <div id="visaWarningList" class="warning-list">
+                    <div class="dashboard-empty">Memuat data visa...</div>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="dashboard-bottom-grid">
+
+            <article class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <p class="dashboard-panel-kicker">STAFF TERBARU</p>
+                        <h2>Terakhir Bergabung</h2>
+                    </div>
+                </div>
+
+                <div id="newStaffList" class="new-staff-list">
+                    <div class="dashboard-empty">Memuat staff terbaru...</div>
+                </div>
+            </article>
+
+            <article class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <p class="dashboard-panel-kicker">INFORMASI TEAM</p>
+                        <h2>Statistik Cepat</h2>
+                    </div>
+                </div>
+
+                <div class="quick-stat-grid">
+                    <div class="quick-stat">
+                        <span>Rata-rata Usia</span>
+                        <strong id="averageAge">0</strong>
+                    </div>
+
+                    <div class="quick-stat">
+                        <span>Staff Aktif Hari Ini</span>
+                        <strong id="activeToday">0</strong>
+                    </div>
+
+                    <div class="quick-stat">
+                        <span>Domisili Terbanyak</span>
+                        <strong id="topDomicile">-</strong>
+                    </div>
+
+                    <div class="quick-stat">
+                        <span>Staff Terlama</span>
+                        <strong id="longestServing">-</strong>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+        <div id="dashboardError" class="dashboard-error" hidden></div>
+
+    </main>
 </div>
 
 <script src="auth.js"></script>
 <script src="menu.js"></script>
 <script src="dashboard.js"></script>
-
 </body>
 </html>
