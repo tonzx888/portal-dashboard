@@ -225,7 +225,7 @@ function renderWarningList(containerId, items) {
         return;
     }
 
-    container.innerHTML = items.slice(0, 8).map(item => {
+    container.innerHTML = items.map(item => {
         const days = Number(item.daysLeft);
         const expired = days < 0;
 
@@ -262,7 +262,7 @@ function renderNewStaff(items) {
         return;
     }
 
-    container.innerHTML = items.slice(0, 6).map(item => `
+    container.innerHTML = items.map(item => `
         <div class="new-staff-item">
             <div class="new-staff-left">
                 <strong>${escapeDashboardHtml(item.nama || "-")}</strong>

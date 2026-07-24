@@ -369,3 +369,96 @@
         grid-template-columns: 70px minmax(0, 1fr) 34px;
     }
 }
+
+
+/* =========================================================
+   DASHBOARD V2.2 — FIXED SIDEBAR & COMPACT SCROLL LISTS
+   ========================================================= */
+
+/* Sidebar tetap di tempat ketika area konten digulir. */
+.sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    align-self: flex-start !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+}
+
+/* Area konten tetap dapat memanjang dan digulir normal. */
+.content.dashboard-page {
+    min-height: 100vh;
+}
+
+/*
+ * Daftar warning dan staff terbaru hanya memperlihatkan sekitar
+ * lima baris. Data berikutnya tetap tersedia melalui scroll
+ * di dalam panelnya masing-masing.
+ */
+#passportWarningList,
+#visaWarningList,
+#newStaffList {
+    max-height: 325px;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+}
+
+/* Ukuran item dibuat konsisten supaya lima item terlihat rapi. */
+#passportWarningList .warning-item,
+#visaWarningList .warning-item,
+#newStaffList .new-staff-item {
+    min-height: 56px;
+}
+
+/* Scrollbar panel dibuat tipis dan menyatu dengan dark theme. */
+#passportWarningList::-webkit-scrollbar,
+#visaWarningList::-webkit-scrollbar,
+#newStaffList::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+    width: 7px;
+}
+
+#passportWarningList::-webkit-scrollbar-track,
+#visaWarningList::-webkit-scrollbar-track,
+#newStaffList::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#passportWarningList::-webkit-scrollbar-thumb,
+#visaWarningList::-webkit-scrollbar-thumb,
+#newStaffList::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #475569;
+}
+
+#passportWarningList,
+#visaWarningList,
+#newStaffList,
+.sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 transparent;
+}
+
+@media (max-width: 760px) {
+    /*
+     * Pada layar kecil sidebar kembali mengikuti alur halaman
+     * agar tidak mengambil tinggi layar secara permanen.
+     */
+    .sidebar {
+        position: relative !important;
+        top: auto !important;
+        height: auto !important;
+        min-height: auto !important;
+    }
+
+    #passportWarningList,
+    #visaWarningList,
+    #newStaffList {
+        max-height: 310px;
+    }
+}
