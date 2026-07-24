@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Offday</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="offday.css">
 </head>
 <body>
     <div class="container">
@@ -13,167 +14,92 @@
             <ul id="sidebarMenu"></ul>
         </aside>
 
-        <main class="content">
+        <main class="content offday-page">
             <div class="topbar">
                 <span id="loginUserName"></span>
                 <button type="button" class="logout-btn" onclick="logout()">Logout</button>
             </div>
 
-            <section class="page-header">
+            <section class="offday-page-header">
                 <div>
                     <h1>Manajemen Offday</h1>
-                    <p>Pengajuan, monitoring, kalender, dan approval offday staff.</p>
+                    <p>Kelola pengajuan dan jadwal offday staff.</p>
                 </div>
-                <button type="button" id="btnRefresh" class="btn-primary">Perbarui Data</button>
+                <button type="button" id="btnRefresh" class="offday-refresh-btn">↻ Refresh</button>
             </section>
 
             <section class="offday-summary-grid">
-                <article class="offday-summary-card">
-                    <span>Total Pengajuan</span>
-                    <strong id="summaryTotal">0</strong>
+                <article class="offday-summary-card summary-total">
+                    <div class="summary-icon">▣</div>
+                    <div><span>Total Pengajuan</span><strong id="summaryTotal">0</strong><small>Semua pengajuan</small></div>
                 </article>
-                <article class="offday-summary-card">
-                    <span>Menunggu</span>
-                    <strong id="summaryPending">0</strong>
+                <article class="offday-summary-card summary-pending">
+                    <div class="summary-icon">◷</div>
+                    <div><span>Menunggu</span><strong id="summaryPending">0</strong><small>Belum diproses</small></div>
                 </article>
-                <article class="offday-summary-card">
-                    <span>Disetujui</span>
-                    <strong id="summaryApproved">0</strong>
+                <article class="offday-summary-card summary-approved">
+                    <div class="summary-icon">✓</div>
+                    <div><span>Disetujui</span><strong id="summaryApproved">0</strong><small>Sudah disetujui</small></div>
                 </article>
-                <article class="offday-summary-card">
-                    <span>Ditolak</span>
-                    <strong id="summaryRejected">0</strong>
+                <article class="offday-summary-card summary-rejected">
+                    <div class="summary-icon">×</div>
+                    <div><span>Ditolak</span><strong id="summaryRejected">0</strong><small>Pengajuan ditolak</small></div>
                 </article>
             </section>
 
             <section id="submissionCard" class="offday-form-card">
                 <div class="section-heading">
-                    <div>
-                        <h2>Ajukan Offday</h2>
-                        <p>Pengajuan minimal H-3 sebelum tanggal offday.</p>
-                    </div>
+                    <div><h2>Ajukan Offday</h2><p>Pengajuan minimal H-3 sebelum tanggal offday.</p></div>
                 </div>
-
                 <div class="offday-form-grid">
-                    <div>
-                        <label for="nama">Nama</label>
-                        <input id="nama" type="text" readonly>
-                    </div>
-                    <div>
-                        <label for="role">Role</label>
-                        <select id="role">
-                            <option value="">Pilih role</option>
-                            <option value="CS">CS</option>
-                            <option value="KAPTEN">KAPTEN</option>
-                            <option value="KASIR">KASIR</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="shift">Shift</label>
-                        <select id="shift">
-                            <option value="">Pilih shift</option>
-                            <option value="PAGI">PAGI</option>
-                            <option value="MALAM">MALAM</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="tanggal">Tanggal Offday</label>
-                        <input id="tanggal" type="date">
-                    </div>
-                    <div class="offday-form-full">
-                        <label for="alasan">Alasan</label>
-                        <textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan offday"></textarea>
-                    </div>
+                    <div><label for="nama">Nama</label><input id="nama" type="text" readonly></div>
+                    <div><label for="role">Role</label><select id="role"><option value="">Pilih role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></div>
+                    <div><label for="shift">Shift</label><select id="shift"><option value="">Pilih shift</option><option value="PAGI">PAGI</option><option value="MALAM">MALAM</option></select></div>
+                    <div><label for="tanggal">Tanggal Offday</label><input id="tanggal" type="date"></div>
+                    <div class="offday-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan offday"></textarea></div>
                 </div>
-
-                <div class="form-actions">
-                    <button type="button" id="btnSubmitOffday" class="btn-primary">Ajukan Offday</button>
-                </div>
+                <div class="form-actions"><button type="button" id="btnSubmitOffday" class="btn-primary">Ajukan Offday</button></div>
             </section>
 
             <section class="offday-calendar-section">
-                <div class="section-heading">
-                    <div>
-                        <h2>Kalender Offday Bulanan</h2>
-                        <p>Data ditampilkan terpisah berdasarkan CS, Kapten, dan Kasir. Klik tanggal berwarna untuk melihat detail.</p>
+                <div class="calendar-main-header">
+                    <h2>Kalender Offday Bulan Ini</h2>
+                    <div class="calendar-controls">
+                        <button id="calendarPrev" type="button" aria-label="Bulan sebelumnya">‹</button>
+                        <span id="calendarMonthLabel">-</span>
+                        <button id="calendarNext" type="button" aria-label="Bulan berikutnya">›</button>
                     </div>
-                    <div class="calendar-legend">
-                        <span><i class="legend-dot blue"></i> 1 pengajuan</span>
-                        <span><i class="legend-dot red"></i> 2 atau lebih</span>
+                    <div class="calendar-legend-inline">
+                        <span><i class="dot cs"></i>CS</span>
+                        <span><i class="dot kapten"></i>KAPTEN</span>
+                        <span><i class="dot kasir"></i>KASIR</span>
+                        <span><i class="dot full"></i>Lebih dari 1</span>
                     </div>
                 </div>
 
-                <div class="calendar-section">
-                    <article class="calendar-card">
-                        <div class="calendar-card-title">CS</div>
-                        <div id="calendarCS"></div>
-                    </article>
-                    <article class="calendar-card">
-                        <div class="calendar-card-title">KAPTEN</div>
-                        <div id="calendarKapten"></div>
-                    </article>
-                    <article class="calendar-card">
-                        <div class="calendar-card-title">KASIR</div>
-                        <div id="calendarKasir"></div>
-                    </article>
+                <div class="calendar-section compact-calendars">
+                    <article class="calendar-card role-cs"><div class="calendar-card-title">CS</div><div id="calendarCS"></div></article>
+                    <article class="calendar-card role-kapten"><div class="calendar-card-title">KAPTEN</div><div id="calendarKapten"></div></article>
+                    <article class="calendar-card role-kasir"><div class="calendar-card-title">KASIR</div><div id="calendarKasir"></div></article>
                 </div>
-            </section>
 
-            <section class="offday-rule-grid">
-                <article class="offday-rule-card">
-                    <strong>Minimal H-3</strong>
-                    <span>Pengajuan dilakukan paling lambat tiga hari sebelum offday.</span>
-                </article>
-                <article class="offday-rule-card">
-                    <strong>Jarak 5 Hari</strong>
-                    <span>Minimal lima hari dari offday terakhir yang disetujui.</span>
-                </article>
-                <article class="offday-rule-card">
-                    <strong>Maksimal 2 Kali</strong>
-                    <span>Setiap staff maksimal dua offday dalam satu bulan.</span>
-                </article>
-                <article class="offday-rule-card">
-                    <strong>Sesuai Kuota</strong>
-                    <span>Kuota dihitung berdasarkan role dan shift.</span>
-                </article>
+                <div class="calendar-help">ⓘ Klik tanggal berwarna untuk melihat detail pengajuan offday pada tanggal tersebut.</div>
             </section>
 
             <section class="offday-table-card">
-                <div class="section-heading table-heading">
-                    <div>
-                        <h2 id="tableTitle">Data Offday</h2>
-                        <p id="tableSubtitle">Daftar pengajuan offday staff.</p>
-                    </div>
-                    <div class="table-tools">
-                        <input id="searchOffday" type="search" placeholder="Cari nama, role, shift, alasan...">
-                        <select id="filterStatus">
-                            <option value="">Semua Status</option>
-                            <option value="MENUNGGU">MENUNGGU</option>
-                            <option value="DISETUJUI">DISETUJUI</option>
-                            <option value="DITOLAK">DITOLAK</option>
-                        </select>
-                    </div>
+                <div class="offday-toolbar">
+                    <input id="searchOffday" type="search" placeholder="Cari nama, role, shift, atau alasan...">
+                    <select id="filterRole"><option value="">Semua Role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select>
+                    <select id="filterShift"><option value="">Semua Shift</option><option value="PAGI">PAGI</option><option value="MALAM">MALAM</option></select>
+                    <select id="filterStatus"><option value="">Semua Status</option><option value="MENUNGGU">MENUNGGU</option><option value="DISETUJUI">DISETUJUI</option><option value="DITOLAK">DITOLAK</option></select>
                 </div>
+
+                <div class="table-title-row"><div><h2 id="tableTitle">Data Offday</h2><p id="tableSubtitle">Daftar pengajuan offday staff.</p></div></div>
 
                 <div class="table-scroll">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>Role</th>
-                                <th>Shift</th>
-                                <th>Tanggal</th>
-                                <th>Alasan</th>
-                                <th>Status</th>
-                                <th>Diproses Oleh</th>
-                                <th>Catatan</th>
-                                <th id="actionHeader">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataOffday">
-                            <tr><td colspan="10">Memuat data offday...</td></tr>
-                        </tbody>
+                        <thead><tr><th>No</th><th>Nama</th><th>Role</th><th>Shift</th><th>Tanggal Offday</th><th>Alasan</th><th>Status</th><th>Diproses Oleh</th><th>Catatan</th><th id="actionHeader">Aksi</th></tr></thead>
+                        <tbody id="dataOffday"><tr><td colspan="10">Memuat data offday...</td></tr></tbody>
                     </table>
                 </div>
             </section>
@@ -181,7 +107,6 @@
     </div>
 
     <div id="toast" class="toast"></div>
-
     <script src="auth.js"></script>
     <script src="menu.js"></script>
     <script src="offday.js"></script>

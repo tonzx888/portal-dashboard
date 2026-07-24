@@ -107,7 +107,6 @@ function formatMonthYear(date) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    injectCalendarStyles();
     createCalendarDetailModal();
     setupOffdayPage();
     loadOffday();
@@ -121,6 +120,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btnSubmitOffday")?.addEventListener("click", submitOffday);
     document.getElementById("searchOffday")?.addEventListener("input", applyOffdayFilters);
     document.getElementById("filterStatus")?.addEventListener("change", applyOffdayFilters);
+    document.getElementById("filterRole")?.addEventListener("change", applyOffdayFilters);
+    document.getElementById("filterShift")?.addEventListener("change", applyOffdayFilters);
+    document.getElementById("calendarPrev")?.addEventListener("click", () => changeCalendarMonth(-1));
+    document.getElementById("calendarNext")?.addEventListener("click", () => changeCalendarMonth(1));
 });
 
 function setupOffdayPage() {
@@ -195,13 +198,22 @@ async function loadSummary() {
 function applyOffdayFilters() {
     const keyword = String(document.getElementById("searchOffday")?.value || "").trim().toLowerCase();
     const status = String(document.getElementById("filterStatus")?.value || "").toUpperCase();
+    const role = String(document.getElementById("filterRole")?.value || "").toUpperCase();
+    const shift = String(document.getElementById("filterShift")?.value || "").toUpperCase();
 
     const filtered = offdayData.filter(item => {
         const searchable = [item.nama, item.role, item.shift, item.status, item.alasan, item.catatan]
             .join(" ")
             .toLowerCase();
 
-        return searchable.includes(keyword) && (!status || String(item.status || "").toUpperCase() === status);
+        const itemStatus = String(item.status || "").toUpperCase();
+        const itemRole = String(item.role || "").toUpperCase();
+        const itemShift = String(item.shift || "").toUpperCase();
+
+        return searchable.includes(keyword)
+            && (!status || itemStatus === status)
+            && (!role || itemRole === role)
+            && (!shift || itemShift === shift);
     });
 
     renderOffday(filtered);
@@ -352,6 +364,9 @@ async function processApproval(type, row, catatan) {
 ======================= */
 
 function renderCalendar(data) {
+    const monthLabel = document.getElementById("calendarMonthLabel");
+    if (monthLabel) monthLabel.textContent = formatMonthYear(calendarViewDate);
+
     renderRoleCalendar("CS", data, "calendarCS");
     renderRoleCalendar("KAPTEN", data, "calendarKapten");
     renderRoleCalendar("KASIR", data, "calendarKasir");
@@ -365,37 +380,29 @@ function renderRoleCalendar(role, data, elementId) {
     const month = calendarViewDate.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const totalDays = new Date(year, month + 1, 0).getDate();
+    const previousMonthDays = new Date(year, month, 0).getDate();
 
     const roleItems = data.filter(item => {
         const itemRole = String(item.role || "").toUpperCase();
         const itemStatus = String(item.status || "").toUpperCase();
         const itemDate = parseOffdayDate(item.tanggal);
 
-        return itemRole === role &&
-            itemStatus !== "DITOLAK" &&
-            itemDate &&
-            itemDate.getFullYear() === year &&
-            itemDate.getMonth() === month;
+        return itemRole === role
+            && itemStatus !== "DITOLAK"
+            && itemDate
+            && itemDate.getFullYear() === year
+            && itemDate.getMonth() === month;
     });
 
     const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-
-    let html = `
-        <div class="offday-calendar-box">
-            <div class="offday-calendar-toolbar">
-                <button type="button" class="calendar-nav-btn" onclick="changeCalendarMonth(-1)">‹</button>
-                <strong>${escapeHtml(formatMonthYear(calendarViewDate))}</strong>
-                <button type="button" class="calendar-nav-btn" onclick="changeCalendarMonth(1)">›</button>
-            </div>
-            <div class="offday-calendar-grid">
-    `;
+    let html = '<div class="offday-calendar-grid">';
 
     dayNames.forEach(dayName => {
         html += `<div class="calendar-weekday">${dayName}</div>`;
     });
 
-    for (let blank = 0; blank < firstDay; blank++) {
-        html += `<div class="calendar-day empty"></div>`;
+    for (let blank = firstDay - 1; blank >= 0; blank--) {
+        html += `<div class="calendar-day outside"><span>${previousMonthDays - blank}</span></div>`;
     }
 
     for (let day = 1; day <= totalDays; day++) {
@@ -404,28 +411,26 @@ function renderRoleCalendar(role, data, elementId) {
             return itemDate && itemDate.getDate() === day;
         });
 
-        let stateClass = "";
-        if (dayItems.length === 1) stateClass = "has-off";
-        if (dayItems.length >= 2) stateClass = "full";
-
-        const countBadge = dayItems.length > 0
-            ? `<span class="calendar-count">${dayItems.length}</span>`
-            : "";
+        const stateClass = dayItems.length >= 2 ? "full" : dayItems.length === 1 ? "has-off" : "";
+        const disabled = dayItems.length === 0 ? "disabled" : "";
+        const countBadge = dayItems.length >= 2 ? `<small>${dayItems.length}</small>` : "";
 
         html += `
-            <button
-                type="button"
+            <button type="button"
                 class="calendar-day ${stateClass}"
                 onclick="showCalendarDayDetail('${role}', ${year}, ${month}, ${day})"
-                ${dayItems.length === 0 ? "disabled" : ""}
-            >
-                <span>${day}</span>
-                ${countBadge}
-            </button>
-        `;
+                ${disabled}>
+                <span>${day}</span>${countBadge}
+            </button>`;
     }
 
-    html += `</div></div>`;
+    const usedCells = firstDay + totalDays;
+    const trailingCells = usedCells <= 35 ? 35 - usedCells : 42 - usedCells;
+    for (let day = 1; day <= trailingCells; day++) {
+        html += `<div class="calendar-day outside"><span>${day}</span></div>`;
+    }
+
+    html += '</div>';
     container.innerHTML = html;
 }
 
@@ -435,7 +440,6 @@ function changeCalendarMonth(offset) {
         calendarViewDate.getMonth() + Number(offset),
         1
     );
-
     renderCalendar(offdayData);
 }
 
@@ -445,12 +449,12 @@ function showCalendarDayDetail(role, year, month, day) {
         const itemStatus = String(item.status || "").toUpperCase();
         const itemDate = parseOffdayDate(item.tanggal);
 
-        return itemRole === role &&
-            itemStatus !== "DITOLAK" &&
-            itemDate &&
-            itemDate.getFullYear() === Number(year) &&
-            itemDate.getMonth() === Number(month) &&
-            itemDate.getDate() === Number(day);
+        return itemRole === role
+            && itemStatus !== "DITOLAK"
+            && itemDate
+            && itemDate.getFullYear() === Number(year)
+            && itemDate.getMonth() === Number(month)
+            && itemDate.getDate() === Number(day);
     });
 
     if (selectedItems.length === 0) return;
@@ -458,9 +462,9 @@ function showCalendarDayDetail(role, year, month, day) {
     const modal = document.getElementById("calendarDetailModal");
     const title = document.getElementById("calendarDetailTitle");
     const body = document.getElementById("calendarDetailBody");
+    if (!modal || !title || !body) return;
 
     title.textContent = `${role} — ${formatDisplayDate(new Date(year, month, day))}`;
-
     body.innerHTML = selectedItems.map(item => `
         <div class="calendar-detail-item">
             <div class="calendar-detail-name">${escapeHtml(item.nama || "-")}</div>
@@ -486,7 +490,6 @@ function createCalendarDetailModal() {
     const modal = document.createElement("div");
     modal.id = "calendarDetailModal";
     modal.className = "calendar-detail-modal";
-
     modal.innerHTML = `
         <div class="calendar-detail-panel">
             <div class="calendar-detail-header">
@@ -494,45 +497,11 @@ function createCalendarDetailModal() {
                 <button type="button" class="calendar-detail-close" onclick="closeCalendarDetailModal()">×</button>
             </div>
             <div id="calendarDetailBody"></div>
-        </div>
-    `;
+        </div>`;
 
     modal.addEventListener("click", event => {
         if (event.target === modal) closeCalendarDetailModal();
     });
 
     document.body.appendChild(modal);
-}
-
-function injectCalendarStyles() {
-    if (document.getElementById("offdayCalendarStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "offdayCalendarStyles";
-    style.textContent = `
-        .offday-calendar-box{width:100%;padding:14px;border:1px solid #334155;border-radius:12px;background:#111827;color:#f8fafc}
-        .offday-calendar-toolbar{display:grid;grid-template-columns:36px 1fr 36px;align-items:center;gap:8px;margin-bottom:12px;text-align:center}
-        .offday-calendar-toolbar strong{color:#fff;font-size:14px;text-transform:capitalize}
-        .calendar-nav-btn{min-height:34px!important;padding:4px 8px!important;border:1px solid #475569!important;border-radius:7px!important;background:#1e293b!important;color:#fff!important;font-size:22px!important;line-height:1!important;cursor:pointer!important}
-        .offday-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(32px,1fr));gap:6px}
-        .calendar-weekday{padding:7px 2px;color:#94a3b8;text-align:center;font-size:11px;font-weight:700}
-        .calendar-day{position:relative;min-height:42px!important;padding:5px!important;border:1px solid #334155!important;border-radius:8px!important;background:#172033!important;color:#f8fafc!important;cursor:pointer!important}
-        .calendar-day:not(:disabled):hover{border-color:#60a5fa!important;background:#253752!important}
-        .calendar-day:disabled{cursor:default!important;opacity:1!important}
-        .calendar-day.empty{border-color:transparent!important;background:transparent!important}
-        .calendar-day.has-off{border-color:#2563eb!important;background:#1d4ed8!important;color:#fff!important}
-        .calendar-day.full{border-color:#ef4444!important;background:#dc2626!important;color:#fff!important}
-        .calendar-count{position:absolute;top:3px;right:5px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:rgba(15,23,42,.75);color:#fff;font-size:10px;line-height:16px}
-        .calendar-detail-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,6,23,.78)}
-        .calendar-detail-panel{width:min(520px,100%);max-height:80vh;overflow-y:auto;padding:20px;border:1px solid #475569;border-radius:12px;background:#1e293b;color:#f8fafc;box-shadow:0 20px 50px rgba(0,0,0,.4)}
-        .calendar-detail-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:15px}
-        .calendar-detail-header h3{margin:0;color:#fff}
-        .calendar-detail-close{min-height:34px!important;padding:3px 10px!important;background:#dc2626!important;color:#fff!important;font-size:20px!important}
-        .calendar-detail-item{padding:14px;margin-bottom:10px;border:1px solid #334155;border-radius:9px;background:#111827}
-        .calendar-detail-name{margin-bottom:7px;color:#fff;font-weight:800}
-        .calendar-detail-meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:8px;color:#cbd5e1;font-size:12px}
-        .calendar-detail-reason{color:#e2e8f0;line-height:1.45}
-    `;
-
-    document.head.appendChild(style);
 }
