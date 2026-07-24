@@ -19,8 +19,8 @@
   overflow-y: auto;
   border-right: 1px solid var(--oc-line);
   background:
-    linear-gradient(180deg, rgba(24, 48, 58, .94), rgba(10, 24, 30, .97));
-  backdrop-filter: blur(18px);
+    linear-gradient(180deg, rgba(30, 63, 73, .98), rgba(18, 39, 47, .99));
+  backdrop-filter: blur(8px);
 }
 
 .oc-brand {
@@ -210,8 +210,8 @@
   margin: 0 -28px 26px;
   padding: 0 28px;
   border-bottom: 1px solid var(--oc-line);
-  background: rgba(9, 20, 25, .78);
-  backdrop-filter: blur(18px);
+  background: rgba(19, 42, 50, .94);
+  backdrop-filter: blur(8px);
 }
 
 .oc-topbar-eyebrow,
@@ -347,7 +347,7 @@
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
   background:
-    linear-gradient(145deg, rgba(29, 58, 69, .93), rgba(16, 34, 41, .97));
+    linear-gradient(145deg, rgba(38, 78, 88, .96), rgba(25, 53, 61, .98));
   box-shadow: var(--oc-shadow-sm);
 }
 
@@ -431,7 +431,7 @@
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
   background:
-    linear-gradient(145deg, rgba(26, 52, 62, .90), rgba(15, 33, 40, .95));
+    linear-gradient(145deg, rgba(35, 72, 82, .96), rgba(24, 50, 58, .98));
   box-shadow: var(--oc-shadow-sm);
 }
 

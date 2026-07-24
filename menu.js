@@ -10,50 +10,32 @@ const menu = document.getElementById("sidebarMenu");
 const menuItems = [
   {
     href: "index.html",
-    icon: "OV",
-    label: "Overview",
+    icon: "HM",
+    label: "Home",
     roles: ["MASTER", "ADMIN", "STAFF"]
   },
   {
     href: "staff.html",
-    icon: "PS",
-    label: "Personnel",
+    icon: "ST",
+    label: "Data Staff",
     roles: ["MASTER", "ADMIN"]
   },
   {
-    href: "shift.html",
-    icon: "SH",
-    label: role === "STAFF" ? "My Schedule" : "Shift Schedule",
-    roles: ["MASTER", "ADMIN", "STAFF"]
-  },
-  {
     href: "cuti.html",
-    icon: "LV",
-    label: role === "STAFF" ? "My Leave" : "Leave",
+    icon: "CT",
+    label: "Jadwal Cuti",
     roles: ["MASTER", "ADMIN", "STAFF"]
   },
   {
     href: "offday.html",
     icon: "OF",
-    label: role === "STAFF" ? "My Offday" : "Offday",
+    label: "Jadwal Offday",
     roles: ["MASTER", "ADMIN", "STAFF"]
   },
   {
-    href: "kasir.html",
-    icon: "CS",
-    label: "Cashier Data",
-    roles: ["MASTER", "ADMIN"]
-  },
-  {
-    href: "laporan.html",
-    icon: "RP",
-    label: "Reports",
-    roles: ["MASTER", "ADMIN"]
-  },
-  {
     href: "users.html",
-    icon: "AC",
-    label: "Access Control",
+    icon: "US",
+    label: "Manajemen User",
     roles: ["MASTER"]
   }
 ];
