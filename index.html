@@ -1,196 +1,250 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard HR</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
+  <title>Operation Center</title>
+
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="component.css">
+  <link rel="stylesheet" href="animation.css">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 
-<body>
-<div class="container">
+<body class="oc-dashboard-body">
+  <div class="oc-shell">
 
-    <aside class="sidebar">
-        <h2>Dashboard</h2>
-        <ul id="sidebarMenu"></ul>
-    </aside>
-
-    <main class="content dashboard-page">
-
-        <div class="topbar">
-            <span id="userInfo"></span>
-            <button type="button" class="logout-btn" onclick="logout()">Logout</button>
+    <aside class="oc-sidebar">
+      <div class="oc-brand">
+        <div class="oc-brand-mark" aria-hidden="true">
+          <span>OC</span>
         </div>
 
-        <section class="dashboard-heading">
+        <div class="oc-brand-copy">
+          <strong>OPERATION CENTER</strong>
+          <small>Operational Workspace</small>
+        </div>
+      </div>
+
+      <div class="oc-sidebar-label">WORKSPACE</div>
+      <ul id="sidebarMenu" class="oc-nav"></ul>
+
+      <div class="oc-sidebar-footer">
+        <div class="oc-system-card">
+          <div class="oc-system-head">
+            <span class="oc-system-pulse"></span>
+            <strong>System Ready</strong>
+          </div>
+          <small>Workspace connected and operational</small>
+        </div>
+      </div>
+    </aside>
+
+    <main class="oc-main">
+      <header class="oc-topbar">
+        <div>
+          <span class="oc-topbar-eyebrow">OPERATION CENTER</span>
+          <strong class="oc-topbar-title">Overview</strong>
+        </div>
+
+        <div class="oc-topbar-actions">
+          <button
+            type="button"
+            id="btnRefreshDashboard"
+            class="oc-btn oc-btn-secondary oc-refresh-btn">
+            Perbarui Data
+          </button>
+
+          <div class="oc-user-chip">
+            <div id="userInitial" class="oc-avatar">OC</div>
+
+            <div class="oc-user-copy">
+              <strong id="userInfo">Memuat pengguna...</strong>
+              <small>Authenticated session</small>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            id="btnLogout"
+            class="oc-btn oc-btn-ghost">
+            Keluar
+          </button>
+        </div>
+      </header>
+
+      <section class="oc-page-heading oc-enter">
+        <div>
+          <span class="oc-section-kicker">OPERATION STATUS</span>
+          <h1 id="welcomeTitle">Selamat Datang</h1>
+          <p id="dashboardDate">Memuat tanggal...</p>
+        </div>
+
+        <div class="oc-live-status">
+          <span class="oc-system-pulse"></span>
+          <div>
+            <strong>Operational</strong>
+            <small>Live workspace status</small>
+          </div>
+        </div>
+      </section>
+
+      <div id="dashboardError" class="oc-dashboard-error" hidden></div>
+
+      <section class="oc-stat-grid oc-enter">
+        <article class="oc-stat-card oc-stat-personnel oc-hover-lift">
+          <div class="oc-stat-top">
+            <span class="oc-stat-label">TOTAL PERSONNEL</span>
+            <span class="oc-stat-symbol">01</span>
+          </div>
+          <strong id="totalStaff" class="oc-stat-number">0</strong>
+          <small id="roleSummary" class="oc-stat-caption">
+            CS 0 · Kapten 0 · Kasir 0
+          </small>
+        </article>
+
+        <article class="oc-stat-card oc-stat-leave oc-hover-lift">
+          <div class="oc-stat-top">
+            <span class="oc-stat-label">LEAVE TODAY</span>
+            <span class="oc-stat-symbol">02</span>
+          </div>
+          <strong id="staffCuti" class="oc-stat-number">0</strong>
+          <small class="oc-stat-caption">Personnel currently on leave</small>
+        </article>
+
+        <article class="oc-stat-card oc-stat-offday oc-hover-lift">
+          <div class="oc-stat-top">
+            <span class="oc-stat-label">OFFDAY TODAY</span>
+            <span class="oc-stat-symbol">03</span>
+          </div>
+          <strong id="offdayHariIni" class="oc-stat-number">0</strong>
+          <small class="oc-stat-caption">Approved operational offday</small>
+        </article>
+
+        <article class="oc-stat-card oc-stat-alert oc-hover-lift">
+          <div class="oc-stat-top">
+            <span class="oc-stat-label">DOCUMENT ALERT</span>
+            <span class="oc-stat-symbol">04</span>
+          </div>
+          <strong id="documentWarning" class="oc-stat-number">0</strong>
+          <small id="documentWarningText" class="oc-stat-caption">
+            Passport 0 · Visa 0
+          </small>
+        </article>
+      </section>
+
+      <section class="oc-dashboard-grid oc-dashboard-grid-primary">
+        <article class="oc-panel oc-enter">
+          <div class="oc-panel-header">
             <div>
-                <p class="dashboard-eyebrow">HR COMMAND CENTER</p>
-                <h1 id="welcomeTitle">Selamat Datang</h1>
-                <p id="dashboardDate" class="dashboard-date">Memuat tanggal...</p>
+              <span class="oc-section-kicker">PERSONNEL MIX</span>
+              <h2>Team Composition</h2>
+              <p>Distribution by operational role.</p>
+            </div>
+          </div>
+
+          <div id="roleChart" class="role-chart">
+            <div class="oc-skeleton" style="height: 150px;"></div>
+          </div>
+        </article>
+
+        <article class="oc-panel oc-enter">
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-section-kicker">TODAY</span>
+              <h2>Operational Activity</h2>
+              <p>Current personnel availability and movement.</p>
+            </div>
+          </div>
+
+          <div id="todayActivity" class="activity-list">
+            <div class="oc-skeleton" style="height: 150px;"></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="oc-dashboard-grid">
+        <article class="oc-panel oc-enter">
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-section-kicker">PASSPORT</span>
+              <h2>Upcoming Expiry</h2>
+              <p>Documents entering the warning period.</p>
             </div>
 
-            <button type="button" id="btnRefreshDashboard" class="dashboard-refresh">
-                ↻ Perbarui Data
-            </button>
-        </section>
+            <span id="passportWarningBadge" class="oc-badge oc-badge-warning">0</span>
+          </div>
 
-        <section class="dashboard-summary-grid">
-            <article class="dashboard-summary-card blue">
-                <div class="dashboard-summary-icon">👥</div>
-                <div>
-                    <span>Total Staff</span>
-                    <strong id="totalStaff">0</strong>
-                    <small id="roleSummary">CS 0 · Kapten 0 · Kasir 0</small>
-                </div>
-            </article>
+          <div id="passportWarningList" class="warning-list"></div>
+        </article>
 
-            <article class="dashboard-summary-card purple">
-                <div class="dashboard-summary-icon">📝</div>
-                <div>
-                    <span>Cuti Hari Ini</span>
-                    <strong id="staffCuti">0</strong>
-                    <small>Staff sedang cuti</small>
-                </div>
-            </article>
+        <article class="oc-panel oc-enter">
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-section-kicker">VISA</span>
+              <h2>Upcoming Expiry</h2>
+              <p>Visa records requiring attention.</p>
+            </div>
 
-            <article class="dashboard-summary-card orange">
-                <div class="dashboard-summary-icon">📅</div>
-                <div>
-                    <span>Offday Hari Ini</span>
-                    <strong id="offdayHariIni">0</strong>
-                    <small>Offday disetujui</small>
-                </div>
-            </article>
+            <span id="visaWarningBadge" class="oc-badge oc-badge-warning">0</span>
+          </div>
 
-            <article class="dashboard-summary-card red">
-                <div class="dashboard-summary-icon">⚠️</div>
-                <div>
-                    <span>Dokumen Warning</span>
-                    <strong id="documentWarning">0</strong>
-                    <small id="documentWarningText">Passport 0 · Visa 0</small>
-                </div>
-            </article>
-        </section>
+          <div id="visaWarningList" class="warning-list"></div>
+        </article>
+      </section>
 
-        <section class="dashboard-main-grid">
+      <section class="oc-dashboard-grid">
+        <article class="oc-panel oc-enter">
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-section-kicker">RECENT PERSONNEL</span>
+              <h2>Latest Joiners</h2>
+              <p>Most recently registered personnel.</p>
+            </div>
+          </div>
 
-            <article class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <p class="dashboard-panel-kicker">KOMPOSISI TEAM</p>
-                        <h2>Staff Berdasarkan Jabatan</h2>
-                    </div>
-                </div>
+          <div id="newStaffList" class="new-staff-list"></div>
+        </article>
 
-                <div id="roleChart" class="role-chart">
-                    <div class="dashboard-empty">Memuat komposisi staff...</div>
-                </div>
-            </article>
+        <article class="oc-panel oc-enter">
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-section-kicker">QUICK INSIGHT</span>
+              <h2>Personnel Snapshot</h2>
+              <p>Fast operational context from the current database.</p>
+            </div>
+          </div>
 
-            <article class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <p class="dashboard-panel-kicker">RINGKASAN HARI INI</p>
-                        <h2>Aktivitas Operasional</h2>
-                    </div>
-                </div>
+          <div class="quick-stat-grid">
+            <div class="oc-quick-stat">
+              <span>Average Age</span>
+              <strong id="averageAge">0</strong>
+            </div>
 
-                <div id="todayActivity" class="activity-list">
-                    <div class="dashboard-empty">Memuat aktivitas...</div>
-                </div>
-            </article>
+            <div class="oc-quick-stat">
+              <span>Active Today</span>
+              <strong id="activeToday">0</strong>
+            </div>
 
-        </section>
+            <div class="oc-quick-stat">
+              <span>Top Domicile</span>
+              <strong id="topDomicile">-</strong>
+            </div>
 
-        <section class="dashboard-warning-grid">
-
-            <article class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <p class="dashboard-panel-kicker">PASSPORT</p>
-                        <h2>Akan Habis</h2>
-                    </div>
-                    <span id="passportWarningBadge" class="dashboard-badge">0</span>
-                </div>
-
-                <div id="passportWarningList" class="warning-list">
-                    <div class="dashboard-empty">Memuat data passport...</div>
-                </div>
-            </article>
-
-            <article class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <p class="dashboard-panel-kicker">VISA</p>
-                        <h2>Akan Habis</h2>
-                    </div>
-                    <span id="visaWarningBadge" class="dashboard-badge">0</span>
-                </div>
-
-                <div id="visaWarningList" class="warning-list">
-                    <div class="dashboard-empty">Memuat data visa...</div>
-                </div>
-            </article>
-
-        </section>
-
-        <section class="dashboard-bottom-grid">
-
-            <article class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <p class="dashboard-panel-kicker">STAFF TERBARU</p>
-                        <h2>Terakhir Bergabung</h2>
-                    </div>
-                </div>
-
-                <div id="newStaffList" class="new-staff-list">
-                    <div class="dashboard-empty">Memuat staff terbaru...</div>
-                </div>
-            </article>
-
-            <article class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <p class="dashboard-panel-kicker">INFORMASI TEAM</p>
-                        <h2>Statistik Cepat</h2>
-                    </div>
-                </div>
-
-                <div class="quick-stat-grid">
-                    <div class="quick-stat">
-                        <span>Rata-rata Usia</span>
-                        <strong id="averageAge">0</strong>
-                    </div>
-
-                    <div class="quick-stat">
-                        <span>Staff Aktif Hari Ini</span>
-                        <strong id="activeToday">0</strong>
-                    </div>
-
-                    <div class="quick-stat">
-                        <span>Domisili Terbanyak</span>
-                        <strong id="topDomicile">-</strong>
-                    </div>
-
-                    <div class="quick-stat">
-                        <span>Staff Terlama</span>
-                        <strong id="longestServing">-</strong>
-                    </div>
-                </div>
-            </article>
-
-        </section>
-
-        <div id="dashboardError" class="dashboard-error" hidden></div>
-
+            <div class="oc-quick-stat">
+              <span>Longest Serving</span>
+              <strong id="longestServing">-</strong>
+            </div>
+          </div>
+        </article>
+      </section>
     </main>
-</div>
+  </div>
 
-<script src="auth.js"></script>
-<script src="menu.js"></script>
-<script src="dashboard.js"></script>
+  <script src="auth.js"></script>
+  <script src="menu.js"></script>
+  <script src="ui.js"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>

@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnRefreshDashboard")
         ?.addEventListener("click", loadDashboard);
+
+    document.getElementById("btnLogout")
+        ?.addEventListener("click", logout);
 });
 
 function setupDashboardHeader() {
@@ -24,6 +27,15 @@ function setupDashboardHeader() {
         "userInfo",
         [username, role].filter(Boolean).join(" · ")
     );
+
+    const initials = username
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part.charAt(0).toUpperCase())
+        .join("");
+
+    setText("userInitial", initials || "OC");
 
     setText(
         "dashboardDate",
@@ -41,8 +53,12 @@ async function loadDashboard() {
     const errorBox = document.getElementById("dashboardError");
 
     if (button) {
-        button.disabled = true;
-        button.textContent = "Memuat...";
+        if (typeof ocSetLoading === "function") {
+            ocSetLoading(button, true, "Memuat...");
+        } else {
+            button.disabled = true;
+            button.textContent = "Memuat...";
+        }
     }
 
     if (errorBox) {
@@ -82,10 +98,18 @@ async function loadDashboard() {
             errorBox.hidden = false;
             errorBox.textContent = error.message;
         }
+
+        if (typeof ocToast === "function") {
+            ocToast("Dashboard gagal dimuat", error.message, { duration: 4200 });
+        }
     } finally {
         if (button) {
-            button.disabled = false;
-            button.textContent = "↻ Perbarui Data";
+            if (typeof ocSetLoading === "function") {
+                ocSetLoading(button, false);
+            } else {
+                button.disabled = false;
+                button.textContent = "Perbarui Data";
+            }
         }
     }
 }

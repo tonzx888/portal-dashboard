@@ -7,35 +7,72 @@ if (!loginUser) {
 const role = String(loginUser?.role || "").toUpperCase();
 const menu = document.getElementById("sidebarMenu");
 
-let html = "";
-
-if (role === "MASTER") {
-  html = `
-    <li><a href="index.html">🏠 Home</a></li>
-    <li><a href="staff.html">👥 Data Staff</a></li>
-    <li><a href="cuti.html">📝 Jadwal Cuti</a></li>
-    <li><a href="offday.html">📅 Data Offday</a></li>
-    <li><a href="users.html">👤 User Management</a></li>
-  `;
-} else if (role === "ADMIN") {
-  html = `
-    <li><a href="index.html">🏠 Home</a></li>
-    <li><a href="staff.html">👥 Data Staff</a></li>
-    <li><a href="cuti.html">📝 Jadwal Cuti</a></li>
-    <li><a href="offday.html">📅 Data Offday</a></li>
-  `;
-} else if (role === "STAFF") {
-  html = `
-    <li><a href="index.html">🏠 Dashboard</a></li>
-    <li><a href="cuti.html">📝 Cuti Saya</a></li>
-    <li><a href="offday.html">📅 Offday Saya</a></li>
-  `;
-}
+const menuItems = [
+  {
+    href: "index.html",
+    icon: "OV",
+    label: "Overview",
+    roles: ["MASTER", "ADMIN", "STAFF"]
+  },
+  {
+    href: "staff.html",
+    icon: "PS",
+    label: "Personnel",
+    roles: ["MASTER", "ADMIN"]
+  },
+  {
+    href: "shift.html",
+    icon: "SH",
+    label: role === "STAFF" ? "My Schedule" : "Shift Schedule",
+    roles: ["MASTER", "ADMIN", "STAFF"]
+  },
+  {
+    href: "cuti.html",
+    icon: "LV",
+    label: role === "STAFF" ? "My Leave" : "Leave",
+    roles: ["MASTER", "ADMIN", "STAFF"]
+  },
+  {
+    href: "offday.html",
+    icon: "OF",
+    label: role === "STAFF" ? "My Offday" : "Offday",
+    roles: ["MASTER", "ADMIN", "STAFF"]
+  },
+  {
+    href: "kasir.html",
+    icon: "CS",
+    label: "Cashier Data",
+    roles: ["MASTER", "ADMIN"]
+  },
+  {
+    href: "laporan.html",
+    icon: "RP",
+    label: "Reports",
+    roles: ["MASTER", "ADMIN"]
+  },
+  {
+    href: "users.html",
+    icon: "AC",
+    label: "Access Control",
+    roles: ["MASTER"]
+  }
+];
 
 if (menu) {
-  menu.innerHTML = html;
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
-  menu.querySelectorAll("a").forEach(link => {
-    if (link.getAttribute("href") === currentPage) link.classList.add("active");
-  });
+  const currentPage =
+    window.location.pathname.split("/").pop() || "index.html";
+
+  menu.innerHTML = menuItems
+    .filter(item => item.roles.includes(role))
+    .map(item => `
+      <li>
+        <a
+          href="${item.href}"
+          class="${item.href === currentPage ? "active" : ""}">
+          <span class="oc-nav-icon" aria-hidden="true">${item.icon}</span>
+          <span>${item.label}</span>
+        </a>
+      </li>
+    `)
+    .join("");
 }
