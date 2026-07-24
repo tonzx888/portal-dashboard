@@ -1,203 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Data Staff</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Staff</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="staff.css">
 </head>
-
 <body>
-
 <div class="container">
+  <aside class="sidebar">
+    <h2>Dashboard</h2>
+    <ul id="sidebarMenu"></ul>
+  </aside>
 
-    <div class="sidebar">
-        <h2>Dashboard</h2>
-        <ul id="sidebarMenu"></ul>
+  <main class="content">
+    <div class="topbar">
+      <span id="userInfo"></span>
+      <button type="button" onclick="logout()">Logout</button>
     </div>
 
-    <div class="content">
+    <section class="staff-page-header">
+      <div>
+        <p class="staff-eyebrow">MASTER DATA</p>
+        <h1>Data Staff</h1>
+        <p class="staff-subtitle">Kelola identitas, jabatan, domisili, masa kerja, passport, dan visa staff.</p>
+      </div>
+      <button type="button" class="btn-primary" id="btnTambahStaff" onclick="openTambahStaff()">+ Tambah Staff</button>
+    </section>
 
-        <div class="topbar">
-            <span id="userInfo"></span>
-            <button onclick="logout()">Logout</button>
-        </div>
+    <section class="staff-summary-grid">
+      <article class="staff-summary-card"><span>Total Staff</span><strong id="summaryTotal">0</strong><small>Semua staff aktif</small></article>
+      <article class="staff-summary-card"><span>CS</span><strong id="summaryCS">0</strong><small>Customer Service</small></article>
+      <article class="staff-summary-card"><span>Kapten</span><strong id="summaryKapten">0</strong><small>Koordinator shift</small></article>
+      <article class="staff-summary-card"><span>Kasir</span><strong id="summaryKasir">0</strong><small>Tim kasir</small></article>
+    </section>
 
-        <div class="page-header">
+    <section class="staff-toolbar">
+      <input type="search" id="searchStaff" placeholder="Cari nama, passport, jabatan, domisili..." autocomplete="off">
+      <select id="filterJabatan">
+        <option value="">Semua Jabatan</option>
+        <option value="CS">CS</option>
+        <option value="KAPTEN">KAPTEN</option>
+        <option value="KASIR">KASIR</option>
+      </select>
+      <select id="filterDomisili"><option value="">Semua Domisili</option></select>
+      <button type="button" class="btn-secondary" id="btnRefreshStaff">Perbarui</button>
+    </section>
 
-            <div>
-                <h1>Data Staff</h1>
-                <p>Total seluruh staff perusahaan.</p>
-            </div>
-
-            <button class="btn-primary" onclick="openTambahStaff()">
-                + Tambah Staff
-            </button>
-
-        </div>
-
-
-        <div class="card">
-
-            <input
-                type="text"
-                id="searchStaff"
-                placeholder="Cari nama / passport / jabatan..."
-                class="search-input"
-            >
-
-        </div>
-
-
-        <div class="card table-card">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th width="60">No</th>
-
-                        <th>Nama Staff</th>
-
-                        <th>No Passport</th>
-
-                        <th>Jabatan</th>
-
-                        <th>Exp Passport</th>
-
-                        <th>Exp Visa</th>
-
-                        <th width="170">Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="dataStaff">
-
-                    <tr>
-
-                        <td colspan="7">
-
-                            Memuat data...
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
+    <section class="staff-table-card">
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>No</th><th>Nama Staff</th><th>Jabatan</th><th>Usia</th><th>Domisili</th>
+              <th>No Passport</th><th>Exp Passport</th><th>Exp Visa</th>
+              <th>Tanggal Join</th><th>Masa Kerja</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dataStaff"><tr><td colspan="11">Memuat data...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 </div>
 
+<div id="modalStaff" class="modal staff-modal">
+  <div class="modal-content staff-modal-content">
+    <div class="modal-header">
+      <div><p class="staff-eyebrow">FORM STAFF</p><h2 id="modalTitle">Tambah Staff</h2></div>
+      <button type="button" class="staff-modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <input type="hidden" id="rowStaff">
 
-<!-- ========================= MODAL ========================= -->
-
-
-<div id="modalStaff" class="modal">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2 id="modalTitle">
-
-                Tambah Staff
-
-            </h2>
-
-            <span class="close" onclick="closeModal()">
-
-                &times;
-
-            </span>
-
-        </div>
-
-
-        <input type="hidden" id="rowStaff">
-
-
-        <label>Nama Staff</label>
-
-        <input
-            type="text"
-            id="nama"
-        >
-
-
-        <label>No Passport</label>
-
-        <input
-            type="text"
-            id="passport"
-        >
-
-
-        <label>Jabatan</label>
-
-        <input
-            type="text"
-            id="jabatan"
-        >
-
-
-        <label>Exp Passport</label>
-
-        <input
-            type="date"
-            id="expPassport"
-        >
-
-
-        <label>Exp Visa</label>
-
-        <input
-            type="date"
-            id="expVisa"
-        >
-
-
-        <div class="modal-footer">
-
-            <button
-                class="btn-secondary"
-                onclick="closeModal()"
-            >
-
-                Batal
-
-            </button>
-
-            <button
-                class="btn-primary"
-                id="btnSave"
-            >
-
-                Simpan
-
-            </button>
-
-        </div>
-
+    <div class="staff-form-grid">
+      <div class="staff-field staff-field-wide"><label>Nama Staff</label><input type="text" id="nama"></div>
+      <div class="staff-field"><label>No Passport</label><input type="text" id="passport"></div>
+      <div class="staff-field"><label>Jabatan</label>
+        <select id="jabatan">
+          <option value="">Pilih Jabatan</option><option value="CS">CS</option>
+          <option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option>
+        </select>
+      </div>
+      <div class="staff-field"><label>Tanggal Lahir</label><input type="date" id="tanggalLahir"></div>
+      <div class="staff-field"><label>Domisili</label><input type="text" id="domisili"></div>
+      <div class="staff-field"><label>Tanggal Join Team</label><input type="date" id="tanggalJoin"></div>
+      <div class="staff-field"><label>Exp Passport</label><input type="date" id="expPassport"></div>
+      <div class="staff-field"><label>Exp Visa</label><input type="date" id="expVisa"></div>
+      <div class="staff-auto-info"><span>Usia</span><strong id="previewUsia">-</strong></div>
+      <div class="staff-auto-info"><span>Masa Kerja</span><strong id="previewMasaKerja">-</strong></div>
     </div>
 
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+      <button type="button" class="btn-primary" id="btnSave">Simpan</button>
+    </div>
+  </div>
 </div>
 
+<div id="modalDetailStaff" class="modal staff-modal">
+  <div class="modal-content staff-detail-content">
+    <div class="modal-header">
+      <div><p class="staff-eyebrow">DETAIL STAFF</p><h2 id="detailNama">-</h2></div>
+      <button type="button" class="staff-modal-close" onclick="closeDetailModal()">&times;</button>
+    </div>
+    <div id="detailStaffBody" class="staff-detail-grid"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" onclick="closeDetailModal()">Tutup</button>
+      <button type="button" class="btn-warning" id="btnDetailEdit">Edit</button>
+    </div>
+  </div>
+</div>
 
-<script src="auth.js"></script>
 <div id="toast" class="toast"></div>
+<script src="auth.js"></script>
 <script src="menu.js"></script>
 <script src="staff.js"></script>
-
 </body>
-
 </html>
