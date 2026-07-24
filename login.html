@@ -1,36 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Login Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Dashboard HR</title>
+
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
 </head>
-<body>
 
-<div class="login-page">
-    <div class="login-card">
-        <h1>Login Dashboard</h1>
+<body class="login-body">
 
-        <form id="loginForm">
+    <main class="login-shell">
+        <section class="login-card">
 
-    <input type="text"
-           id="username"
-           placeholder="Username"
-           autocomplete="username">
+            <div class="login-brand">
+                <div class="login-logo">HR</div>
 
-    <input type="password"
-           id="password"
-           placeholder="Password"
-           autocomplete="current-password">
+                <div>
+                    <p class="login-eyebrow">INTERNAL SYSTEM</p>
+                    <h1>HR Dashboard</h1>
+                    <p class="login-subtitle">
+                        Masuk untuk mengakses data staff, cuti, offday, dan monitoring dokumen.
+                    </p>
+                </div>
+            </div>
 
-    <button type="submit">
-        Login
-    </button>
+            <form id="loginForm" class="login-form">
 
-</form>
+                <div class="login-field">
+                    <label for="username">Username</label>
 
-<p id="pesanLogin"></p>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">👤</span>
 
-<script src="login.js"></script>
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Masukkan username"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="login-field">
+                    <label for="password">Password</label>
+
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">🔒</span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Masukkan password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="login-toggle-password"
+                            aria-label="Tampilkan password"
+                        >
+                            👁
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-submit">
+                    <span>Masuk Dashboard</span>
+                    <span class="login-submit-arrow">→</span>
+                </button>
+
+                <p id="pesanLogin" class="login-message"></p>
+            </form>
+
+            <div class="login-footer">
+                <span class="login-status-dot"></span>
+                <span>Secure HR Access</span>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="login.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggleButton = document.getElementById("togglePassword");
+            const passwordInput = document.getElementById("password");
+
+            toggleButton?.addEventListener("click", () => {
+                const isPassword = passwordInput.type === "password";
+
+                passwordInput.type = isPassword ? "text" : "password";
+                toggleButton.textContent = isPassword ? "🙈" : "👁";
+                toggleButton.setAttribute(
+                    "aria-label",
+                    isPassword ? "Sembunyikan password" : "Tampilkan password"
+                );
+            });
+        });
+    </script>
 
 </body>
 </html>
