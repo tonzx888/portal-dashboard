@@ -524,14 +524,70 @@
 .new-staff-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
   min-height: 58px;
   padding: 11px 12px;
   border: 1px solid var(--oc-line);
   border-radius: 13px;
   background: var(--oc-surface-soft);
 }
+
+.activity-left,
+.warning-left,
+.new-staff-left {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Ikon bulat berwarna khas per jenis aktivitas hari ini */
+.activity-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+}
+
+.activity-icon svg { width: 16px; height: 16px; }
+
+.activity-icon-leave { background: var(--oc-blue-soft); color: var(--oc-blue); }
+.activity-icon-offday { background: var(--oc-purple-soft); color: var(--oc-purple); }
+.activity-icon-active { background: var(--oc-primary-soft); color: var(--oc-primary-strong); }
+.activity-icon-birthday { background: var(--oc-accent-soft); color: var(--oc-accent-strong); }
+
+/* Ikon dokumen (passport/visa), warna menunjukkan tingkat urgensi */
+.warning-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: var(--oc-surface-raised);
+  color: var(--oc-muted);
+}
+
+.warning-icon svg { width: 16px; height: 16px; }
+.warning-icon.urgent { background: var(--oc-warning-soft); color: var(--oc-warning); }
+.warning-icon.expired { background: var(--oc-danger-soft); color: var(--oc-danger); }
+
+/* Avatar inisial staff baru, warna sesuai jabatan (samakan dengan dot kalender) */
+.new-staff-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.new-staff-avatar.role-cs { background: #2e7df6; }
+.new-staff-avatar.role-kapten { background: #8f4ce8; }
+.new-staff-avatar.role-kasir { background: #e99800; }
 
 .activity-left strong,
 .warning-left strong,
@@ -554,6 +610,7 @@
   display: grid;
   min-width: 32px;
   height: 32px;
+  flex: 0 0 auto;
   place-items: center;
   border-radius: 10px;
   background: var(--oc-primary-soft);
@@ -563,9 +620,14 @@
 }
 
 .warning-days {
-  color: var(--oc-warning);
+  flex: 0 0 auto;
+  color: var(--oc-muted);
   font-size: 10px;
   font-weight: 800;
+}
+
+.warning-days.urgent {
+  color: var(--oc-warning);
 }
 
 .warning-days.expired {
@@ -573,6 +635,7 @@
 }
 
 .new-staff-role {
+  flex: 0 0 auto;
   padding: 5px 8px;
   border-radius: 999px;
   background: var(--oc-blue-soft);
@@ -581,6 +644,10 @@
   font-weight: 800;
   letter-spacing: .04em;
 }
+
+.new-staff-role.role-cs { background: rgba(46,125,246,.14); color: #2e7df6; }
+.new-staff-role.role-kapten { background: rgba(143,76,232,.14); color: #8f4ce8; }
+.new-staff-role.role-kasir { background: rgba(233,152,0,.14); color: #c97a12; }
 
 #passportWarningList,
 #visaWarningList,
@@ -603,6 +670,19 @@
   border-radius: 14px;
   background: var(--oc-surface-soft);
 }
+
+.quick-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 9px;
+  border-radius: 8px;
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+}
+
+.quick-stat-icon svg { width: 14px; height: 14px; }
 
 .oc-quick-stat span {
   display: block;

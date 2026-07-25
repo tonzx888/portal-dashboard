@@ -201,6 +201,15 @@ function renderRoleChart(roles, totalStaff) {
     }).join("");
 }
 
+const dashboardIcons = {
+  leave: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 15l2 2 4-4"/></svg>`,
+  offday: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+  active: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+  birthday: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 21h16"/><path d="M12 11V7"/><path d="M12 7c-1 0-1.5-.7-1.5-1.5S11 3 12 3s1.5.8 1.5 1.5S13 7 12 7Z"/><path d="M4 15.5h16"/></svg>`,
+  passport: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17h8"/></svg>`,
+  visa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/></svg>`
+};
+
 function renderActivity(data) {
     const container = document.getElementById("todayActivity");
     if (!container) return;
@@ -211,21 +220,29 @@ function renderActivity(data) {
 
     const activities = [
         {
+            icon: dashboardIcons.leave,
+            variant: "leave",
             title: "Staff Cuti",
             subtitle: "Sedang cuti hari ini",
             value: Number(data.staffCuti || 0)
         },
         {
+            icon: dashboardIcons.offday,
+            variant: "offday",
             title: "Staff Offday",
             subtitle: "Offday disetujui hari ini",
             value: Number(data.offdayHariIni || 0)
         },
         {
+            icon: dashboardIcons.active,
+            variant: "active",
             title: "Staff Aktif",
             subtitle: "Tidak cuti dan tidak offday",
             value: Number(data.activeToday || 0)
         },
         {
+            icon: dashboardIcons.birthday,
+            variant: "birthday",
             title: "Ulang Tahun",
             subtitle: birthdayNames.length
                 ? birthdayNames.join(", ")
@@ -236,6 +253,7 @@ function renderActivity(data) {
 
     container.innerHTML = activities.map(item => `
         <div class="activity-item">
+            <span class="activity-icon activity-icon-${item.variant}">${item.icon}</span>
             <div class="activity-left">
                 <strong>${escapeDashboardHtml(item.title)}</strong>
                 <small>${escapeDashboardHtml(item.subtitle)}</small>
@@ -249,6 +267,10 @@ function renderWarningList(containerId, items) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    const icon = containerId === "visaWarningList"
+        ? dashboardIcons.visa
+        : dashboardIcons.passport;
+
     if (!items.length) {
         container.innerHTML = `
             <div class="dashboard-empty">
@@ -261,6 +283,7 @@ function renderWarningList(containerId, items) {
     container.innerHTML = items.map(item => {
         const days = Number(item.daysLeft);
         const expired = days < 0;
+        const urgent = !expired && days <= 30;
 
         const daysText = expired
             ? `Lewat ${Math.abs(days)} hari`
@@ -268,13 +291,16 @@ function renderWarningList(containerId, items) {
                 ? "Habis hari ini"
                 : `${days} hari`;
 
+        const urgencyClass = expired ? "expired" : urgent ? "urgent" : "";
+
         return `
             <div class="warning-item">
+                <span class="warning-icon ${urgencyClass}">${icon}</span>
                 <div class="warning-left">
                     <strong>${escapeDashboardHtml(item.nama || "-")}</strong>
                     <small>${escapeDashboardHtml(item.expiryDate || "-")}</small>
                 </div>
-                <span class="warning-days ${expired ? "expired" : ""}">
+                <span class="warning-days ${urgencyClass}">
                     ${escapeDashboardHtml(daysText)}
                 </span>
             </div>
@@ -295,17 +321,35 @@ function renderNewStaff(items) {
         return;
     }
 
-    container.innerHTML = items.map(item => `
-        <div class="new-staff-item">
-            <div class="new-staff-left">
-                <strong>${escapeDashboardHtml(item.nama || "-")}</strong>
-                <small>Join ${escapeDashboardHtml(item.tanggalJoin || "-")}</small>
+    container.innerHTML = items.map(item => {
+        const nama = String(item.nama || "-");
+        const jabatan = String(item.jabatan || "-").toUpperCase();
+        const initials = nama
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(part => part.charAt(0).toUpperCase())
+            .join("") || "?";
+
+        const roleVariant = jabatan === "KAPTEN"
+            ? "kapten"
+            : jabatan === "KASIR"
+                ? "kasir"
+                : "cs";
+
+        return `
+            <div class="new-staff-item">
+                <span class="new-staff-avatar role-${roleVariant}">${escapeDashboardHtml(initials)}</span>
+                <div class="new-staff-left">
+                    <strong>${escapeDashboardHtml(nama)}</strong>
+                    <small>Join ${escapeDashboardHtml(item.tanggalJoin || "-")}</small>
+                </div>
+                <span class="new-staff-role role-${roleVariant}">
+                    ${escapeDashboardHtml(item.jabatan || "-")}
+                </span>
             </div>
-            <span class="new-staff-role">
-                ${escapeDashboardHtml(item.jabatan || "-")}
-            </span>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 }
 
 function setText(id, value) {
