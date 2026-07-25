@@ -397,6 +397,84 @@ async function processApproval(type, row, catatan) {
 ========================================================== */
 
 /**
+ * Kuota maksimal staff per role yang boleh offday
+ * di tanggal yang sama sebelum dianggap "Penuh".
+ *
+ * CATATAN: nilai default = 2 (mengikuti label legenda
+ * "Lebih dari 1" pada kalender). Sesuaikan angka ini
+ * dengan aturan operasional toko yang sebenarnya.
+ */
+const ROLE_QUOTA_MAP = {
+    CS: 2,
+    KAPTEN: 2,
+    KASIR: 2
+};
+
+/**
+ * Menyamakan penulisan role (CS / KAPTEN / KASIR)
+ * agar konsisten saat dibandingkan atau dipakai sebagai key.
+ */
+function normalizeRole(role) {
+    return String(role || "").trim().toUpperCase();
+}
+
+/**
+ * Menyamakan penulisan status (MENUNGGU / DISETUJUI / DITOLAK).
+ */
+function normalizeStatus(status) {
+    return String(status || "MENUNGGU").trim().toUpperCase();
+}
+
+/**
+ * Mengambil kuota untuk suatu role. Fallback ke 2 jika role
+ * tidak dikenali di ROLE_QUOTA_MAP.
+ */
+function getRoleQuota(role) {
+    const normalizedRole = normalizeRole(role);
+    return ROLE_QUOTA_MAP[normalizedRole] || 2;
+}
+
+/**
+ * Parse tanggal offday menjadi objek Date.
+ * Memakai ulang logika parseOffdayDate yang sudah ada
+ * (mendukung format ISO "YYYY-MM-DD" dan "DD/MM/YYYY").
+ */
+function parseDate(value) {
+    return parseOffdayDate(value);
+}
+
+/**
+ * Membandingkan dua Date apakah jatuh di hari yang sama
+ * (tahun, bulan, dan tanggal sama).
+ */
+function isSameDate(dateA, dateB) {
+    if (!(dateA instanceof Date) || !(dateB instanceof Date)) return false;
+    if (Number.isNaN(dateA.getTime()) || Number.isNaN(dateB.getTime())) return false;
+
+    return (
+        dateA.getFullYear() === dateB.getFullYear() &&
+        dateA.getMonth() === dateB.getMonth() &&
+        dateA.getDate() === dateB.getDate()
+    );
+}
+
+/**
+ * Membersihkan teks (trim) agar aman dipakai untuk
+ * perbandingan/pengurutan maupun ditampilkan.
+ */
+function cleanText(value) {
+    return String(value ?? "").trim();
+}
+
+/**
+ * Alias escapeHtml, dipakai di beberapa bagian kode kalender
+ * dengan penulisan "escapeHTML" (huruf besar semua).
+ */
+function escapeHTML(value) {
+    return escapeHtml(value);
+}
+
+/**
  * Menampilkan tiga kalender berdasarkan role.
  *
  * Kalender selalu menggunakan calendarData lengkap (semua staff),
