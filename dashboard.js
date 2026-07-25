@@ -70,7 +70,7 @@ async function loadDashboard() {
         const cacheBuster = Date.now();
 
         const response = await fetch(
-            `${DASHBOARD_API_BASE}?type=dashboard&_=${cacheBuster}`,
+            `${DASHBOARD_API_BASE}?type=dashboard&token=${encodeURIComponent(getLoginToken())}&_=${cacheBuster}`,
             { cache: "no-store" }
         );
 
@@ -81,6 +81,15 @@ async function loadDashboard() {
         const data = await response.json();
 
         if (data?.success === false) {
+            const message = String(data.message || "").toLowerCase();
+
+            if (message.includes("sesi tidak valid") || message.includes("login ulang")) {
+                alert("Sesi Anda sudah berakhir. Silakan login ulang.");
+                localStorage.removeItem("loginUser");
+                window.location.href = "login.html";
+                return;
+            }
+
             throw new Error(data.message || "Dashboard gagal dimuat.");
         }
 

@@ -1,8 +1,21 @@
 const API_CUTI = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?type=cuti";
 
-fetch(API_CUTI)
+fetch(`${API_CUTI}&token=${encodeURIComponent(getLoginToken())}`)
   .then(response => response.json())
   .then(data => {
+    if (!Array.isArray(data)) {
+      const message = String(data?.message || "").toLowerCase();
+
+      if (message.includes("sesi tidak valid") || message.includes("login ulang")) {
+        alert("Sesi Anda sudah berakhir. Silakan login ulang.");
+        localStorage.removeItem("loginUser");
+        window.location.href = "login.html";
+        return;
+      }
+
+      throw new Error(data?.message || "Format data tidak valid.");
+    }
+
     const tbody = document.getElementById("dataCuti");
     tbody.innerHTML = "";
 
