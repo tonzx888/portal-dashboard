@@ -409,7 +409,7 @@ function renderCalendar(data) {
 
     if (monthLabel) {
         monthLabel.textContent =
-            formatCalendarMonthYear(currentCalendarDate);
+            formatCalendarMonthYear(calendarViewDate);
     }
 
     renderRoleCalendar("CS", calendarItems, "calendarCS");
@@ -428,8 +428,8 @@ function renderRoleCalendar(role, data, elementId) {
 
     const normalizedRole = normalizeRole(role);
 
-    const year = currentCalendarDate.getFullYear();
-    const month = currentCalendarDate.getMonth();
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
 
     const firstDayIndex = new Date(year, month, 1).getDay();
     const totalDays = new Date(year, month + 1, 0).getDate();
@@ -533,7 +533,7 @@ function renderRoleCalendar(role, data, elementId) {
                 ${hasData ? "" : "disabled"}
                 aria-label="
                     ${normalizedRole},
-                    ${day} ${formatCalendarMonthYear(currentCalendarDate)},
+                    ${day} ${formatCalendarMonthYear(calendarViewDate)},
                     ${calendarState.label}
                 "
             >
@@ -720,9 +720,9 @@ function getCalendarStatusPriority(status) {
  * Menggeser bulan kalender.
  */
 function changeCalendarMonth(offset) {
-    currentCalendarDate = new Date(
-        currentCalendarDate.getFullYear(),
-        currentCalendarDate.getMonth() + Number(offset || 0),
+    calendarViewDate = new Date(
+        calendarViewDate.getFullYear(),
+        calendarViewDate.getMonth() + Number(offset || 0),
         1
     );
 
