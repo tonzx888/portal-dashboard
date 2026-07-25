@@ -18,7 +18,7 @@ const menuItems = [
     href: "staff.html",
     icon: "ST",
     label: "Data Staff",
-    roles: ["MASTER", "ADMIN"]
+    roles: ["MASTER", "ADMIN", "STAFF"]
   },
   {
     href: "cuti.html",
