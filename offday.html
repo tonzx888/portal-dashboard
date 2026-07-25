@@ -48,19 +48,59 @@
                 </article>
             </section>
 
-            <section id="submissionCard" class="offday-form-card">
-                <div class="section-heading">
-                    <div><h2>Ajukan Offday</h2><p>Pengajuan minimal H-3 sebelum tanggal offday.</p></div>
-                </div>
-                <div class="offday-form-grid">
-                    <div><label for="nama">Nama</label><input id="nama" type="text" readonly></div>
-                    <div><label for="role">Role</label><select id="role"><option value="">Pilih role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></div>
-                    <div><label for="shift">Shift</label><select id="shift"><option value="">Pilih shift</option><option value="PAGI">PAGI</option><option value="MALAM">MALAM</option></select></div>
-                    <div><label for="tanggal">Tanggal Offday</label><input id="tanggal" type="date"></div>
-                    <div class="offday-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan offday"></textarea></div>
-                </div>
-                <div class="form-actions"><button type="button" id="btnSubmitOffday" class="btn-primary">Ajukan Offday</button></div>
-            </section>
+            <div class="offday-top-row">
+                <section id="submissionCard" class="offday-form-card">
+                    <div class="section-heading">
+                        <div><h2>Ajukan Offday</h2><p>Pengajuan minimal H-3 sebelum tanggal offday.</p></div>
+                    </div>
+                    <div class="offday-form-grid">
+                        <div><label for="nama">Nama</label><input id="nama" type="text" readonly></div>
+                        <div><label for="role">Role</label><select id="role"><option value="">Pilih role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></div>
+                        <div><label for="shift">Shift</label><select id="shift"><option value="">Pilih shift</option><option value="PAGI">PAGI</option><option value="MALAM">MALAM</option></select></div>
+                        <div><label for="tanggal">Tanggal Offday</label><input id="tanggal" type="date"></div>
+                        <div class="offday-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan offday"></textarea></div>
+                    </div>
+                    <div class="form-actions"><button type="button" id="btnSubmitOffday" class="btn-primary">Ajukan Offday</button></div>
+                </section>
+
+                <section class="offday-notice-card">
+                    <div class="section-heading">
+                        <div><h2>📌 Noted – Sistem Off Day</h2><p>Baca dulu sebelum mengajukan offday.</p></div>
+                    </div>
+
+                    <div class="offday-notice-scroll">
+                        <h3>Ketentuan Umum</h3>
+                        <ol>
+                            <li>Setiap staff mendapatkan jatah 2 kali off day dalam 1 bulan.</li>
+                            <li>Pengajuan off day dilakukan minimal 3 hari sebelum tanggal yang diinginkan.</li>
+                            <li>Off day hanya dapat diajukan setelah proses rolling shift minggu pertama selesai.</li>
+                            <li>Pengajuan off day periode 2 baru dapat dilakukan setelah seluruh off day periode 1 selesai.</li>
+                            <li>Off day tidak dapat diambil di awal bulan (karena proses rolling shift) maupun akhir bulan (karena pergantian docs).</li>
+                        </ol>
+
+                        <h3>Aturan Pengambilan Off Day</h3>
+                        <ul>
+                            <li>Tidak boleh diambil tepat sebelum atau sesudah cuti.</li>
+                            <li>Tidak boleh bersamaan dengan rekan yang memiliki posisi yang sama (CS, Kapten, atau Kasir). Maksimal 1 orang per posisi yang off dalam satu hari.</li>
+                            <li>Tidak boleh mengambil off day selama 2 hari berturut-turut.</li>
+                            <li>Tidak dapat diambil pada jam atau hari ramai, seperti Kamis pagi dan Sabtu malam.</li>
+                        </ul>
+
+                        <h3>Ketentuan Off Day Periode 2</h3>
+                        <ul>
+                            <li>Seluruh staff harus sudah mendapatkan jatah off day periode 1.</li>
+                            <li>Jarak antara off day periode 1 dan periode 2 minimal 5 hari.</li>
+                            <li>Khusus <strong>KAPTEN</strong>, pengajuan off day periode 2 baru dapat dilakukan setelah seluruh staff <strong>Kasir</strong> mendapatkan jatah off day periode 2.</li>
+                        </ul>
+
+                        <h3>Saat Off Day</h3>
+                        <ul>
+                            <li>Tetap wajib melakukan <strong>ABSEN</strong>.</li>
+                            <li>Wajib menginformasikan di grup bahwa sedang offday.<br><em>Contoh: "Hari ini offday."</em></li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
 
             <section class="offday-calendar-section">
                 <div class="calendar-main-header">
