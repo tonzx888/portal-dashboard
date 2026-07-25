@@ -1,6 +1,7 @@
 const API_BASE = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec";
 
 let offdayData = [];
+let calendarData = [];
 let toastTimer = null;
 let calendarViewDate = new Date();
 
@@ -110,10 +111,11 @@ document.addEventListener("DOMContentLoaded", () => {
     createCalendarDetailModal();
     setupOffdayPage();
     loadOffday();
+    loadCalendarData();
     loadSummary();
 
     document.getElementById("btnRefresh")?.addEventListener("click", async () => {
-        await Promise.all([loadOffday(), loadSummary()]);
+        await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
         showToast("Data berhasil diperbarui.");
     });
 
@@ -172,11 +174,42 @@ async function loadOffday() {
 
         offdayData = result;
         applyOffdayFilters();
-        renderCalendar(offdayData);
     } catch (error) {
         console.error("Gagal mengambil data offday:", error);
         if (tbody) tbody.innerHTML = `<tr><td colspan="10">Gagal memuat data offday.</td></tr>`;
         showToast("Gagal memuat data offday.", "error");
+    }
+}
+
+/**
+ * Mengambil data offday khusus untuk kalender visual.
+ *
+ * Kalender harus terlihat oleh SEMUA staff (termasuk KASIR),
+ * sehingga request ini selalu memakai systemRole "ADMIN"
+ * (akses baca penuh, tanpa hak approval) agar backend
+ * mengembalikan seluruh data, bukan hanya milik user yang login.
+ * Ini tidak memberi hak approval apa pun karena hanya dipakai
+ * untuk menampilkan kalender (read-only).
+ */
+async function loadCalendarData() {
+    try {
+        const params = new URLSearchParams({
+            type: "offday",
+            systemRole: "ADMIN",
+            username: currentUsername
+        });
+
+        const response = await fetch(`${API_BASE}?${params.toString()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const result = await response.json();
+        if (!Array.isArray(result)) throw new Error(result.message || "Format data tidak valid.");
+
+        calendarData = result;
+        renderCalendar(calendarData);
+    } catch (error) {
+        console.error("Gagal mengambil data kalender offday:", error);
+        showToast("Gagal memuat kalender offday.", "error");
     }
 }
 
@@ -304,7 +337,7 @@ async function submitOffday() {
             document.getElementById("shift").value = "";
             document.getElementById("tanggal").value = "";
             document.getElementById("alasan").value = "";
-            await Promise.all([loadOffday(), loadSummary()]);
+            await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
         }
     } catch (error) {
         console.error("Gagal submit offday:", error);
@@ -351,7 +384,7 @@ async function processApproval(type, row, catatan) {
         showToast(result.message, result.success ? "success" : "error");
 
         if (result.success) {
-            await Promise.all([loadOffday(), loadSummary()]);
+            await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
         }
     } catch (error) {
         console.error("Gagal memproses approval:", error);
@@ -359,149 +392,668 @@ async function processApproval(type, row, catatan) {
     }
 }
 
-/* =======================
+/* ==========================================================
    OFFDAY CALENDAR
-======================= */
+========================================================== */
 
+/**
+ * Menampilkan tiga kalender berdasarkan role.
+ *
+ * Kalender selalu menggunakan calendarData lengkap (semua staff),
+ * tidak terpengaruh filter pada tabel maupun role user yang login.
+ */
 function renderCalendar(data) {
-    const monthLabel = document.getElementById("calendarMonthLabel");
-    if (monthLabel) monthLabel.textContent = formatMonthYear(calendarViewDate);
+    const calendarItems = Array.isArray(data) ? data : [];
 
-    renderRoleCalendar("CS", data, "calendarCS");
-    renderRoleCalendar("KAPTEN", data, "calendarKapten");
-    renderRoleCalendar("KASIR", data, "calendarKasir");
+    const monthLabel = document.getElementById("calendarMonthLabel");
+
+    if (monthLabel) {
+        monthLabel.textContent =
+            formatCalendarMonthYear(currentCalendarDate);
+    }
+
+    renderRoleCalendar("CS", calendarItems, "calendarCS");
+    renderRoleCalendar("KAPTEN", calendarItems, "calendarKapten");
+    renderRoleCalendar("KASIR", calendarItems, "calendarKasir");
 }
 
+
+/**
+ * Menampilkan satu kalender berdasarkan role.
+ */
 function renderRoleCalendar(role, data, elementId) {
     const container = document.getElementById(elementId);
+
     if (!container) return;
 
-    const year = calendarViewDate.getFullYear();
-    const month = calendarViewDate.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
+    const normalizedRole = normalizeRole(role);
+
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
     const totalDays = new Date(year, month + 1, 0).getDate();
     const previousMonthDays = new Date(year, month, 0).getDate();
 
-    const roleItems = data.filter(item => {
-        const itemRole = String(item.role || "").toUpperCase();
-        const itemStatus = String(item.status || "").toUpperCase();
-        const itemDate = parseOffdayDate(item.tanggal);
+    const roleQuota = getRoleQuota(normalizedRole);
 
-        return itemRole === role
-            && itemStatus !== "DITOLAK"
-            && itemDate
-            && itemDate.getFullYear() === year
-            && itemDate.getMonth() === month;
+    const roleItems = data.filter(item => {
+        const itemRole = normalizeRole(item.role);
+        const itemDate = parseDate(item.tanggal);
+
+        return (
+            itemRole === normalizedRole &&
+            itemDate &&
+            itemDate.getFullYear() === year &&
+            itemDate.getMonth() === month
+        );
     });
 
-    const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-    let html = '<div class="offday-calendar-grid">';
+    const dayNames = [
+        "Min",
+        "Sen",
+        "Sel",
+        "Rab",
+        "Kam",
+        "Jum",
+        "Sab"
+    ];
+
+    let html = `
+        <div class="offday-calendar-grid">
+    `;
 
     dayNames.forEach(dayName => {
-        html += `<div class="calendar-weekday">${dayName}</div>`;
+        html += `
+            <div class="calendar-weekday">
+                ${dayName}
+            </div>
+        `;
     });
 
-    for (let blank = firstDay - 1; blank >= 0; blank--) {
-        html += `<div class="calendar-day outside"><span>${previousMonthDays - blank}</span></div>`;
-    }
-
-    for (let day = 1; day <= totalDays; day++) {
-        const dayItems = roleItems.filter(item => {
-            const itemDate = parseOffdayDate(item.tanggal);
-            return itemDate && itemDate.getDate() === day;
-        });
-
-        const stateClass = dayItems.length >= 2 ? "full" : dayItems.length === 1 ? "has-off" : "";
-        const disabled = dayItems.length === 0 ? "disabled" : "";
-        const countBadge = dayItems.length >= 2 ? `<small>${dayItems.length}</small>` : "";
+    /*
+     * Tanggal dari bulan sebelumnya.
+     */
+    for (
+        let blankIndex = firstDayIndex - 1;
+        blankIndex >= 0;
+        blankIndex--
+    ) {
+        const previousDay = previousMonthDays - blankIndex;
 
         html += `
-            <button type="button"
-                class="calendar-day ${stateClass}"
-                onclick="showCalendarDayDetail('${role}', ${year}, ${month}, ${day})"
-                ${disabled}>
-                <span>${day}</span>${countBadge}
-            </button>`;
+            <div class="calendar-day outside">
+                <span class="calendar-day-number">
+                    ${previousDay}
+                </span>
+            </div>
+        `;
     }
 
-    const usedCells = firstDay + totalDays;
-    const trailingCells = usedCells <= 35 ? 35 - usedCells : 42 - usedCells;
+    /*
+     * Tanggal pada bulan aktif.
+     */
+    for (let day = 1; day <= totalDays; day++) {
+        const selectedDate = new Date(year, month, day);
+
+        const dayItems = roleItems.filter(item => {
+            const itemDate = parseDate(item.tanggal);
+
+            return (
+                itemDate &&
+                isSameDate(itemDate, selectedDate)
+            );
+        });
+
+        const calendarState = getCalendarDayState(
+            dayItems,
+            roleQuota
+        );
+
+        const dayContent = createCalendarDayContent(dayItems);
+
+        const hasData = dayItems.length > 0;
+
+        html += `
+            <button
+                type="button"
+                class="
+                    calendar-day
+                    ${calendarState.className}
+                    ${hasData ? "has-data" : ""}
+                "
+                onclick="
+                    showCalendarDayDetail(
+                        '${normalizedRole}',
+                        ${year},
+                        ${month},
+                        ${day}
+                    )
+                "
+                ${hasData ? "" : "disabled"}
+                aria-label="
+                    ${normalizedRole},
+                    ${day} ${formatCalendarMonthYear(currentCalendarDate)},
+                    ${calendarState.label}
+                "
+            >
+                <span class="calendar-day-number">
+                    ${day}
+                </span>
+
+                ${dayContent}
+
+                ${
+                    calendarState.label
+                        ? `
+                            <span class="calendar-day-status">
+                                ${calendarState.label}
+                            </span>
+                        `
+                        : ""
+                }
+            </button>
+        `;
+    }
+
+    /*
+     * Mengisi sisa kalender agar tetap 5 atau 6 baris.
+     */
+    const usedCells = firstDayIndex + totalDays;
+
+    const trailingCells =
+        usedCells <= 35
+            ? 35 - usedCells
+            : 42 - usedCells;
+
     for (let day = 1; day <= trailingCells; day++) {
-        html += `<div class="calendar-day outside"><span>${day}</span></div>`;
+        html += `
+            <div class="calendar-day outside">
+                <span class="calendar-day-number">
+                    ${day}
+                </span>
+            </div>
+        `;
     }
 
-    html += '</div>';
+    html += `</div>`;
+
     container.innerHTML = html;
 }
 
-function changeCalendarMonth(offset) {
-    calendarViewDate = new Date(
-        calendarViewDate.getFullYear(),
-        calendarViewDate.getMonth() + Number(offset),
-        1
-    );
-    renderCalendar(offdayData);
+
+/**
+ * Menentukan warna dan kondisi suatu tanggal.
+ *
+ * Prioritas:
+ * 1. Kuota penuh
+ * 2. Ada pengajuan menunggu
+ * 3. Ada pengajuan disetujui
+ * 4. Hanya berisi pengajuan ditolak
+ */
+function getCalendarDayState(items, quota) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return {
+            className: "",
+            label: ""
+        };
+    }
+
+    const activeItems = items.filter(item => {
+        const status = normalizeStatus(item.status);
+
+        return !isRejectedOffdayStatus(status);
+    });
+
+    const approvedItems = activeItems.filter(item => {
+        return isApprovedOffdayStatus(item.status);
+    });
+
+    const pendingItems = activeItems.filter(item => {
+        return isPendingOffdayStatus(item.status);
+    });
+
+    const isFull =
+        activeItems.length >= Number(quota || 1);
+
+    if (isFull) {
+        return {
+            className: "full",
+            label: `Penuh ${activeItems.length}/${quota}`
+        };
+    }
+
+    if (pendingItems.length > 0) {
+        return {
+            className: "pending has-off",
+            label: `${pendingItems.length} Menunggu`
+        };
+    }
+
+    if (approvedItems.length > 0) {
+        return {
+            className: "approved has-off",
+            label: `${approvedItems.length} Disetujui`
+        };
+    }
+
+    return {
+        className: "rejected",
+        label: "Ditolak"
+    };
 }
 
-function showCalendarDayDetail(role, year, month, day) {
-    const selectedItems = offdayData.filter(item => {
-        const itemRole = String(item.role || "").toUpperCase();
-        const itemStatus = String(item.status || "").toUpperCase();
-        const itemDate = parseOffdayDate(item.tanggal);
 
-        return itemRole === role
-            && itemStatus !== "DITOLAK"
-            && itemDate
-            && itemDate.getFullYear() === Number(year)
-            && itemDate.getMonth() === Number(month)
-            && itemDate.getDate() === Number(day);
+/**
+ * Membuat isi ringkas pada kotak tanggal.
+ *
+ * Contoh:
+ *
+ * 29
+ * Anthony
+ * +2
+ */
+function createCalendarDayContent(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return "";
+    }
+
+    const sortedItems = [...items].sort((itemA, itemB) => {
+        const statusA = getCalendarStatusPriority(itemA.status);
+        const statusB = getCalendarStatusPriority(itemB.status);
+
+        if (statusA !== statusB) {
+            return statusA - statusB;
+        }
+
+        return cleanText(itemA.nama).localeCompare(
+            cleanText(itemB.nama),
+            "id"
+        );
     });
+
+    const firstItem = sortedItems[0];
+
+    const firstName =
+        cleanText(firstItem.nama) || "Tanpa Nama";
+
+    const additionalCount = sortedItems.length - 1;
+
+    return `
+        <div class="calendar-day-content">
+            <span
+                class="calendar-staff-name"
+                title="${escapeHTML(firstName)}"
+            >
+                ${escapeHTML(firstName)}
+            </span>
+
+            ${
+                additionalCount > 0
+                    ? `
+                        <span class="calendar-more-count">
+                            +${additionalCount}
+                        </span>
+                    `
+                    : ""
+            }
+        </div>
+    `;
+}
+
+
+/**
+ * Prioritas tampilan nama pada kalender:
+ *
+ * Disetujui → Menunggu → Ditolak.
+ */
+function getCalendarStatusPriority(status) {
+    if (isApprovedOffdayStatus(status)) return 1;
+    if (isPendingOffdayStatus(status)) return 2;
+    if (isRejectedOffdayStatus(status)) return 3;
+
+    return 4;
+}
+
+
+/**
+ * Menggeser bulan kalender.
+ */
+function changeCalendarMonth(offset) {
+    currentCalendarDate = new Date(
+        currentCalendarDate.getFullYear(),
+        currentCalendarDate.getMonth() + Number(offset || 0),
+        1
+    );
+
+    renderCalendar(calendarData);
+}
+
+
+/**
+ * Membuka popup detail berdasarkan role dan tanggal.
+ */
+function showCalendarDayDetail(role, year, month, day) {
+    const normalizedRole = normalizeRole(role);
+
+    const selectedDate = new Date(
+        Number(year),
+        Number(month),
+        Number(day)
+    );
+
+    const selectedItems = calendarData
+        .filter(item => {
+            const itemRole = normalizeRole(item.role);
+            const itemDate = parseDate(item.tanggal);
+
+            return (
+                itemRole === normalizedRole &&
+                itemDate &&
+                isSameDate(itemDate, selectedDate)
+            );
+        })
+        .sort((itemA, itemB) => {
+            return (
+                getCalendarStatusPriority(itemA.status) -
+                getCalendarStatusPriority(itemB.status)
+            );
+        });
 
     if (selectedItems.length === 0) return;
 
-    const modal = document.getElementById("calendarDetailModal");
-    const title = document.getElementById("calendarDetailTitle");
-    const body = document.getElementById("calendarDetailBody");
+    const modal =
+        document.getElementById("calendarDetailModal");
+
+    const title =
+        document.getElementById("calendarDetailTitle");
+
+    const body =
+        document.getElementById("calendarDetailBody");
+
     if (!modal || !title || !body) return;
 
-    title.textContent = `${role} — ${formatDisplayDate(new Date(year, month, day))}`;
-    body.innerHTML = selectedItems.map(item => `
-        <div class="calendar-detail-item">
-            <div class="calendar-detail-name">${escapeHtml(item.nama || "-")}</div>
-            <div class="calendar-detail-meta">
-                <span>Shift: ${escapeHtml(item.shift || "-")}</span>
-                <span>Status: ${escapeHtml(item.status || "-")}</span>
+    const quota = getRoleQuota(normalizedRole);
+
+    const activeCount = selectedItems.filter(item => {
+        return !isRejectedOffdayStatus(item.status);
+    }).length;
+
+    title.textContent =
+        `${normalizedRole} — ` +
+        formatCalendarDisplayDate(selectedDate);
+
+    body.innerHTML = `
+        <div class="calendar-detail-summary">
+            <div>
+                <span class="calendar-detail-summary-label">
+                    Role
+                </span>
+
+                <strong>
+                    ${escapeHTML(normalizedRole)}
+                </strong>
             </div>
-            <div class="calendar-detail-reason">${escapeHtml(item.alasan || "-")}</div>
+
+            <div>
+                <span class="calendar-detail-summary-label">
+                    Kuota
+                </span>
+
+                <strong>
+                    ${activeCount}/${quota}
+                </strong>
+            </div>
+
+            <div>
+                <span class="calendar-detail-summary-label">
+                    Total Pengajuan
+                </span>
+
+                <strong>
+                    ${selectedItems.length}
+                </strong>
+            </div>
         </div>
-    `).join("");
+
+        <div class="calendar-detail-list">
+            ${selectedItems
+                .map(item => createCalendarDetailItem(item))
+                .join("")}
+        </div>
+    `;
 
     modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
 }
 
+
+/**
+ * Membuat satu kartu detail pengajuan.
+ */
+function createCalendarDetailItem(item) {
+    const status = normalizeStatus(item.status);
+
+    const statusClass = isApprovedOffdayStatus(status)
+        ? "approved"
+        : isPendingOffdayStatus(status)
+            ? "pending"
+            : isRejectedOffdayStatus(status)
+                ? "rejected"
+                : "unknown";
+
+    return `
+        <article class="calendar-detail-item ${statusClass}">
+            <div class="calendar-detail-item-header">
+                <div>
+                    <div class="calendar-detail-name">
+                        ${escapeHTML(item.nama || "-")}
+                    </div>
+
+                    <div class="calendar-detail-role">
+                        ${escapeHTML(item.role || "-")}
+                        ·
+                        Shift ${escapeHTML(item.shift || "-")}
+                    </div>
+                </div>
+
+                <span class="calendar-detail-badge ${statusClass}">
+                    ${escapeHTML(status)}
+                </span>
+            </div>
+
+            <div class="calendar-detail-grid">
+                <div>
+                    <span>Tanggal Offday</span>
+
+                    <strong>
+                        ${escapeHTML(item.tanggal || "-")}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Disetujui Oleh</span>
+
+                    <strong>
+                        ${escapeHTML(item.approvedBy || "-")}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Tanggal Approval</span>
+
+                    <strong>
+                        ${escapeHTML(item.approvedDate || "-")}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="calendar-detail-section">
+                <span class="calendar-detail-section-label">
+                    Alasan
+                </span>
+
+                <p>
+                    ${escapeHTML(item.alasan || "-")}
+                </p>
+            </div>
+
+            ${
+                cleanText(item.catatan)
+                    ? `
+                        <div class="calendar-detail-section">
+                            <span class="calendar-detail-section-label">
+                                Catatan
+                            </span>
+
+                            <p>
+                                ${escapeHTML(item.catatan)}
+                            </p>
+                        </div>
+                    `
+                    : ""
+            }
+        </article>
+    `;
+}
+
+
+/**
+ * Menutup popup kalender.
+ */
 function closeCalendarDetailModal() {
-    const modal = document.getElementById("calendarDetailModal");
-    if (modal) modal.style.display = "none";
+    const modal =
+        document.getElementById("calendarDetailModal");
+
+    if (!modal) return;
+
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
 }
 
+
+/**
+ * Membuat popup kalender secara otomatis.
+ */
 function createCalendarDetailModal() {
-    if (document.getElementById("calendarDetailModal")) return;
+    if (
+        document.getElementById("calendarDetailModal")
+    ) {
+        return;
+    }
 
     const modal = document.createElement("div");
+
     modal.id = "calendarDetailModal";
     modal.className = "calendar-detail-modal";
+    modal.setAttribute("aria-hidden", "true");
+
     modal.innerHTML = `
-        <div class="calendar-detail-panel">
+        <div
+            class="calendar-detail-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="calendarDetailTitle"
+        >
             <div class="calendar-detail-header">
-                <h3 id="calendarDetailTitle">Detail Offday</h3>
-                <button type="button" class="calendar-detail-close" onclick="closeCalendarDetailModal()">×</button>
+                <div>
+                    <span class="calendar-detail-eyebrow">
+                        Detail Jadwal Offday
+                    </span>
+
+                    <h3 id="calendarDetailTitle">
+                        Detail Offday
+                    </h3>
+                </div>
+
+                <button
+                    type="button"
+                    class="calendar-detail-close"
+                    onclick="closeCalendarDetailModal()"
+                    aria-label="Tutup detail"
+                >
+                    ×
+                </button>
             </div>
+
             <div id="calendarDetailBody"></div>
-        </div>`;
+        </div>
+    `;
 
     modal.addEventListener("click", event => {
-        if (event.target === modal) closeCalendarDetailModal();
+        if (event.target === modal) {
+            closeCalendarDetailModal();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (
+            event.key === "Escape" &&
+            modal.style.display === "flex"
+        ) {
+            closeCalendarDetailModal();
+        }
     });
 
     document.body.appendChild(modal);
+}
+
+
+/* ==========================================================
+   CALENDAR STATUS HELPERS
+========================================================== */
+
+function isApprovedOffdayStatus(status) {
+    const normalizedStatus = normalizeStatus(status);
+
+    return (
+        normalizedStatus === "DISETUJUI" ||
+        normalizedStatus === "APPROVED"
+    );
+}
+
+
+function isPendingOffdayStatus(status) {
+    const normalizedStatus = normalizeStatus(status);
+
+    return (
+        normalizedStatus === "MENUNGGU" ||
+        normalizedStatus === "PENDING"
+    );
+}
+
+
+function isRejectedOffdayStatus(status) {
+    const normalizedStatus = normalizeStatus(status);
+
+    return (
+        normalizedStatus === "DITOLAK" ||
+        normalizedStatus === "REJECTED"
+    );
+}
+
+
+/* ==========================================================
+   CALENDAR DATE FORMAT
+========================================================== */
+
+function formatCalendarMonthYear(date) {
+    if (!(date instanceof Date)) return "-";
+
+    return new Intl.DateTimeFormat("id-ID", {
+        month: "long",
+        year: "numeric"
+    }).format(date);
+}
+
+
+function formatCalendarDisplayDate(date) {
+    if (!(date instanceof Date)) return "-";
+
+    return new Intl.DateTimeFormat("id-ID", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    }).format(date);
 }
