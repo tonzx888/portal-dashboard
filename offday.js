@@ -109,6 +109,7 @@ function formatMonthYear(date) {
 
 document.addEventListener("DOMContentLoaded", () => {
     createCalendarDetailModal();
+    createOffdayBlockedModal();
     setupOffdayPage();
     loadOffday();
     loadCalendarData();
@@ -307,7 +308,25 @@ async function submitOffday() {
     const alasan = document.getElementById("alasan")?.value.trim() || "";
 
     if (!nama || !role || !shift || !tanggal || !alasan) {
-        showToast("Role, shift, tanggal, dan alasan wajib diisi.", "error");
+        showOffdayBlockedModal(
+            "Data Belum Lengkap",
+            "Role, shift, tanggal, dan alasan wajib diisi sebelum mengajukan offday."
+        );
+        return;
+    }
+
+    if (tanggal < getMinimumSubmitDate()) {
+        showOffdayBlockedModal(
+            "Pengajuan Terlalu Mepet",
+            "Pengajuan offday minimal H-3 sebelum tanggal offday. Silakan pilih tanggal lain."
+        );
+        return;
+    }
+
+    const blockReason = getOffdaySubmitBlockReason(role, tanggal);
+
+    if (blockReason) {
+        showOffdayBlockedModal("Pengajuan Tidak Dapat Diajukan", blockReason);
         return;
     }
 
@@ -330,15 +349,22 @@ async function submitOffday() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const result = await response.json();
-        showToast(result.message, result.success ? "success" : "error");
 
-        if (result.success) {
-            document.getElementById("role").value = "";
-            document.getElementById("shift").value = "";
-            document.getElementById("tanggal").value = "";
-            document.getElementById("alasan").value = "";
-            await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
+        if (!result.success) {
+            showOffdayBlockedModal(
+                "Pengajuan Tidak Dapat Diajukan",
+                result.message || "Pengajuan offday ditolak oleh sistem."
+            );
+            return;
         }
+
+        showToast(result.message || "Pengajuan offday berhasil dikirim.");
+
+        document.getElementById("role").value = "";
+        document.getElementById("shift").value = "";
+        document.getElementById("tanggal").value = "";
+        document.getElementById("alasan").value = "";
+        await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
     } catch (error) {
         console.error("Gagal submit offday:", error);
         showToast("Gagal mengirim pengajuan offday.", "error");
@@ -348,6 +374,127 @@ async function submitOffday() {
             button.textContent = "Ajukan Offday";
         }
     }
+}
+
+/**
+ * Mengecek dari calendarData (data lengkap semua staff) apakah
+ * pengajuan pada role & tanggal tersebut bisa dilakukan.
+ *
+ * Mengembalikan string alasan penolakan jika TIDAK bisa diajukan,
+ * atau null jika boleh dilanjutkan ke server.
+ */
+function getOffdaySubmitBlockReason(role, tanggal) {
+    const normalizedRole = normalizeRole(role);
+    const targetDate = parseDate(tanggal);
+
+    if (!targetDate) return null;
+
+    const sameDayItems = (Array.isArray(calendarData) ? calendarData : []).filter(item => {
+        const itemDate = parseDate(item.tanggal);
+        return itemDate && isSameDate(itemDate, targetDate);
+    });
+
+    const activeSameRoleItems = sameDayItems.filter(item => {
+        const itemRole = normalizeRole(item.role);
+        const status = normalizeStatus(item.status);
+        return itemRole === normalizedRole && !isRejectedOffdayStatus(status);
+    });
+
+    const alreadySubmittedByMe = sameDayItems.some(item => {
+        const status = normalizeStatus(item.status);
+        return (
+            cleanText(item.nama).toLowerCase() === currentUsername.toLowerCase() &&
+            !isRejectedOffdayStatus(status)
+        );
+    });
+
+    if (alreadySubmittedByMe) {
+        return `Anda sudah memiliki pengajuan offday pada tanggal ${formatDisplayDate(targetDate)}. Satu staff hanya dapat mengajukan satu offday per tanggal.`;
+    }
+
+    const quota = getRoleQuota(normalizedRole);
+
+    if (activeSameRoleItems.length >= quota) {
+        return `Kuota offday untuk role ${normalizedRole} pada tanggal ${formatDisplayDate(targetDate)} sudah penuh (${activeSameRoleItems.length}/${quota}). Silakan pilih tanggal lain.`;
+    }
+
+    return null;
+}
+
+/**
+ * Menampilkan popup alasan mengapa pengajuan offday tidak dapat dilakukan.
+ */
+function showOffdayBlockedModal(title, reason) {
+    const modal = document.getElementById("offdayBlockedModal");
+    if (!modal) return;
+
+    const titleEl = document.getElementById("offdayBlockedTitle");
+    const reasonEl = document.getElementById("offdayBlockedReason");
+
+    if (titleEl) titleEl.textContent = title || "Pengajuan Tidak Dapat Diajukan";
+    if (reasonEl) reasonEl.textContent = reason || "Pengajuan offday tidak dapat diproses saat ini.";
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+/**
+ * Menutup popup alasan offday tidak dapat diajukan.
+ */
+function closeOffdayBlockedModal() {
+    const modal = document.getElementById("offdayBlockedModal");
+    if (!modal) return;
+
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+}
+
+/**
+ * Membuat popup alasan offday secara otomatis (sekali saja).
+ */
+function createOffdayBlockedModal() {
+    if (document.getElementById("offdayBlockedModal")) return;
+
+    const modal = document.createElement("div");
+    modal.id = "offdayBlockedModal";
+    modal.className = "calendar-detail-modal";
+    modal.setAttribute("aria-hidden", "true");
+
+    modal.innerHTML = `
+        <div
+            class="calendar-detail-panel offday-blocked-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="offdayBlockedTitle"
+        >
+            <div class="offday-blocked-icon">!</div>
+            <h3 id="offdayBlockedTitle" class="offday-blocked-title">
+                Pengajuan Tidak Dapat Diajukan
+            </h3>
+            <p id="offdayBlockedReason" class="offday-blocked-reason"></p>
+            <button
+                type="button"
+                class="btn-primary offday-blocked-ok"
+                onclick="closeOffdayBlockedModal()"
+            >
+                Mengerti
+            </button>
+        </div>
+    `;
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) {
+            closeOffdayBlockedModal();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && modal.style.display === "flex") {
+            closeOffdayBlockedModal();
+        }
+    });
+
+    document.body.appendChild(modal);
 }
 
 async function approveOffday(row) {
