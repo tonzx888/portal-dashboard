@@ -80,7 +80,7 @@
 .oc-sidebar-label {
   padding: 13px 12px 8px;
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: .18em;
 }
@@ -197,7 +197,7 @@
   display: block;
   margin-top: 7px;
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1.5;
 }
 
@@ -237,7 +237,7 @@
 
 .oc-topbar-eyebrow {
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: .18em;
 }
@@ -283,7 +283,7 @@
 .oc-user-copy small {
   margin-top: 2px;
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .oc-page-heading {
@@ -296,7 +296,7 @@
 
 .oc-section-kicker {
   color: var(--oc-primary);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: .18em;
 }
@@ -336,7 +336,7 @@
 .oc-live-status small {
   margin-top: 3px;
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .oc-dashboard-error {
@@ -403,7 +403,7 @@
 
 .oc-stat-label {
   color: var(--oc-text-soft);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: .09em;
 }
@@ -447,7 +447,7 @@
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
   background:
-    linear-gradient(145deg, rgba(35, 72, 82, .96), rgba(24, 50, 58, .98));
+    linear-gradient(145deg, #ffffff, var(--oc-surface-soft));
   box-shadow: var(--oc-shadow-sm);
 }
 
@@ -461,13 +461,13 @@
 
 .oc-panel-header h2 {
   margin: 6px 0 0;
-  font-size: 16px;
+  font-size: 19px;
 }
 
 .oc-panel-header p {
   margin: 5px 0 0;
   color: var(--oc-muted);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -547,7 +547,7 @@
   display: block;
   margin-top: 4px;
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .activity-count {
@@ -577,7 +577,7 @@
   border-radius: 999px;
   background: var(--oc-blue-soft);
   color: var(--oc-blue);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: .04em;
 }
@@ -607,7 +607,7 @@
 .oc-quick-stat span {
   display: block;
   color: var(--oc-muted);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .oc-quick-stat strong {
