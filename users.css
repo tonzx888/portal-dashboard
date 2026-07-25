@@ -205,7 +205,9 @@
 }
 
 .users-user-cell strong {
-    color: var(--oc-text);
+    color: var(--oc-text) !important;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .users-user-cell small {
@@ -226,28 +228,28 @@
 }
 
 .users-role-badge.master {
-    background: rgba(110, 93, 166, .16);
-    color: #6e5da6;
+    background: #6e5da6;
+    color: #ffffff !important;
 }
 
 .users-role-badge.admin {
-    background: rgba(46, 125, 192, .16);
-    color: #2e7dc0;
+    background: #2e7dc0;
+    color: #ffffff !important;
 }
 
 .users-role-badge.staff {
-    background: rgba(14, 124, 134, .14);
-    color: #0e7c86;
+    background: #0e7c86;
+    color: #ffffff !important;
 }
 
 .users-status-badge.active {
-    background: rgba(10, 122, 78, .14);
-    color: #0a7a4e;
+    background: #0a7a4e;
+    color: #ffffff !important;
 }
 
 .users-status-badge.inactive {
-    background: rgba(200, 72, 58, .14);
-    color: #c8483a;
+    background: #8a8f94;
+    color: #ffffff !important;
 }
 
 .users-actions {
