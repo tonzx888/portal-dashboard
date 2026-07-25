@@ -588,8 +588,6 @@ function renderRoleCalendar(role, data, elementId) {
             roleQuota
         );
 
-        const dayContent = createCalendarDayContent(dayItems);
-
         const hasData = dayItems.length > 0;
 
         html += `
@@ -598,7 +596,6 @@ function renderRoleCalendar(role, data, elementId) {
                 class="
                     calendar-day
                     ${calendarState.className}
-                    ${hasData ? "has-data" : ""}
                 "
                 onclick="
                     showCalendarDayDetail(
@@ -612,22 +609,16 @@ function renderRoleCalendar(role, data, elementId) {
                 aria-label="
                     ${normalizedRole},
                     ${day} ${formatCalendarMonthYear(calendarViewDate)},
-                    ${calendarState.label}
+                    ${calendarState.label || "Tidak ada offday"}
                 "
             >
                 <span class="calendar-day-number">
                     ${day}
                 </span>
 
-                ${dayContent}
-
                 ${
-                    calendarState.label
-                        ? `
-                            <span class="calendar-day-status">
-                                ${calendarState.label}
-                            </span>
-                        `
+                    dayItems.length > 1
+                        ? `<small>${dayItems.length}</small>`
                         : ""
                 }
             </button>
