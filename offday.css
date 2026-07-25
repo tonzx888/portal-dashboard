@@ -126,8 +126,22 @@
 
 /* Dashboard V2 shell normalization */
 .offday-page{min-width:0}.offday-page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:20px}.offday-page-header h1{margin:0;font-size:clamp(28px,3vw,42px)}.offday-page-header p{margin:8px 0 0;color:var(--oc-muted)}
-.offday-summary-grid,.offday-form-card,.offday-notice-card,.offday-calendar-section,.offday-table-card{border-color:var(--oc-line)!important;background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(244,249,248,.96))!important;box-shadow:var(--oc-shadow-sm)}
-.offday-summary-card{border-color:var(--oc-line)!important;background:rgba(14,43,46,.035)!important;border-radius:var(--oc-radius-md)!important}.offday-summary-card strong{color:var(--oc-text)!important}.offday-summary-card span,.offday-summary-card small{color:var(--oc-muted)!important}
-.offday-form-card,.offday-calendar-section,.offday-table-card{border-radius:var(--oc-radius-lg)!important}.offday-form-card input,.offday-form-card select,.offday-form-card textarea,.offday-toolbar input,.offday-toolbar select{border:1px solid var(--oc-line-strong)!important;background:rgba(244,249,248,.9)!important;color:var(--oc-text)!important;border-radius:12px!important;outline:none}.offday-form-card input,.offday-form-card select,.offday-toolbar input,.offday-toolbar select{min-height:44px!important;padding:10px 12px!important}.offday-form-card textarea{padding:12px!important}
+.offday-form-card,.offday-notice-card,.offday-calendar-section,.offday-table-card{border-color:var(--oc-line)!important;background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(244,249,248,.96))!important;box-shadow:var(--oc-shadow-sm)}
+.offday-summary-card{border:1px solid var(--oc-line)!important;background:linear-gradient(145deg,#ffffff,#f4f9f8)!important;box-shadow:var(--oc-shadow-sm)}.offday-summary-card strong{color:var(--oc-text)!important}.offday-summary-card span,.offday-summary-card small{color:var(--oc-muted)!important}
+.offday-form-card,.offday-calendar-section,.offday-table-card{border-radius:var(--oc-radius-lg)!important}.offday-form-card input,.offday-form-card select,.offday-form-card textarea,.offday-toolbar input,.offday-toolbar select{border:1px solid var(--oc-line-strong)!important;background:rgba(244,249,248,.9)!important;color:var(--oc-text)!important;border-radius:12px!important;outline:none;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}.offday-form-card input,.offday-form-card select,.offday-toolbar input,.offday-toolbar select{min-height:44px!important;padding:10px 12px!important}.offday-form-card textarea{padding:12px!important}
+
+.offday-form-card select,.offday-toolbar select{
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+  padding-right:36px!important;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230e7c86' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right 12px center!important;
+}
+.offday-form-card select:hover,.offday-toolbar select:hover{border-color:rgba(14,124,134,.4)!important}
+.offday-form-card input:focus,.offday-form-card select:focus,.offday-form-card textarea:focus,.offday-toolbar input:focus,.offday-toolbar select:focus{
+  border-color:rgba(14,124,134,.55)!important;
+  background:#ffffff!important;
+  box-shadow:0 0 0 4px rgba(14,124,134,.12);
+}
 .offday-table-card table{border-collapse:separate!important;border-spacing:0!important}.offday-table-card th{position:sticky;top:0;background:rgba(238,245,244,.98)!important;color:#0e2b2e!important;font-size:11px!important;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.offday-table-card td{color:var(--oc-text-soft)!important;border-color:var(--oc-line)!important}.calendar-card{border-color:var(--oc-line)!important;background:rgba(14,43,46,.045)!important}
 @media(max-width:900px){.offday-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.oc-topbar-actions .oc-refresh-btn{display:none}}@media(max-width:600px){.offday-summary-grid{grid-template-columns:1fr!important}}
