@@ -85,6 +85,7 @@ function escapeUsersHtml(value) {
 }
 
 async function callUsersApi(params) {
+    params.set("token", getLoginToken());
     params.set("_", String(Date.now()));
 
     const response = await fetch(

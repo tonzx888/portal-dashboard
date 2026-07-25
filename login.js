@@ -21,6 +21,7 @@ function login() {
                 localStorage.setItem("loginUser", JSON.stringify({
                     username: result.username,
                     role: result.role,
+                    token: result.token,
                     loginTime: new Date().toISOString()
                 }));
 

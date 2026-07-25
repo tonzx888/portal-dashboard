@@ -11,6 +11,16 @@ function getLoginUser() {
     }
 }
 
+/**
+ * Mengambil token sesi yang didapat dari backend saat login.
+ * Dipakai di setiap request API yang butuh identitas terverifikasi
+ * (bukan lagi mengirim role/username mentah).
+ */
+function getLoginToken() {
+    const user = getLoginUser();
+    return user && user.token ? String(user.token) : "";
+}
+
 function requireLogin() {
     const user = getLoginUser();
 
@@ -23,6 +33,15 @@ function requireLogin() {
 }
 
 function logout() {
+    const token = getLoginToken();
+
+    // Beri tahu server untuk menghapus sesi ini juga (best-effort,
+    // tidak menunggu responsnya supaya logout tetap terasa instan).
+    if (token) {
+        fetch(`https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?type=logout&token=${encodeURIComponent(token)}`)
+            .catch(() => {});
+    }
+
     localStorage.removeItem("loginUser");
     window.location.href = "login.html";
 }

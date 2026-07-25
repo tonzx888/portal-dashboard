@@ -9,6 +9,25 @@ const currentUser = getLoginUser();
 const currentSystemRole = String(currentUser?.role || "").toUpperCase();
 const currentUsername = String(currentUser?.username || "").trim();
 
+/**
+ * Mengecek apakah suatu pesan dari backend menandakan sesi/token
+ * sudah tidak valid (kedaluwarsa, dihapus, atau memang belum login).
+ * Kalau iya, paksa logout & arahkan ke halaman login supaya user
+ * tidak bingung melihat data kosong/gagal terus-menerus.
+ */
+function handleExpiredSession_(message) {
+    const text = String(message || "").toLowerCase();
+    const isExpired = text.includes("sesi tidak valid") || text.includes("login ulang");
+
+    if (isExpired) {
+        alert("Sesi Anda sudah berakhir. Silakan login ulang.");
+        localStorage.removeItem("loginUser");
+        window.location.href = "login.html";
+    }
+
+    return isExpired;
+}
+
 function showToast(message, type = "success") {
     const toast = document.getElementById("toast");
     if (!toast) return;
@@ -163,15 +182,17 @@ async function loadOffday() {
     try {
         const params = new URLSearchParams({
             type: "offday",
-            systemRole: currentSystemRole,
-            username: currentUsername
+            token: getLoginToken()
         });
 
         const response = await fetch(`${API_BASE}?${params.toString()}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const result = await response.json();
-        if (!Array.isArray(result)) throw new Error(result.message || "Format data tidak valid.");
+        if (!Array.isArray(result)) {
+            if (handleExpiredSession_(result.message)) return;
+            throw new Error(result.message || "Format data tidak valid.");
+        }
 
         offdayData = result;
         applyOffdayFilters();
@@ -183,28 +204,29 @@ async function loadOffday() {
 }
 
 /**
- * Mengambil data offday khusus untuk kalender visual.
+ * Mengambil data offday khusus untuk kalender visual, lewat
+ * endpoint "offdayCalendar" di backend.
  *
- * Kalender harus terlihat oleh SEMUA staff (termasuk KASIR),
- * sehingga request ini selalu memakai systemRole "ADMIN"
- * (akses baca penuh, tanpa hak approval) agar backend
- * mengembalikan seluruh data, bukan hanya milik user yang login.
- * Ini tidak memberi hak approval apa pun karena hanya dipakai
- * untuk menampilkan kalender (read-only).
+ * Endpoint ini memang sengaja TIDAK memfilter berdasarkan role
+ * (semua staff yang sudah login boleh lihat jadwal semua orang),
+ * tapi tetap wajib mengirim token sesi yang valid -- backend akan
+ * menolak kalau token kosong/salah/kedaluwarsa.
  */
 async function loadCalendarData() {
     try {
         const params = new URLSearchParams({
-            type: "offday",
-            systemRole: "ADMIN",
-            username: currentUsername
+            type: "offdayCalendar",
+            token: getLoginToken()
         });
 
         const response = await fetch(`${API_BASE}?${params.toString()}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const result = await response.json();
-        if (!Array.isArray(result)) throw new Error(result.message || "Format data tidak valid.");
+        if (!Array.isArray(result)) {
+            if (handleExpiredSession_(result.message)) return;
+            throw new Error(result.message || "Format data tidak valid.");
+        }
 
         calendarData = result;
         renderCalendar(calendarData);
@@ -216,7 +238,12 @@ async function loadCalendarData() {
 
 async function loadSummary() {
     try {
-        const response = await fetch(`${API_BASE}?type=offdaySummary`);
+        const params = new URLSearchParams({
+            type: "offdaySummary",
+            token: getLoginToken()
+        });
+
+        const response = await fetch(`${API_BASE}?${params.toString()}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const summary = await response.json();
@@ -338,7 +365,7 @@ async function submitOffday() {
     try {
         const params = new URLSearchParams({
             type: "submitOffday",
-            nama,
+            token: getLoginToken(),
             role,
             shift,
             tanggal,
@@ -351,6 +378,8 @@ async function submitOffday() {
         const result = await response.json();
 
         if (!result.success) {
+            if (handleExpiredSession_(result.message)) return;
+
             showOffdayBlockedModal(
                 "Pengajuan Tidak Dapat Diajukan",
                 result.message || "Pengajuan offday ditolak oleh sistem."
@@ -519,8 +548,7 @@ async function processApproval(type, row, catatan) {
         const params = new URLSearchParams({
             type,
             row: String(row),
-            systemRole: currentSystemRole,
-            approvedBy: currentUsername,
+            token: getLoginToken(),
             catatan
         });
 
@@ -528,6 +556,8 @@ async function processApproval(type, row, catatan) {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const result = await response.json();
+        if (handleExpiredSession_(result.message)) return;
+
         showToast(result.message, result.success ? "success" : "error");
 
         if (result.success) {
