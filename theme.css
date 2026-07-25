@@ -1,38 +1,53 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
+/*
+  =========================================================
+  HARBOR DECK — palet terang bertema pusat operasional
+  pelabuhan/kapal (cocok dengan role KAPTEN, CS, KASIR).
+  Latar cerah seperti kabut laut, aksen teal pelabuhan,
+  dan satu warna koral "suar" dipakai terbatas untuk hal
+  yang butuh perhatian (menu aktif, status mendesak).
+  =========================================================
+*/
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   --oc-font: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  --oc-bg: #12232a;
-  --oc-bg-soft: #18313a;
-  --oc-surface: #20414a;
-  --oc-surface-soft: #28515a;
-  --oc-surface-raised: #32616a;
+  --oc-bg: #eff5f4;
+  --oc-bg-soft: #e3eeec;
+  --oc-surface: #ffffff;
+  --oc-surface-soft: #f4f9f8;
+  --oc-surface-raised: #e7f1ef;
 
-  --oc-text: #f7fbf8;
-  --oc-text-soft: #d7e5dd;
-  --oc-muted: #a7bbb0;
+  --oc-text: #0e2b2e;
+  --oc-text-soft: #3e5c5c;
+  --oc-muted: #6e8788;
 
-  --oc-line: rgba(224, 242, 232, .14);
-  --oc-line-strong: rgba(224, 242, 232, .24);
+  --oc-line: rgba(14, 43, 46, .12);
+  --oc-line-strong: rgba(14, 43, 46, .22);
 
-  --oc-primary: #7ee0a5;
-  --oc-primary-strong: #4fc883;
-  --oc-primary-soft: rgba(126, 224, 165, .18);
+  --oc-primary: #0e7c86;
+  --oc-primary-strong: #0a5f68;
+  --oc-primary-soft: rgba(14, 124, 134, .12);
 
-  --oc-blue: #8db7ff;
-  --oc-blue-soft: rgba(141, 183, 255, .17);
+  --oc-blue: #2e7dc0;
+  --oc-blue-soft: rgba(46, 125, 192, .12);
 
-  --oc-warning: #f0c96e;
-  --oc-warning-soft: rgba(240, 201, 110, .17);
+  --oc-warning: #c97a12;
+  --oc-warning-soft: rgba(201, 122, 18, .14);
 
-  --oc-danger: #ef9292;
-  --oc-danger-soft: rgba(239, 146, 146, .17);
+  --oc-danger: #c8483a;
+  --oc-danger-soft: rgba(200, 72, 58, .12);
 
-  --oc-purple: #b9a2eb;
-  --oc-purple-soft: rgba(185, 162, 235, .17);
+  --oc-purple: #6e5da6;
+  --oc-purple-soft: rgba(110, 93, 166, .13);
+
+  /* Aksen "suar" — dipakai TERBATAS: menu aktif, status mendesak. */
+  --oc-accent: #ff6b4a;
+  --oc-accent-strong: #e8532f;
+  --oc-accent-soft: rgba(255, 107, 74, .14);
 
   --oc-radius-xs: 8px;
   --oc-radius-sm: 12px;
@@ -40,9 +55,9 @@
   --oc-radius-lg: 22px;
   --oc-radius-xl: 28px;
 
-  --oc-shadow-sm: 0 10px 26px rgba(4, 14, 17, .14);
-  --oc-shadow-md: 0 18px 46px rgba(4, 14, 17, .20);
-  --oc-shadow-lg: 0 30px 84px rgba(4, 14, 17, .28);
+  --oc-shadow-sm: 0 8px 20px rgba(14, 43, 46, .06);
+  --oc-shadow-md: 0 16px 36px rgba(14, 43, 46, .09);
+  --oc-shadow-lg: 0 26px 60px rgba(14, 43, 46, .14);
 
   --oc-speed-fast: 140ms;
   --oc-speed: 190ms;
@@ -73,9 +88,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 12% 10%, rgba(126, 224, 165, .10), transparent 30rem),
-    radial-gradient(circle at 88% 8%, rgba(141, 183, 255, .08), transparent 28rem),
-    linear-gradient(150deg, #12242b 0%, #18323a 52%, #102127 100%);
+    radial-gradient(circle at 12% 8%, rgba(14, 124, 134, .08), transparent 32rem),
+    radial-gradient(circle at 90% 4%, rgba(255, 107, 74, .06), transparent 26rem),
+    linear-gradient(150deg, #f2f8f7 0%, #eaf3f1 52%, #e6f1ee 100%);
   color: var(--oc-text);
   font-family: var(--oc-font);
   text-rendering: optimizeLegibility;
@@ -93,6 +108,6 @@ a {
 }
 
 ::selection {
-  background: rgba(126, 224, 165, .34);
-  color: #fff;
+  background: rgba(14, 124, 134, .22);
+  color: var(--oc-text);
 }

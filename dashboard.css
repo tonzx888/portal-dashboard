@@ -19,7 +19,7 @@
   overflow-y: auto;
   border-right: 1px solid var(--oc-line);
   background:
-    linear-gradient(180deg, rgba(30, 63, 73, .98), rgba(18, 39, 47, .99));
+    linear-gradient(180deg, #ffffff, var(--oc-surface-soft));
   backdrop-filter: blur(8px);
 }
 
@@ -38,13 +38,13 @@
   flex: 0 0 auto;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(114, 212, 154, .27);
+  border: 1px solid rgba(14, 124, 134, .22);
   border-radius: 15px;
   background:
-    radial-gradient(circle at 28% 24%, rgba(255,255,255,.20), transparent 30%),
-    linear-gradient(145deg, rgba(114,212,154,.25), rgba(72,185,120,.08));
-  color: #e5faed;
-  box-shadow: 0 12px 28px rgba(34, 121, 75, .18);
+    radial-gradient(circle at 28% 24%, rgba(255,255,255,.5), transparent 30%),
+    linear-gradient(145deg, rgba(14,124,134,.20), rgba(14,124,134,.08));
+  color: var(--oc-primary-strong);
+  box-shadow: 0 12px 22px rgba(14, 124, 134, .14);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .08em;
@@ -56,7 +56,7 @@
   bottom: -18px;
   width: 44px;
   height: 44px;
-  border: 1px solid rgba(114, 212, 154, .24);
+  border: 1px solid rgba(14, 124, 134, .20);
   border-radius: 50%;
   content: "";
 }
@@ -79,7 +79,7 @@
 
 .oc-sidebar-label {
   padding: 13px 12px 8px;
-  color: #71897e;
+  color: var(--oc-muted);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .18em;
@@ -114,15 +114,15 @@
 .oc-nav a:hover {
   transform: translateX(2px);
   border-color: var(--oc-line);
-  background: rgba(255,255,255,.035);
-  color: #fff;
+  background: var(--oc-accent-soft);
+  color: var(--oc-accent-strong);
 }
 
 .oc-nav a.active {
-  border-color: rgba(114, 212, 154, .18);
+  border-color: rgba(255, 107, 74, .28);
   background:
-    linear-gradient(90deg, rgba(114,212,154,.15), rgba(114,212,154,.025));
-  color: #effff5;
+    linear-gradient(90deg, rgba(255,107,74,.14), rgba(255,107,74,.03));
+  color: var(--oc-accent-strong);
 }
 
 .oc-nav a.active::before {
@@ -132,27 +132,43 @@
   height: 24px;
   border-radius: 999px;
   background: var(--oc-primary);
-  box-shadow: 0 0 16px rgba(114, 212, 154, .44);
+  box-shadow: 0 0 14px rgba(255, 107, 74, .38);
   content: "";
 }
 
 .oc-nav-icon {
   display: grid;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
   place-items: center;
   border: 1px solid var(--oc-line);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--oc-muted);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .04em;
+  background: var(--oc-surface-soft);
+  transition:
+    color var(--oc-speed) var(--oc-ease),
+    background var(--oc-speed) var(--oc-ease),
+    border-color var(--oc-speed) var(--oc-ease),
+    transform var(--oc-speed) var(--oc-ease);
+}
+
+.oc-nav-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.oc-nav a:hover .oc-nav-icon {
+  border-color: rgba(255, 107, 74, .28);
+  background: var(--oc-accent-soft);
+  color: var(--oc-accent-strong);
+  transform: scale(1.08) rotate(-4deg);
 }
 
 .oc-nav a.active .oc-nav-icon {
-  border-color: rgba(114, 212, 154, .20);
-  background: var(--oc-primary-soft);
-  color: var(--oc-primary);
+  border-color: rgba(255, 107, 74, .30);
+  background: var(--oc-accent-soft);
+  color: var(--oc-accent-strong);
 }
 
 .oc-sidebar-footer {
@@ -164,7 +180,7 @@
   padding: 14px;
   border: 1px solid var(--oc-line);
   border-radius: 16px;
-  background: rgba(255,255,255,.025);
+  background: var(--oc-surface-soft);
 }
 
 .oc-system-head {
@@ -191,7 +207,7 @@
   flex: 0 0 auto;
   border-radius: 50%;
   background: var(--oc-primary);
-  box-shadow: 0 0 14px rgba(114, 212, 154, .62);
+  box-shadow: 0 0 12px rgba(14, 124, 134, .5);
 }
 
 .oc-main {
@@ -210,7 +226,7 @@
   margin: 0 -28px 26px;
   padding: 0 28px;
   border-bottom: 1px solid var(--oc-line);
-  background: rgba(19, 42, 50, .94);
+  background: rgba(255, 255, 255, .88);
   backdrop-filter: blur(8px);
 }
 
@@ -248,7 +264,7 @@
   padding: 6px 11px 6px 7px;
   border: 1px solid var(--oc-line);
   border-radius: 999px;
-  background: rgba(255,255,255,.025);
+  background: var(--oc-surface-soft);
 }
 
 .oc-user-copy strong,
@@ -303,9 +319,9 @@
   gap: 11px;
   min-width: 190px;
   padding: 13px 15px;
-  border: 1px solid rgba(114, 212, 154, .16);
+  border: 1px solid rgba(14, 124, 134, .18);
   border-radius: 16px;
-  background: rgba(114, 212, 154, .055);
+  background: rgba(14, 124, 134, .06);
 }
 
 .oc-live-status strong,
@@ -329,7 +345,7 @@
   border: 1px solid rgba(233, 130, 130, .24);
   border-radius: 14px;
   background: var(--oc-danger-soft);
-  color: #f5c1c1;
+  color: var(--oc-danger);
   font-size: 12px;
 }
 
@@ -347,7 +363,7 @@
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
   background:
-    linear-gradient(145deg, rgba(38, 78, 88, .96), rgba(25, 53, 61, .98));
+    linear-gradient(145deg, #ffffff, var(--oc-surface-soft));
   box-shadow: var(--oc-shadow-sm);
 }
 
@@ -401,7 +417,7 @@
 .oc-stat-number {
   display: block;
   margin-top: 22px;
-  color: #fff;
+  color: var(--oc-text);
   font-size: 32px;
   font-weight: 800;
   line-height: 1;
@@ -486,7 +502,7 @@
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(255,255,255,.045);
+  background: var(--oc-bg-soft);
 }
 
 .role-fill {
@@ -514,7 +530,7 @@
   padding: 11px 12px;
   border: 1px solid var(--oc-line);
   border-radius: 13px;
-  background: rgba(255,255,255,.022);
+  background: var(--oc-surface-soft);
 }
 
 .activity-left strong,
@@ -541,26 +557,26 @@
   place-items: center;
   border-radius: 10px;
   background: var(--oc-primary-soft);
-  color: #ccebd8;
+  color: var(--oc-primary-strong);
   font-size: 10px;
   font-weight: 800;
 }
 
 .warning-days {
-  color: #f0d79b;
+  color: var(--oc-warning);
   font-size: 10px;
   font-weight: 800;
 }
 
 .warning-days.expired {
-  color: #f1b4b4;
+  color: var(--oc-danger);
 }
 
 .new-staff-role {
   padding: 5px 8px;
   border-radius: 999px;
   background: var(--oc-blue-soft);
-  color: #c8d9ff;
+  color: var(--oc-blue);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: .04em;
@@ -585,7 +601,7 @@
   padding: 14px;
   border: 1px solid var(--oc-line);
   border-radius: 14px;
-  background: rgba(255,255,255,.025);
+  background: var(--oc-surface-soft);
 }
 
 .oc-quick-stat span {

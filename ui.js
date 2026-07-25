@@ -83,6 +83,21 @@
     return Promise.resolve(window.confirm(`${title}\n\n${message}`));
   };
 
+  /**
+   * Membuat baris <tr> skeleton (blok berkedip) sebanyak rowCount,
+   * masing-masing berisi colCount sel <td>, untuk dipakai sebagai
+   * placeholder saat tabel sedang memuat data dari server.
+   * Terasa lebih cepat dibanding teks "Memuat data..." polos,
+   * walau waktu tunggunya sama.
+   */
+  window.ocSkeletonRows = function (colCount, rowCount = 5) {
+    const makeCell = () =>
+      `<td><span class="oc-skeleton" style="display:block;height:14px;width:${60 + Math.round(Math.random() * 30)}%"></span></td>`;
+    const makeRow = () =>
+      `<tr class="oc-skeleton-row">${Array.from({ length: colCount }, makeCell).join("")}</tr>`;
+    return Array.from({ length: rowCount }, makeRow).join("");
+  };
+
   document.addEventListener("click", event => {
     const closeButton = event.target.closest("[data-oc-close]");
 

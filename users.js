@@ -117,11 +117,7 @@ async function callUsersApi(params) {
 async function loadUsers() {
     const tbody = document.getElementById("userTable");
 
-    tbody.innerHTML = `
-        <tr>
-            <td colspan="4" class="users-loading">Memuat data user...</td>
-        </tr>
-    `;
+    tbody.innerHTML = ocSkeletonRows(4);
 
     showUsersAlert("");
 

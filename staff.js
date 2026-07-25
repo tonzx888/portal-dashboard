@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadStaff() {
   const tbody = document.getElementById("dataStaff");
-  tbody.innerHTML = `<tr><td colspan="11">Memuat data...</td></tr>`;
+  tbody.innerHTML = ocSkeletonRows(11);
   try {
     const response = await fetch(`${BASE_URL}?type=staff&token=${encodeURIComponent(getLoginToken())}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);

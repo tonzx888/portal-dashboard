@@ -1,5 +1,12 @@
 const API_CUTI = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?type=cuti";
 
+document.addEventListener("DOMContentLoaded", () => {
+    const tbody = document.getElementById("dataCuti");
+    if (tbody && typeof ocSkeletonRows === "function") {
+        tbody.innerHTML = ocSkeletonRows(6);
+    }
+});
+
 fetch(`${API_CUTI}&token=${encodeURIComponent(getLoginToken())}`)
   .then(response => response.json())
   .then(data => {

@@ -2,14 +2,14 @@
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
   background:
-    linear-gradient(145deg, rgba(28, 57, 68, .92), rgba(18, 37, 45, .96));
+    linear-gradient(145deg, #ffffff, var(--oc-surface-soft));
   box-shadow: var(--oc-shadow-sm);
 }
 
 .oc-card-soft {
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-md);
-  background: rgba(255, 255, 255, .025);
+  background: var(--oc-surface-soft);
 }
 
 .oc-btn {
@@ -45,19 +45,19 @@
 
 .oc-btn-primary {
   background: linear-gradient(135deg, var(--oc-primary-strong), var(--oc-primary));
-  color: #07180f;
-  box-shadow: 0 12px 24px rgba(72, 185, 120, .16);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(14, 124, 134, .22);
 }
 
 .oc-btn-secondary {
   border-color: var(--oc-line);
-  background: rgba(255, 255, 255, .035);
+  background: var(--oc-surface);
   color: var(--oc-text);
 }
 
 .oc-btn-danger {
   background: var(--oc-danger);
-  color: #2a0c0c;
+  color: #ffffff;
 }
 
 .oc-btn-ghost {
@@ -71,7 +71,7 @@
   width: 100%;
   border: 1px solid var(--oc-line-strong);
   border-radius: 12px;
-  background: rgba(7, 18, 23, .62);
+  background: var(--oc-surface-soft);
   color: var(--oc-text);
   outline: none;
   transition:
@@ -95,9 +95,9 @@
 .oc-input:focus,
 .oc-select:focus,
 .oc-textarea:focus {
-  border-color: rgba(114, 212, 154, .58);
-  background: rgba(9, 24, 30, .86);
-  box-shadow: 0 0 0 4px rgba(114, 212, 154, .10);
+  border-color: rgba(14, 124, 134, .55);
+  background: var(--oc-surface);
+  box-shadow: 0 0 0 4px var(--oc-primary-soft);
 }
 
 .oc-badge {
@@ -113,29 +113,29 @@
 
 .oc-badge-success {
   background: var(--oc-primary-soft);
-  color: #c9eed8;
+  color: var(--oc-primary-strong);
 }
 
 .oc-badge-info {
   background: var(--oc-blue-soft);
-  color: #c8d9ff;
+  color: var(--oc-blue);
 }
 
 .oc-badge-warning {
   background: var(--oc-warning-soft);
-  color: #f0daa6;
+  color: var(--oc-warning);
 }
 
 .oc-badge-danger {
   background: var(--oc-danger-soft);
-  color: #f4bcbc;
+  color: var(--oc-danger);
 }
 
 .oc-table-wrap {
   overflow: auto;
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
-  background: rgba(18, 37, 45, .74);
+  background: var(--oc-surface);
 }
 
 .oc-table {
@@ -151,7 +151,7 @@
   z-index: 2;
   padding: 13px 14px;
   border-bottom: 1px solid var(--oc-line);
-  background: rgba(13, 29, 35, .96);
+  background: var(--oc-surface-soft);
   color: var(--oc-muted);
   font-size: 10px;
   letter-spacing: .10em;
@@ -170,7 +170,7 @@
 }
 
 .oc-table tbody tr:hover {
-  background: rgba(255, 255, 255, .025);
+  background: var(--oc-surface-raised);
 }
 
 .oc-modal {
@@ -181,8 +181,8 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(3, 10, 13, .74);
-  backdrop-filter: blur(10px);
+  background: rgba(14, 43, 46, .38);
+  backdrop-filter: blur(6px);
 }
 
 .oc-modal.is-open {
@@ -195,8 +195,7 @@
   overflow: auto;
   border: 1px solid var(--oc-line-strong);
   border-radius: var(--oc-radius-xl);
-  background:
-    linear-gradient(145deg, rgba(32, 64, 75, .98), rgba(14, 31, 38, .98));
+  background: var(--oc-surface);
   box-shadow: var(--oc-shadow-lg);
 }
 
@@ -238,14 +237,14 @@
   overflow: hidden;
   border: 1px solid var(--oc-line-strong);
   border-radius: 14px;
-  background: rgba(22, 47, 56, .97);
+  background: var(--oc-surface);
   box-shadow: var(--oc-shadow-md);
 }
 
 .oc-toast strong {
   display: block;
   margin-bottom: 4px;
-  color: #fff;
+  color: var(--oc-text);
   font-size: 12px;
 }
 
@@ -271,7 +270,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: rgba(255, 255, 255, .04);
+  background: var(--oc-surface-raised);
 }
 
 .oc-skeleton::after {
@@ -279,7 +278,7 @@
   inset: 0;
   transform: translateX(-100%);
   animation: ocShimmer 1.4s infinite;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent);
+  background: linear-gradient(90deg, transparent, rgba(14, 43, 46, .07), transparent);
   content: "";
 }
 
@@ -296,7 +295,7 @@
   place-items: center;
   border-radius: 50%;
   background: var(--oc-primary-soft);
-  color: #dff7e8;
+  color: var(--oc-primary-strong);
   font-size: 12px;
   font-weight: 800;
 }

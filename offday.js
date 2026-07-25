@@ -177,7 +177,7 @@ function setupOffdayPage() {
 
 async function loadOffday() {
     const tbody = document.getElementById("dataOffday");
-    if (tbody) tbody.innerHTML = `<tr><td colspan="10">Memuat data offday...</td></tr>`;
+    if (tbody) tbody.innerHTML = ocSkeletonRows(10);
 
     try {
         const params = new URLSearchParams({
@@ -247,10 +247,15 @@ async function loadSummary() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const summary = await response.json();
+        const pendingCount = Number(summary.menunggu || 0);
+
         document.getElementById("summaryTotal").textContent = summary.total || 0;
-        document.getElementById("summaryPending").textContent = summary.menunggu || 0;
+        document.getElementById("summaryPending").textContent = pendingCount;
         document.getElementById("summaryApproved").textContent = summary.disetujui || 0;
         document.getElementById("summaryRejected").textContent = summary.ditolak || 0;
+
+        document.querySelector(".summary-pending")
+            ?.classList.toggle("has-pending", pendingCount > 0);
     } catch (error) {
         console.error("Gagal mengambil ringkasan offday:", error);
     }
@@ -783,6 +788,7 @@ function renderRoleCalendar(role, data, elementId) {
                     )
                 "
                 ${hasData ? "" : "disabled"}
+                title="${normalizedRole}, ${day} ${formatCalendarMonthYear(calendarViewDate)} — ${calendarState.label || "Tidak ada offday"}"
                 aria-label="
                     ${normalizedRole},
                     ${day} ${formatCalendarMonthYear(calendarViewDate)},
