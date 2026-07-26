@@ -375,7 +375,7 @@ function renderCutiTable() {
                 <td>${escapeCutiHtml(item.nama)} ${item.urgent ? '<span class="cuti-urgent-badge">URGENT</span>' : ""}</td>
                 <td>${escapeCutiHtml(item.role)}</td>
                 <td>${escapeCutiHtml(item.jenisCuti)}</td>
-                <td>${escapeCutiHtml(item.tanggalMulai)} &ndash; ${escapeCutiHtml(item.tanggalSelesai)}</td>
+                <td>${formatCutiLongDate_(item.tanggalMulaiInput)} &ndash; ${formatCutiLongDate_(item.tanggalSelesaiInput)}</td>
                 <td>${escapeCutiHtml(item.totalHari)}</td>
                 <td>${cutiStatusBadge(item.status)}</td>
                 <td>${escapeCutiHtml(item.approvedBy || "-")}</td>
@@ -415,7 +415,7 @@ function openCutiDetailModal(filteredIndex) {
             <div class="calendar-detail-name">${escapeCutiHtml(item.nama)} &middot; ${escapeCutiHtml(item.role)}</div>
             <div class="calendar-detail-meta">
                 <span>${escapeCutiHtml(item.jenisCuti)}</span>
-                <span>${escapeCutiHtml(item.tanggalMulai)} &ndash; ${escapeCutiHtml(item.tanggalSelesai)} (${escapeCutiHtml(item.totalHari)} hari)</span>
+                <span>${formatCutiLongDate_(item.tanggalMulaiInput)} &ndash; ${formatCutiLongDate_(item.tanggalSelesaiInput)} (${escapeCutiHtml(item.totalHari)} hari)</span>
                 <span>${cutiStatusBadge(item.status)}</span>
             </div>
             <p><strong>Alasan:</strong> ${escapeCutiHtml(item.alasan || "(tidak diisi)")}</p>
@@ -673,10 +673,12 @@ function copyCutiReportB(filteredIndex) {
     const text =
 `Info : 
 Perihal : ${item.jenisCuti}
+
 NO PASPOR : ${getPassportFor(item.nama)}
 NAMA STAFF : ${item.nama}
-START CUTI S/D : ${item.tanggalMulai} S/D ${item.tanggalSelesai}
+START CUTI S/D : ${formatCutiLongDate_(item.tanggalMulaiInput)} S/D ${formatCutiLongDate_(item.tanggalSelesaiInput)}
 TOTAL CUTI : ${item.totalHari} hari
+
 Ket : 
 Keterangan : Untuk kelengkapan SIM CARD dan token sudah di check aman. Untuk admin, dan email sudah serah terima ke Leader. Untuk passport sudah berada di tangan staff.`;
 
