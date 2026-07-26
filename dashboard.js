@@ -169,9 +169,59 @@ function renderDashboard(data) {
 
     renderRoleChart(roles, totalStaff);
     renderActivity(data);
+    renderActivityDonut({ activeToday, staffCuti, offdayHariIni, totalStaff });
     renderWarningList("passportWarningList", passportWarnings);
     renderWarningList("visaWarningList", visaWarnings);
     renderNewStaff(data.newStaff || []);
+}
+
+/**
+ * Grafik donat kecil di header "Aktivitas Operasional": proporsi
+ * staff Aktif vs Cuti vs Offday hari ini, sebagai ringkasan visual
+ * cepat tanpa perlu baca angka satu-satu.
+ */
+function renderActivityDonut({ activeToday, staffCuti, offdayHariIni, totalStaff }) {
+    const container = document.getElementById("activityDonut");
+    if (!container) return;
+
+    const total = Math.max(totalStaff, 1);
+    const radius = 30;
+    const circumference = 2 * Math.PI * radius;
+
+    const segments = [
+        { value: activeToday, color: "var(--oc-primary)" },
+        { value: staffCuti, color: "var(--oc-blue)" },
+        { value: offdayHariIni, color: "var(--oc-purple)" }
+    ];
+
+    let offset = 0;
+    const circles = segments.map(segment => {
+        const fraction = segment.value / total;
+        const dash = Math.max(fraction * circumference, segment.value > 0 ? 3 : 0);
+        const circle = `
+            <circle
+                cx="36" cy="36" r="${radius}"
+                fill="none" stroke="${segment.color}" stroke-width="8"
+                stroke-dasharray="${dash} ${circumference - dash}"
+                stroke-dashoffset="${-offset}"
+                stroke-linecap="round"
+                transform="rotate(-90 36 36)"
+            />
+        `;
+        offset += dash;
+        return circle;
+    }).join("");
+
+    container.innerHTML = `
+        <svg viewBox="0 0 72 72" width="72" height="72">
+            <circle cx="36" cy="36" r="${radius}" fill="none" stroke="var(--oc-line)" stroke-width="8"/>
+            ${circles}
+        </svg>
+        <div class="activity-donut-center">
+            <strong>${activeToday}</strong>
+            <small>Aktif</small>
+        </div>
+    `;
 }
 
 function renderRoleChart(roles, totalStaff) {
