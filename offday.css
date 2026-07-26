@@ -84,6 +84,10 @@
 .offday-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}.offday-form-full{grid-column:1/-1}.form-actions{display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px dashed var(--oc-line)}
 #offdaySubmitModal .oc-modal-panel{width:min(520px,100%)}
 
+.offday-profile-display{min-height:44px;display:flex;align-items:center;padding:10px 14px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft);color:var(--oc-text);font-size:13px}
+.offday-profile-display strong{color:var(--oc-primary-strong)}
+.offday-profile-warning{grid-column:1/-1;padding:10px 12px;border-radius:9px;background:rgba(200,72,58,.08);border:1px solid rgba(200,72,58,.28);color:#8a2f24;font-size:12px;font-weight:600}
+
 .section-heading{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .section-heading::before{content:"";width:4px;height:30px;border-radius:99px;background:linear-gradient(180deg,var(--oc-primary),var(--oc-primary-strong));flex:0 0 auto}
 .section-heading h2{margin:0;font-size:19px;color:var(--oc-text)}

@@ -198,6 +198,25 @@
   border-radius: var(--oc-radius-xl);
   background: var(--oc-surface);
   box-shadow: var(--oc-shadow-lg);
+  scrollbar-width: thin;
+  scrollbar-color: var(--oc-line-strong) transparent;
+}
+
+.oc-modal-panel::-webkit-scrollbar {
+  width: 7px;
+}
+
+.oc-modal-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.oc-modal-panel::-webkit-scrollbar-thumb {
+  background: var(--oc-line-strong);
+  border-radius: 999px;
+}
+
+.oc-modal-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--oc-primary);
 }
 
 .oc-modal-head,

@@ -222,9 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
     loadOffday();
     loadCalendarData();
     loadSummary();
+    loadOffdayStaffProfile();
 
     if (typeof ocInitCustomSelect === "function") {
-        ocInitCustomSelect(document.getElementById("role"));
         ocInitCustomSelect(document.getElementById("shift"));
         ocInitCustomSelect(document.getElementById("filterRole"));
         ocInitCustomSelect(document.getElementById("filterShift"));
@@ -245,23 +245,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("calendarNext")?.addEventListener("click", () => changeCalendarMonth(1));
 });
 
+let offdayStaffProfile = null;
+
 function setupOffdayPage() {
-    const namaInput = document.getElementById("nama");
     const tanggalInput = document.getElementById("tanggal");
-    const submissionCard = document.getElementById("submissionCard");
     const actionHeader = document.getElementById("actionHeader");
     const tableTitle = document.getElementById("tableTitle");
     const tableSubtitle = document.getElementById("tableSubtitle");
 
-    if (namaInput) namaInput.value = currentUsername;
     if (tanggalInput) tanggalInput.min = getMinimumSubmitDate();
 
     if (currentSystemRole === "MASTER") {
-        if (submissionCard) submissionCard.style.display = "none";
         if (tableTitle) tableTitle.textContent = "Approval Pengajuan Offday";
         if (tableSubtitle) tableSubtitle.textContent = "MASTER dapat menyetujui atau menolak pengajuan yang masih menunggu.";
     } else if (currentSystemRole === "ADMIN") {
-        if (submissionCard) submissionCard.style.display = "none";
         if (actionHeader) actionHeader.style.display = "none";
         if (tableTitle) tableTitle.textContent = "Monitoring Offday";
         if (tableSubtitle) tableSubtitle.textContent = "ADMIN memiliki akses baca tanpa hak approval.";
@@ -269,6 +266,47 @@ function setupOffdayPage() {
         if (actionHeader) actionHeader.style.display = "none";
         if (tableTitle) tableTitle.textContent = "Riwayat Offday Saya";
         if (tableSubtitle) tableSubtitle.textContent = "Riwayat pengajuan ditampilkan berdasarkan username akun login.";
+    }
+}
+
+/**
+ * Ambil nama lengkap & role staff OTOMATIS dari Data Staff
+ * (dicocokkan lewat kolom Username), sama seperti modul Cuti.
+ * Ditampilkan read-only supaya tidak bisa dipilih/diisi bebas.
+ */
+async function loadOffdayStaffProfile() {
+    const display = document.getElementById("staffProfileDisplay");
+    const warning = document.getElementById("staffProfileWarning");
+    const submitButton = document.getElementById("btnSubmitOffday");
+
+    try {
+        const params = new URLSearchParams({ type: "staff", token: getLoginToken() });
+        const response = await fetch(`${API_BASE}?${params.toString()}`);
+        const result = await response.json();
+
+        if (!Array.isArray(result)) return;
+
+        const own = result.find(item =>
+            String(item.username || "").trim().toUpperCase() === currentUsername.toUpperCase()
+        );
+
+        if (!own) {
+            if (display) display.textContent = "-";
+            if (warning) {
+                warning.hidden = false;
+                warning.textContent = `Username "${currentUsername}" tidak ditemukan pada kolom Username di Data Staff. Hubungi MASTER untuk melengkapi data staff terlebih dahulu.`;
+            }
+            if (submitButton) submitButton.disabled = true;
+            return;
+        }
+
+        offdayStaffProfile = own;
+
+        if (display) {
+            display.innerHTML = `<strong>${escapeHtml(own.nama)}</strong> &middot; ${escapeHtml(own.jabatan)}`;
+        }
+    } catch (error) {
+        console.error("Gagal memuat data profil staff:", error);
     }
 }
 
@@ -431,15 +469,23 @@ function renderOffday(data) {
 async function submitOffday() {
     const button = document.getElementById("btnSubmitOffday");
     const nama = currentUsername;
-    const role = document.getElementById("role")?.value || "";
+    const role = offdayStaffProfile?.jabatan || "";
     const shift = document.getElementById("shift")?.value || "";
     const tanggal = document.getElementById("tanggal")?.value || "";
     const alasan = document.getElementById("alasan")?.value.trim() || "";
 
+    if (!offdayStaffProfile) {
+        showOffdayBlockedModal(
+            "Data Staff Belum Ditemukan",
+            "Data staff Anda belum ditemukan di Data Staff, tidak bisa mengajukan offday. Hubungi MASTER."
+        );
+        return;
+    }
+
     if (!nama || !role || !shift || !tanggal) {
         showOffdayBlockedModal(
             "Data Belum Lengkap",
-            "Role, shift, dan tanggal wajib diisi sebelum mengajukan offday."
+            "Shift dan tanggal wajib diisi sebelum mengajukan offday."
         );
         return;
     }
@@ -491,13 +537,11 @@ async function submitOffday() {
 
         showToast(result.message || "Pengajuan offday berhasil dikirim.");
 
-        document.getElementById("role").value = "";
         document.getElementById("shift").value = "";
         document.getElementById("tanggal").value = "";
         document.getElementById("alasan").value = "";
 
         if (typeof ocRefreshCustomSelect === "function") {
-            ocRefreshCustomSelect(document.getElementById("role"));
             ocRefreshCustomSelect(document.getElementById("shift"));
         }
 

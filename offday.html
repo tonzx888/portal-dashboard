@@ -108,8 +108,11 @@
             </div>
             <div class="oc-modal-body">
                 <div class="offday-form-grid">
-                    <div><label for="nama">Nama</label><input id="nama" type="text" readonly></div>
-                    <div><label for="role">Role</label><select id="role"><option value="">Pilih role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></div>
+                    <div class="offday-form-full">
+                        <label>Nama &amp; Role</label>
+                        <div id="staffProfileDisplay" class="offday-profile-display">Memuat data staff...</div>
+                    </div>
+                    <div id="staffProfileWarning" class="offday-profile-warning" hidden></div>
                     <div><label for="shift">Shift</label><select id="shift"><option value="">Pilih shift</option><option value="PAGI">PAGI</option><option value="MALAM">MALAM</option></select></div>
                     <div><label for="tanggal">Tanggal Offday</label><input id="tanggal" type="date"></div>
                     <div class="offday-form-full"><label for="alasan">Alasan <small>(opsional)</small></label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan offday (opsional)"></textarea></div>
