@@ -135,17 +135,22 @@ function applyStaffFilters() {
 
 function renderTable(data) {
   const tbody = document.getElementById("dataStaff");
-  if (!data.length) return tbody.innerHTML = `<tr><td colspan="11">Tidak ada data yang sesuai.</td></tr>`;
+  if (!data.length) return tbody.innerHTML = `<tr><td colspan="12">Tidak ada data yang sesuai.</td></tr>`;
   tbody.innerHTML = data.map((x,i)=>{
     const row = Number(x.row);
     const actions = currentStaffSystemRole==="MASTER" ? `
       <div class="staff-action-group">
-        <button class="btn-warning" onclick="editStaffByRow(${row})">Edit</button>
-        <button class="btn-danger" onclick="deleteStaff(${row})">Hapus</button>
+        <button class="staff-icon-btn edit" onclick="editStaffByRow(${row})" title="Edit" aria-label="Edit ${escapeHtml(x.nama||"")}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        </button>
+        <button class="staff-icon-btn delete" onclick="deleteStaff(${row})" title="Hapus" aria-label="Hapus ${escapeHtml(x.nama||"")}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
       </div>` : `<span class="staff-muted">Lihat saja</span>`;
     return `<tr>
       <td>${i+1}</td>
       <td><button class="staff-name-button" onclick="showStaffDetail(${row})">${escapeHtml(x.nama||"-")}</button></td>
+      <td class="staff-username-cell">${x.username ? escapeHtml(x.username) : '<span class="staff-username-missing">Belum diisi</span>'}</td>
       <td>${escapeHtml(x.jabatan||"-")}</td>
       <td>${escapeHtml(x.usia||calculateAge(x.tanggalLahir))}</td>
       <td>${escapeHtml(x.domisili||"-")}</td>
@@ -162,7 +167,7 @@ function renderTable(data) {
 function openTambahStaff() {
   if (currentStaffSystemRole!=="MASTER") return;
   modalTitle.textContent="Tambah Staff";
-  ["rowStaff","nama","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
+  ["rowStaff","nama","username","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
   updateComputedPreview();
   modalStaff.style.display="flex";
   nama.focus();
@@ -179,6 +184,7 @@ function editStaff(x) {
   modalTitle.textContent="Edit Staff";
   rowStaff.value=x.row||"";
   nama.value=x.nama||"";
+  document.getElementById("username").value=x.username||"";
   passport.value=x.passport||"";
   jabatan.value=String(x.jabatan||"").toUpperCase();
   tanggalLahir.value=convertDate(x.tanggalLahir);
@@ -216,11 +222,14 @@ function showStaffDetail(row) {
 async function saveStaff() {
   if (currentStaffSystemRole!=="MASTER") return;
   const payload={
-    row:rowStaff.value.trim(),nama:nama.value.trim(),passport:passport.value.trim(),
+    row:rowStaff.value.trim(),nama:nama.value.trim(),
+    username:document.getElementById("username").value.trim(),
+    passport:passport.value.trim(),
     jabatan:jabatan.value.trim(),
     tanggalLahir:tanggalLahir.value,domisili:domisili.value.trim(),tanggalJoin:tanggalJoin.value
   };
   if (!payload.nama||!payload.passport||!payload.jabatan) return showToast("Nama, passport, dan jabatan wajib diisi.","error");
+  if (!payload.username) return showToast("Username login wajib diisi (dipakai untuk menghubungkan ke modul lain seperti Cuti).","error");
   if (!payload.tanggalLahir||!payload.domisili||!payload.tanggalJoin) return showToast("Tanggal lahir, domisili, dan tanggal join wajib diisi.","error");
   btnSave.disabled=true;btnSave.textContent="Menyimpan...";
   try{

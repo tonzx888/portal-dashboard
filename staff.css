@@ -14,7 +14,23 @@
 .staff-name-button{padding:0!important;min-height:auto!important;border:0!important;background:transparent!important;color:#0e7c86!important;font-weight:800!important;text-align:left;cursor:pointer}
 .staff-name-button:hover{text-decoration:underline}
 .staff-name-button:focus-visible{outline:2px solid rgba(14,124,134,.5);outline-offset:2px;border-radius:4px}
-.staff-action-group{display:flex;gap:7px}.staff-action-group button{min-height:32px!important;padding:6px 10px!important}
+
+.staff-username-cell{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#3e5c5c}
+.staff-username-missing{color:#c8483a;font-family:inherit;font-style:italic;font-weight:700}
+
+.staff-username-hint{margin:16px 0 0;padding:10px 12px;border-radius:9px;background:rgba(14,124,134,.08);color:#0a5f68;font-size:11px;line-height:1.6}
+
+.staff-action-group{display:flex;gap:6px}
+.staff-icon-btn{
+  display:grid;place-items:center;width:32px;height:32px;padding:0;
+  border:1px solid var(--staff-border);border-radius:9px;background:#fff;cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,color .15s ease,transform .15s ease;
+}
+.staff-icon-btn svg{width:15px;height:15px}
+.staff-icon-btn.edit{color:#0e7c86}
+.staff-icon-btn.edit:hover{background:rgba(14,124,134,.1);border-color:rgba(14,124,134,.35);transform:translateY(-1px)}
+.staff-icon-btn.delete{color:#c8483a}
+.staff-icon-btn.delete:hover{background:rgba(200,72,58,.1);border-color:rgba(200,72,58,.35);transform:translateY(-1px)}
 .staff-muted{color:var(--staff-muted)}.staff-warning{color:#c8483a;font-weight:800}.staff-safe{color:#0a5f68;font-weight:700}
 .staff-modal{padding:24px}.staff-modal-content{width:min(760px,100%);max-height:90vh;overflow:auto}.staff-detail-content{width:min(680px,100%);max-height:90vh;overflow:auto}
 .staff-form-grid,.staff-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.staff-field-wide{grid-column:1/-1}

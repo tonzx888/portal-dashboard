@@ -124,12 +124,12 @@
           <table class="staff-table">
             <thead>
               <tr>
-                <th>No</th><th>Nama Staff</th><th>Jabatan</th><th>Usia</th><th>Domisili</th>
+                <th>No</th><th>Nama Staff</th><th>Username</th><th>Jabatan</th><th>Usia</th><th>Domisili</th>
                 <th>No Passport</th><th>Exp Passport</th><th>Exp Visa</th>
                 <th>Tanggal Join</th><th>Masa Kerja</th><th>Aksi</th>
               </tr>
             </thead>
-            <tbody id="dataStaff"><tr><td colspan="11"><div class="staff-empty-state">Memuat data staff...</div></td></tr></tbody>
+            <tbody id="dataStaff"><tr><td colspan="12"><div class="staff-empty-state">Memuat data staff...</div></td></tr></tbody>
           </table>
         </div>
       </section>
@@ -146,6 +146,7 @@
         <input type="hidden" id="rowStaff">
         <div class="staff-form-grid">
           <label class="staff-field staff-field-wide"><span>Nama Staff</span><input class="oc-input" type="text" id="nama" autocomplete="off"></label>
+          <label class="staff-field"><span>Username Login</span><input class="oc-input" type="text" id="username" autocomplete="off" placeholder="Harus sama dengan username login staff"></label>
           <label class="staff-field"><span>No Passport</span><input class="oc-input" type="text" id="passport" autocomplete="off"></label>
           <label class="staff-field"><span>Jabatan</span><select class="oc-select" id="jabatan"><option value="">Pilih Jabatan</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></label>
           <label class="staff-field"><span>Tanggal Lahir</span><input class="oc-input" type="date" id="tanggalLahir"></label>
@@ -154,6 +155,8 @@
           <div class="staff-auto-info"><span>Usia</span><strong id="previewUsia">-</strong></div>
           <div class="staff-auto-info"><span>Masa Kerja</span><strong id="previewMasaKerja">-</strong></div>
         </div>
+
+        <p class="staff-username-hint">💡 Username ini dipakai untuk menghubungkan akun login staff dengan datanya di modul lain (mis. Pengajuan Cuti) — pastikan sama persis dengan username yang staff pakai untuk login.</p>
       </div>
       <div class="oc-modal-foot">
         <button type="button" class="oc-btn oc-btn-secondary" onclick="closeModal()">Batal</button>
