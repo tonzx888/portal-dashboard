@@ -85,7 +85,9 @@ if (menu) {
               <span class="oc-nav-group-label">${item.label}</span>
               <span class="oc-nav-chevron" aria-hidden="true">${menuIcons.chevron}</span>
             </button>
-            <ul class="oc-nav-sub">${childrenHtml}</ul>
+            <div class="oc-nav-sub-collapse">
+              <ul class="oc-nav-sub">${childrenHtml}</ul>
+            </div>
           </li>
         `;
       }

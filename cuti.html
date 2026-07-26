@@ -18,40 +18,92 @@
     <div class="oc-sidebar-footer"><div class="oc-system-card"><div class="oc-system-head"><span class="oc-system-pulse"></span><strong>Sistem Aktif</strong></div><small>Seluruh layanan berjalan normal</small></div></div>
   </aside>
   <main class="oc-main">
-    <header class="oc-topbar"><div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Jadwal Cuti</strong></div><div class="oc-topbar-actions"><div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div><button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button></div></header>
-    <section class="oc-page-heading oc-enter"><div><span class="oc-section-kicker">MANAJEMEN CUTI</span><h1>Jadwal Cuti Staff</h1><p>Daftar pengajuan, periode, dan status cuti seluruh staff.</p></div><div class="oc-live-status"><span class="oc-system-pulse"></span><div><strong>Data Terhubung</strong><small>Google Sheets aktif</small></div></div></section>
+    <header class="oc-topbar">
+      <div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Jadwal Cuti</strong></div>
+      <div class="oc-topbar-actions">
+        <button type="button" id="btnRefresh" class="oc-btn oc-btn-secondary oc-refresh-btn">Perbarui Data</button>
+        <div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div>
+        <button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button>
+      </div>
+    </header>
 
-    <section class="oc-stat-grid cuti-stat-grid oc-enter">
-      <article class="oc-stat-card oc-stat-personnel oc-hover-lift">
-        <div class="oc-stat-top"><span class="oc-stat-label">TOTAL CUTI</span><span class="oc-stat-symbol">01</span></div>
-        <strong id="cutiTotal" class="oc-stat-number">0</strong>
-        <small class="oc-stat-caption">Semua pengajuan tercatat</small>
+    <section class="oc-page-heading oc-enter">
+      <div><span class="oc-section-kicker">CUTI STAFF</span><h1>Jadwal Cuti</h1><p>Kalender visual &amp; daftar cuti seluruh staff, supaya mudah lihat tanggal yang masih kosong.</p></div>
+    </section>
+
+    <section class="cuti-summary-grid oc-enter">
+      <article class="cuti-summary-card summary-total">
+        <div class="summary-icon">▣</div>
+        <div><span>Total Cuti</span><strong id="cutiTotal">0</strong><small>Semua pengajuan tercatat</small></div>
       </article>
-      <article class="oc-stat-card oc-stat-offday oc-hover-lift">
-        <div class="oc-stat-top"><span class="oc-stat-label">SEDANG CUTI</span><span class="oc-stat-symbol">02</span></div>
-        <strong id="cutiActive" class="oc-stat-number">0</strong>
-        <small class="oc-stat-caption">Berlangsung hari ini</small>
+      <article class="cuti-summary-card summary-active">
+        <div class="summary-icon">●</div>
+        <div><span>Sedang Cuti</span><strong id="cutiActive">0</strong><small>Berlangsung hari ini</small></div>
       </article>
-      <article class="oc-stat-card oc-stat-leave oc-hover-lift">
-        <div class="oc-stat-top"><span class="oc-stat-label">AKAN DATANG</span><span class="oc-stat-symbol">03</span></div>
-        <strong id="cutiUpcoming" class="oc-stat-number">0</strong>
-        <small class="oc-stat-caption">Belum dimulai</small>
+      <article class="cuti-summary-card summary-upcoming">
+        <div class="summary-icon">◷</div>
+        <div><span>Akan Datang</span><strong id="cutiUpcoming">0</strong><small>Belum dimulai</small></div>
       </article>
-      <article class="oc-stat-card oc-stat-alert oc-hover-lift">
-        <div class="oc-stat-top"><span class="oc-stat-label">SELESAI</span><span class="oc-stat-symbol">04</span></div>
-        <strong id="cutiDone" class="oc-stat-number">0</strong>
-        <small class="oc-stat-caption">Sudah berakhir</small>
+      <article class="cuti-summary-card summary-done">
+        <div class="summary-icon">✓</div>
+        <div><span>Selesai</span><strong id="cutiDone">0</strong><small>Sudah berakhir</small></div>
       </article>
     </section>
 
-    <section class="cuti-panel oc-enter">
-      <div class="cuti-panel-head"><div><span class="oc-section-kicker">DAFTAR CUTI</span><h2>Data Cuti Staff</h2><p>Status diperbarui berdasarkan tanggal mulai dan berakhir.</p></div></div>
-      <div class="cuti-toolbar">
-        <input type="text" id="cutiSearch" class="oc-input" placeholder="Cari nama, role, atau status...">
+    <section class="cuti-calendar-card oc-enter">
+      <div class="cuti-calendar-head">
+        <div><span class="oc-section-kicker">KALENDER VISUAL</span><h2>Jadwal Cuti Bulan Ini</h2></div>
+        <div class="cuti-calendar-nav">
+          <button type="button" id="calendarPrev" class="oc-btn oc-btn-secondary">&lsaquo;</button>
+          <strong id="calendarMonthLabel">-</strong>
+          <button type="button" id="calendarNext" class="oc-btn oc-btn-secondary">&rsaquo;</button>
+        </div>
+        <div class="cuti-calendar-legend">
+          <span><i class="dot cs"></i> CS</span>
+          <span><i class="dot kapten"></i> KAPTEN</span>
+          <span><i class="dot kasir"></i> KASIR</span>
+          <span><i class="dot full"></i> Penuh</span>
+        </div>
       </div>
-      <div class="cuti-table-wrap"><table class="cuti-table"><thead><tr><th>Nama</th><th>Role</th><th>Pengajuan Cuti</th><th>Start Cuti</th><th>End Cuti</th><th>Status</th></tr></thead><tbody id="dataCuti"><tr><td colspan="6" class="cuti-loading">Memuat data cuti...</td></tr></tbody></table></div>
+
+      <div class="cuti-calendar-grid">
+        <div class="cuti-role-calendar" id="calendarCS"><h3 class="role-cs">CS</h3><div class="calendar-body"></div></div>
+        <div class="cuti-role-calendar" id="calendarKAPTEN"><h3 class="role-kapten">KAPTEN</h3><div class="calendar-body"></div></div>
+        <div class="cuti-role-calendar" id="calendarKASIR"><h3 class="role-kasir">KASIR</h3><div class="calendar-body"></div></div>
+      </div>
+
+      <p class="cuti-calendar-hint">ℹ️ Klik tanggal berwarna untuk melihat siapa yang cuti pada tanggal tersebut.</p>
+    </section>
+
+    <section class="cuti-table-card oc-enter">
+      <div class="cuti-toolbar">
+        <input type="text" id="cutiSearch" class="oc-input" placeholder="Cari nama, role, jenis cuti, atau status...">
+        <select id="filterCutiStatus"><option value="">Semua Status</option><option value="MENUNGGU">MENUNGGU</option><option value="DISETUJUI">DISETUJUI</option><option value="DITOLAK">DITOLAK</option></select>
+      </div>
+
+      <div class="section-heading cuti-table-heading">
+        <div><h2>Daftar Cuti Staff</h2><p>Semua pengajuan cuti, status berdasarkan tanggal mulai &amp; berakhir.</p></div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="cuti-table">
+          <thead><tr><th>Nama</th><th>Role</th><th>Jenis Cuti</th><th>Tanggal</th><th>Hari</th><th>Status</th></tr></thead>
+          <tbody id="dataCuti"><tr><td colspan="6" class="cuti-loading">Memuat data cuti...</td></tr></tbody>
+        </table>
+      </div>
     </section>
   </main>
 </div>
-<script src="auth.js"></script><script src="menu.js"></script><script src="ui.js"></script><script src="cuti.js?v=3"></script>
+
+<div id="cutiDayDetailModal" class="calendar-detail-modal" aria-hidden="true">
+  <div class="calendar-detail-panel" role="dialog" aria-modal="true">
+    <div class="calendar-detail-head">
+      <strong id="cutiDayDetailTitle">Detail Cuti</strong>
+      <button type="button" onclick="closeCutiDayDetail()" aria-label="Tutup">&times;</button>
+    </div>
+    <div id="cutiDayDetailBody"></div>
+  </div>
+</div>
+
+<script src="auth.js"></script><script src="menu.js"></script><script src="ui.js"></script><script src="cuti.js?v=4"></script>
 </body></html>
