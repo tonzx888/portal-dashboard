@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengajuan Cuti | Operation Center</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="component.css">
+  <link rel="stylesheet" href="animation.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="cuti-pengajuan.css">
+</head>
+<body class="oc-dashboard-body">
+<div class="oc-shell">
+  <aside class="oc-sidebar">
+    <div class="oc-brand"><div class="oc-brand-mark"><span>OC</span></div><div class="oc-brand-copy"><strong>OPERATION CENTER</strong><small>Pusat Operasional</small></div></div>
+    <div class="oc-sidebar-label">MENU UTAMA</div><ul id="sidebarMenu" class="oc-nav"></ul>
+    <div class="oc-sidebar-footer"><div class="oc-system-card"><div class="oc-system-head"><span class="oc-system-pulse"></span><strong>Sistem Aktif</strong></div><small>Seluruh layanan berjalan normal</small></div></div>
+  </aside>
+
+  <main class="oc-main">
+    <header class="oc-topbar">
+      <div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Pengajuan Cuti</strong></div>
+      <div class="oc-topbar-actions">
+        <button type="button" id="btnRefresh" class="oc-btn oc-btn-secondary oc-refresh-btn">Perbarui Data</button>
+        <div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div>
+        <button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button>
+      </div>
+    </header>
+
+    <section class="oc-page-heading oc-enter">
+      <div><span class="oc-section-kicker">CUTI STAFF</span><h1>Pengajuan Cuti</h1><p>Ajukan cuti dan pantau status persetujuannya.</p></div>
+    </section>
+
+    <section class="cuti-summary-grid oc-enter">
+      <article class="cuti-summary-card summary-total">
+        <div class="summary-icon">▣</div>
+        <div><span>Total Pengajuan</span><strong id="summaryTotal">0</strong><small>Semua pengajuan</small></div>
+      </article>
+      <article class="cuti-summary-card summary-pending">
+        <div class="summary-icon">◷</div>
+        <div><span>Menunggu</span><strong id="summaryPending">0</strong><small>Belum diproses</small></div>
+      </article>
+      <article class="cuti-summary-card summary-approved">
+        <div class="summary-icon">✓</div>
+        <div><span>Disetujui</span><strong id="summaryApproved">0</strong><small>Sudah disetujui</small></div>
+      </article>
+      <article class="cuti-summary-card summary-rejected">
+        <div class="summary-icon">×</div>
+        <div><span>Ditolak</span><strong id="summaryRejected">0</strong><small>Pengajuan ditolak</small></div>
+      </article>
+    </section>
+
+    <div class="cuti-top-row oc-enter">
+      <section id="submissionCard" class="cuti-form-card">
+        <div class="section-heading">
+          <div><h2>Ajukan Cuti</h2><p>Lengkapi data pengajuan cuti kamu.</p></div>
+        </div>
+
+        <div id="eligibilityBanner" class="cuti-eligibility-banner" hidden></div>
+
+        <div class="cuti-form-grid">
+          <div><label for="role">Role</label><select id="role"><option value="">Pilih role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></div>
+          <div><label for="jenisCuti">Jenis Cuti</label><select id="jenisCuti"><option value="">Pilih jenis cuti</option><option value="6 BULAN">6 Bulan (12/14 hari)</option><option value="SETAHUN">Setahun (25 hari)</option><option value="6 BULAN ADD ON">6 Bulan (ADD ON)</option></select></div>
+          <div><label for="tanggalMulai">Tanggal Mulai</label><input id="tanggalMulai" type="date"></div>
+          <div><label for="tanggalSelesai">Tanggal Selesai</label><input id="tanggalSelesai" type="date"></div>
+          <div class="cuti-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti"></textarea></div>
+
+          <div class="cuti-form-full cuti-urgent-box">
+            <label class="cuti-urgent-toggle">
+              <input type="checkbox" id="urgentToggle">
+              <span class="cuti-urgent-switch" aria-hidden="true"></span>
+              <span class="cuti-urgent-copy">
+                <strong>Cuti Urgent</strong>
+                <small>Mengabaikan syarat jarak 6 bulan &amp; masa kerja minimal 1 tahun. Gunakan hanya untuk keadaan mendesak.</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions"><button type="button" id="btnSubmitCuti" class="btn-primary">Ajukan Cuti</button></div>
+      </section>
+
+      <section class="cuti-rules-card">
+        <div class="section-heading">
+          <div><h2>📌 Ketentuan Cuti</h2><p>Ringkasan aturan yang berlaku.</p></div>
+        </div>
+
+        <div class="cuti-rules-scroll">
+          <h3>Jatah Hari</h3>
+          <ul>
+            <li>6 Bulan: <strong>KASIR 12 hari</strong>, <strong>CS/KAPTEN 14 hari</strong>.</li>
+            <li>Setahun: <strong>25 hari</strong>, semua role.</li>
+            <li>ADD ON: fleksibel, tidak terikat jatah hari tetap.</li>
+          </ul>
+
+          <h3>Syarat Pengajuan</h3>
+          <ul>
+            <li>Masa kerja minimal <strong>12 bulan</strong> untuk cuti reguler.</li>
+            <li>Jarak minimal <strong>6 bulan</strong> sejak cuti terakhir.</li>
+            <li>Maksimal staff cuti bersamaan per role dibatasi otomatis oleh sistem.</li>
+          </ul>
+
+          <h3>Cuti Urgent</h3>
+          <ul>
+            <li>Mengabaikan syarat masa kerja 1 tahun &amp; jarak 6 bulan.</li>
+            <li>Tetap tunduk pada jatah hari &amp; kuota bentrok per role.</li>
+            <li>Gunakan hanya untuk keadaan mendesak — akan ditandai khusus di tabel persetujuan.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="cuti-table-card oc-enter">
+      <div class="cuti-toolbar">
+        <input type="text" id="searchCuti" class="oc-input" placeholder="Cari nama, role, atau status...">
+        <select id="filterStatus"><option value="">Semua Status</option><option value="MENUNGGU">MENUNGGU</option><option value="DISETUJUI">DISETUJUI</option><option value="DITOLAK">DITOLAK</option></select>
+      </div>
+
+      <div class="section-heading cuti-table-heading">
+        <div><h2>Approval Pengajuan Cuti</h2><p>MASTER dapat menyetujui atau menolak pengajuan yang masih menunggu.</p></div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th><th>Nama</th><th>Role</th><th>Jenis Cuti</th><th>Tanggal</th><th>Hari</th><th>Alasan</th><th>Status</th><th>Diproses Oleh</th><th>Catatan</th><th>Laporan</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="dataCuti"><tr><td colspan="12">Memuat data cuti...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="cutiRejectModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">TOLAK PENGAJUAN</span><h2>Alasan Penolakan</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeCutiRejectModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body">
+      <textarea id="cutiRejectReason" class="oc-textarea" rows="3" placeholder="Jelaskan alasan penolakan..."></textarea>
+    </div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeCutiRejectModal()">Batal</button>
+      <button type="button" class="oc-btn oc-btn-danger" onclick="confirmCutiReject()">Tolak Pengajuan</button>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="menu.js"></script>
+<script src="ui.js"></script>
+<script src="cuti-pengajuan.js"></script>
+</body>
+</html>

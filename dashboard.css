@@ -171,6 +171,130 @@
   color: var(--oc-accent-strong);
 }
 
+/* Grup menu dengan submenu (mis. "Cuti Staff") */
+.oc-nav-group-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 11px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: none;
+  color: var(--oc-text-soft);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color var(--oc-speed) var(--oc-ease),
+    background var(--oc-speed) var(--oc-ease),
+    border-color var(--oc-speed) var(--oc-ease);
+}
+
+.oc-nav-group-toggle:hover {
+  border-color: var(--oc-line);
+  background: var(--oc-accent-soft);
+  color: var(--oc-accent-strong);
+}
+
+.oc-nav-group-toggle.active {
+  border-color: rgba(255, 107, 74, .28);
+  background: linear-gradient(90deg, rgba(255,107,74,.14), rgba(255,107,74,.03));
+  color: var(--oc-accent-strong);
+}
+
+.oc-nav-group-toggle.active .oc-nav-icon {
+  border-color: rgba(255, 107, 74, .30);
+  background: var(--oc-accent-soft);
+  color: var(--oc-accent-strong);
+}
+
+.oc-nav-group-label {
+  flex: 1;
+}
+
+.oc-nav-chevron {
+  display: grid;
+  place-items: center;
+  color: var(--oc-muted);
+  transition: transform var(--oc-speed) var(--oc-ease);
+}
+
+.oc-nav-chevron svg {
+  width: 13px;
+  height: 13px;
+}
+
+.oc-nav-group.open .oc-nav-chevron {
+  transform: rotate(90deg);
+}
+
+.oc-nav-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: grid-template-rows var(--oc-speed-slow) var(--oc-ease);
+}
+
+.oc-nav-sub > * {
+  min-height: 0;
+}
+
+.oc-nav-group.open .oc-nav-sub {
+  grid-template-rows: 1fr;
+}
+
+.oc-nav-sub li {
+  overflow: hidden;
+}
+
+.oc-nav-sub-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  margin: 4px 0 0 14px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--oc-muted);
+  font-size: 12px;
+  text-decoration: none;
+  transition:
+    color var(--oc-speed) var(--oc-ease),
+    background var(--oc-speed) var(--oc-ease),
+    border-color var(--oc-speed) var(--oc-ease);
+}
+
+.oc-nav-sub-link:hover {
+  border-color: var(--oc-line);
+  background: var(--oc-surface-raised);
+  color: var(--oc-text);
+}
+
+.oc-nav-sub-link.active {
+  border-color: rgba(14, 124, 134, .28);
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+  font-weight: 700;
+}
+
+.oc-nav-icon-sub {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+}
+
+.oc-nav-icon-sub svg {
+  width: 13px;
+  height: 13px;
+}
+
 .oc-sidebar-footer {
   margin-top: auto;
   padding-top: 22px;

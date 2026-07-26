@@ -1,0 +1,115 @@
+/* ===== Kartu ringkasan status ===== */
+.cuti-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:14px;margin-bottom:16px}
+.cuti-summary-card{display:flex;align-items:center;gap:12px;padding:12px 14px;min-height:70px;border:1px solid var(--oc-line);border-radius:11px;background:linear-gradient(145deg,#ffffff,#f4f9f8);box-shadow:var(--oc-shadow-sm)}
+.cuti-summary-card .summary-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:9px;font-size:22px;font-weight:800;color:#fff}
+.cuti-summary-card div:last-child{display:flex;flex-direction:column;gap:1px}
+.cuti-summary-card span{font-size:11px;color:#3e5c5c}
+.cuti-summary-card strong{font-size:20px;line-height:1;color:#0e2b2e}
+.cuti-summary-card small{color:#6e8788;font-size:11px}
+.summary-total .summary-icon{background:#155ed6}
+.summary-pending .summary-icon{background:#c97a12}
+.summary-approved .summary-icon{background:#0a7a4e}
+.summary-rejected .summary-icon{background:#c8483a}
+
+.summary-pending.has-pending{
+  border-color:rgba(255,107,74,.45)!important;
+  background:linear-gradient(145deg,#fff,rgba(255,107,74,.06))!important;
+  box-shadow:0 0 0 3px rgba(255,107,74,.12),var(--oc-shadow-sm)!important;
+  animation:cutiPendingPulse 2.4s ease-in-out infinite;
+}
+@keyframes cutiPendingPulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(255,107,74,.12),var(--oc-shadow-sm)}
+  50%{box-shadow:0 0 0 6px rgba(255,107,74,.05),var(--oc-shadow-sm)}
+}
+@media (prefers-reduced-motion: reduce){.summary-pending.has-pending{animation:none}}
+
+/* ===== Baris form + kartu ketentuan ===== */
+.cuti-top-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,1fr);gap:16px;align-items:start;margin-bottom:16px}
+.cuti-form-card,.cuti-rules-card{padding:18px;border:1px solid var(--oc-line);border-radius:var(--oc-radius-lg);background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft));box-shadow:var(--oc-shadow-sm)}
+
+.section-heading{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.section-heading::before{content:"";width:4px;height:30px;border-radius:99px;background:linear-gradient(180deg,var(--oc-primary),var(--oc-primary-strong));flex:0 0 auto}
+.section-heading h2{margin:0;font-size:19px;color:var(--oc-text)}
+.section-heading p{margin:3px 0 0;color:var(--oc-muted);font-size:12px}
+.cuti-table-heading{margin-top:6px}
+
+.cuti-eligibility-banner{margin-bottom:16px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6}
+.cuti-eligibility-banner.info{border:1px solid rgba(46,125,192,.28);background:rgba(46,125,192,.08);color:#1c507d}
+.cuti-eligibility-banner.neutral{border:1px solid var(--oc-line);background:var(--oc-surface-soft);color:var(--oc-text-soft)}
+.cuti-eligibility-banner strong{color:inherit}
+
+.cuti-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 14px}
+.cuti-form-full{grid-column:1/-1}
+.cuti-form-grid label{display:block;margin-bottom:7px;color:var(--oc-text-soft);font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.cuti-form-grid input,.cuti-form-grid select,.cuti-form-grid textarea{
+  width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--oc-line-strong);
+  border-radius:12px;background:rgba(244,249,248,.9);color:var(--oc-text);outline:none;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.cuti-form-grid textarea{min-height:auto;padding:12px}
+.cuti-form-grid input:focus,.cuti-form-grid select:focus,.cuti-form-grid textarea:focus{
+  border-color:rgba(14,124,134,.55);background:#fff;box-shadow:0 0 0 4px rgba(14,124,134,.12);
+}
+
+.form-actions{display:flex;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px dashed var(--oc-line)}
+.form-actions .btn-primary,.form-actions #btnSubmitCuti{
+  display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:11px 26px;
+  border:0;border-radius:12px;background:linear-gradient(135deg,var(--oc-primary-strong),var(--oc-primary));
+  color:#fff;font-weight:800;font-size:13px;box-shadow:0 12px 24px rgba(14,124,134,.22);
+  cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;
+}
+.form-actions .btn-primary::after{content:"→";font-size:15px}
+.form-actions .btn-primary:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(14,124,134,.28)}
+.form-actions .btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+/* ===== Toggle Cuti Urgent ===== */
+.cuti-urgent-box{padding:14px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft);transition:border-color .18s ease,background .18s ease}
+.cuti-urgent-box.is-urgent{border-color:rgba(200,72,58,.4);background:rgba(200,72,58,.06)}
+.cuti-urgent-toggle{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.cuti-urgent-toggle input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.cuti-urgent-switch{position:relative;flex:0 0 auto;width:40px;height:22px;margin-top:2px;border-radius:999px;background:var(--oc-line-strong);transition:background .18s ease}
+.cuti-urgent-switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s ease}
+.cuti-urgent-toggle input:checked + .cuti-urgent-switch{background:#c8483a}
+.cuti-urgent-toggle input:checked + .cuti-urgent-switch::after{transform:translateX(18px)}
+.cuti-urgent-copy strong{display:block;color:var(--oc-text);font-size:13px}
+.cuti-urgent-copy small{display:block;margin-top:3px;color:var(--oc-muted);font-size:11px;line-height:1.5}
+.cuti-urgent-box.is-urgent .cuti-urgent-copy strong{color:#c8483a}
+
+/* ===== Kartu ketentuan (mirip offday-notice-card) ===== */
+.cuti-rules-scroll{max-height:min(560px,calc(100vh - 420px));overflow-y:auto;padding-right:8px;font-size:12px;line-height:1.65;color:var(--oc-text-soft)}
+.cuti-rules-scroll h3{margin:16px 0 8px;color:var(--oc-primary-strong);font-size:13px;font-weight:800}
+.cuti-rules-scroll h3:first-child{margin-top:0}
+.cuti-rules-scroll ul{margin:0;padding-left:18px}
+.cuti-rules-scroll li{margin-bottom:8px}
+.cuti-rules-scroll li:last-child{margin-bottom:0}
+.cuti-rules-scroll strong{color:var(--oc-text)}
+
+@media(max-width:1200px){.cuti-top-row{grid-template-columns:1fr}}
+@media(max-width:760px){.cuti-form-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.cuti-form-grid{grid-template-columns:1fr}.cuti-summary-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== Tabel approval ===== */
+.cuti-table-card{padding:18px;border:1px solid var(--oc-line);border-radius:var(--oc-radius-lg);background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft));box-shadow:var(--oc-shadow-sm)}
+.cuti-toolbar{display:grid;grid-template-columns:minmax(240px,1fr) 200px;gap:12px;margin-bottom:16px}
+.table-scroll{overflow:auto;border:1px solid var(--oc-line);border-radius:9px}
+.table-scroll table{width:100%;min-width:1280px;border-collapse:separate;border-spacing:0}
+.table-scroll th{position:sticky;top:0;background:rgba(238,245,244,.98);color:#0e2b2e;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:11px;text-align:left;border-bottom:1px solid var(--oc-line)}
+.table-scroll td{padding:11px;font-size:12px;color:var(--oc-text-soft);border-bottom:1px solid var(--oc-line);vertical-align:top}
+.table-scroll tbody tr:hover{background:rgba(14,43,46,.03)}
+.cuti-wrap{white-space:normal;max-width:220px}
+.cuti-muted{color:var(--oc-muted);font-size:11px}
+
+.cuti-status-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.03em;color:#fff;white-space:nowrap}
+.cuti-status-badge.pending{background:#c97a12}
+.cuti-status-badge.approved{background:#0a7a4e}
+.cuti-status-badge.rejected{background:#c8483a}
+
+.cuti-urgent-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:#c8483a;color:#fff;font-size:9px;font-weight:800;letter-spacing:.03em;vertical-align:middle}
+
+.cuti-action-btn{min-height:30px;padding:5px 10px;margin-right:6px;border:0;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.cuti-action-btn.approve{background:#0a7a4e}
+.cuti-action-btn.reject{background:#c8483a}
+
+.cuti-report-cell{white-space:nowrap}
+.cuti-report-btn{min-height:28px;padding:4px 9px;margin-right:6px;margin-bottom:4px;border:1px solid var(--oc-line-strong);border-radius:8px;background:#fff;color:var(--oc-text-soft);font-size:10px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.cuti-report-btn:hover{border-color:rgba(14,124,134,.4);background:var(--oc-primary-soft);color:var(--oc-primary-strong)}
