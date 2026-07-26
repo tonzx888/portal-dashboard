@@ -149,7 +149,7 @@ async function loadEligibility() {
         }
 
         banner.className = "cuti-eligibility-banner info";
-        banner.innerHTML = `Cuti terakhir berakhir <strong>${escapeCutiHtml(result.lastCutiEnd)}</strong> — cuti reguler berikutnya boleh diajukan mulai <strong>${escapeCutiHtml(result.nextEligibleDate)}</strong>. Butuh lebih cepat? Aktifkan <em>Cuti Urgent</em>.`;
+        banner.innerHTML = `Cuti terakhir berakhir <strong>${escapeCutiHtml(result.lastCutiEnd)}</strong> — cuti reguler berikutnya boleh diajukan mulai <strong>${escapeCutiHtml(result.nextEligibleDate)}</strong>.`;
     } catch (error) {
         console.error("Gagal memuat info kelayakan cuti:", error);
     }
@@ -174,14 +174,14 @@ async function loadStaffProfileAndPassportMap() {
         });
 
         const own = result.find(item =>
-            String(item.nama || "").trim().toUpperCase() === currentUsername.toUpperCase()
+            String(item.username || "").trim().toUpperCase() === currentUsername.toUpperCase()
         );
 
         if (!own) {
             if (display) display.textContent = "-";
             if (warning) {
                 warning.hidden = false;
-                warning.textContent = `Nama "${currentUsername}" tidak ditemukan di Data Staff. Hubungi MASTER untuk mendaftarkan data staff terlebih dahulu sebelum bisa mengajukan cuti.`;
+                warning.textContent = `Username "${currentUsername}" tidak ditemukan pada kolom Username di Data Staff. Hubungi MASTER untuk melengkapi data staff terlebih dahulu sebelum bisa mengajukan cuti.`;
             }
             if (submitButton) submitButton.disabled = true;
             return;
