@@ -69,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("jenisCuti")?.addEventListener("change", updateCutiDayLock);
     document.getElementById("tanggalMulai")?.addEventListener("change", updateCutiEndPreview);
     document.getElementById("jumlahHari")?.addEventListener("input", updateCutiEndPreview);
+    document.getElementById("tanggalMulaiLokal")?.addEventListener("change", updateCutiEndPreview);
+    document.getElementById("tanggalMulaiKerja")?.addEventListener("change", updateCutiEndPreview);
 
     document.getElementById("urgentToggle")?.addEventListener("change", event => {
         document.querySelector(".cuti-urgent-box")
@@ -78,25 +80,35 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Mengunci/membuka kolom Jumlah Hari:
- * - Terkunci (otomatis) untuk jenis cuti tunggal & bukan urgent.
- * - Terbuka (isi manual) untuk kombinasi "LOKAL + KERJA" ATAU saat
- *   Cuti Urgent aktif.
+ * Mengatur tampilan & kunci kolom Jumlah Hari sesuai jenis cuti:
+ * - Jenis tunggal (Lokal/Indonesia/Kerja/Setahun): 1 tanggal mulai,
+ *   jumlah hari terkunci ke jatah role (KECUALI Cuti Urgent aktif,
+ *   boleh diisi manual).
+ * - "Lokal + Kerja": 2 tanggal mulai terpisah (masing-masing satu
+ *   periode), jumlah hari SELALU terkunci ke jatah role untuk
+ *   kedua periode -- tidak bisa diedit manual sama sekali.
  */
 function updateCutiDayLock() {
     const jenisCuti = document.getElementById("jenisCuti")?.value || "";
     const isUrgent = document.getElementById("urgentToggle")?.checked || false;
-    const isCombo = jenisCuti.indexOf("+") >= 0;
+    const isCombo = jenisCuti === "CUTI LOKAL + CUTI KERJA";
     const jumlahHariInput = document.getElementById("jumlahHari");
     if (!jumlahHariInput) return;
 
-    const isFleksibel = isCombo || isUrgent;
+    document.getElementById("singlePeriodFields").hidden = isCombo;
+    document.getElementById("comboPeriodFields").hidden = !isCombo;
+
+    const role = staffProfile?.jabatan || "";
+    const lockedDays = jenisCuti === "SETAHUN" ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
+
+    // Kombinasi: SELALU terkunci ke role, tidak peduli urgent atau tidak.
+    // Tunggal: terkunci ke role KECUALI urgent aktif (boleh manual).
+    const isFleksibel = !isCombo && isUrgent;
+
     jumlahHariInput.readOnly = !isFleksibel;
     jumlahHariInput.classList.toggle("is-editable", isFleksibel);
 
     if (!isFleksibel) {
-        const role = staffProfile?.jabatan || "";
-        const lockedDays = jenisCuti === "SETAHUN" ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
         jumlahHariInput.value = jenisCuti ? lockedDays : "";
     } else if (!jumlahHariInput.value) {
         jumlahHariInput.value = "";
@@ -107,9 +119,16 @@ function updateCutiDayLock() {
 }
 
 function updateCutiEndPreview() {
-    const preview = document.getElementById("tanggalSelesaiPreview");
-    const tanggalMulai = document.getElementById("tanggalMulai")?.value || "";
     const jumlahHari = Number(document.getElementById("jumlahHari")?.value || 0);
+
+    fillEndDatePreview("tanggalMulai", "tanggalSelesaiPreview", jumlahHari);
+    fillEndDatePreview("tanggalMulaiLokal", "tanggalSelesaiLokalPreview", jumlahHari);
+    fillEndDatePreview("tanggalMulaiKerja", "tanggalSelesaiKerjaPreview", jumlahHari);
+}
+
+function fillEndDatePreview(startId, previewId, jumlahHari) {
+    const preview = document.getElementById(previewId);
+    const tanggalMulai = document.getElementById(startId)?.value || "";
     if (!preview) return;
 
     if (!tanggalMulai || !jumlahHari || jumlahHari < 1) {
@@ -310,7 +329,7 @@ function cutiStatusBadge(status) {
 async function submitCuti() {
     const button = document.getElementById("btnSubmitCuti");
     const jenisCuti = document.getElementById("jenisCuti")?.value || "";
-    const tanggalMulai = document.getElementById("tanggalMulai")?.value || "";
+    const isCombo = jenisCuti === "CUTI LOKAL + CUTI KERJA";
     const jumlahHari = document.getElementById("jumlahHari")?.value || "";
     const alasan = document.getElementById("alasan")?.value.trim() || "";
     const urgent = document.getElementById("urgentToggle")?.checked || false;
@@ -320,9 +339,40 @@ async function submitCuti() {
         return;
     }
 
-    if (!jenisCuti || !tanggalMulai || !jumlahHari || !alasan) {
-        showToast("Jenis cuti, tanggal mulai, jumlah hari, dan alasan wajib diisi.", "error");
+    if (!jenisCuti || !alasan) {
+        showToast("Jenis cuti dan alasan wajib diisi.", "error");
         return;
+    }
+
+    const params = new URLSearchParams({
+        type: "submitCuti",
+        token: getLoginToken(),
+        jenisCuti,
+        alasan,
+        urgent: String(urgent)
+    });
+
+    if (isCombo) {
+        const tanggalMulaiLokal = document.getElementById("tanggalMulaiLokal")?.value || "";
+        const tanggalMulaiKerja = document.getElementById("tanggalMulaiKerja")?.value || "";
+
+        if (!tanggalMulaiLokal || !tanggalMulaiKerja) {
+            showToast("Tanggal mulai Cuti Lokal dan Cuti Kerja wajib diisi.", "error");
+            return;
+        }
+
+        params.set("tanggalMulaiLokal", tanggalMulaiLokal);
+        params.set("tanggalMulaiKerja", tanggalMulaiKerja);
+    } else {
+        const tanggalMulai = document.getElementById("tanggalMulai")?.value || "";
+
+        if (!tanggalMulai || !jumlahHari) {
+            showToast("Tanggal mulai dan jumlah hari wajib diisi.", "error");
+            return;
+        }
+
+        params.set("tanggalMulai", tanggalMulai);
+        params.set("jumlahHari", jumlahHari);
     }
 
     if (button) {
@@ -331,16 +381,6 @@ async function submitCuti() {
     }
 
     try {
-        const params = new URLSearchParams({
-            type: "submitCuti",
-            token: getLoginToken(),
-            jenisCuti,
-            tanggalMulai,
-            jumlahHari,
-            alasan,
-            urgent: String(urgent)
-        });
-
         const response = await fetch(`${API_BASE}?${params.toString()}`);
         const result = await response.json();
 
@@ -351,8 +391,12 @@ async function submitCuti() {
         if (result.success) {
             document.getElementById("jenisCuti").value = "";
             document.getElementById("tanggalMulai").value = "";
+            document.getElementById("tanggalMulaiLokal").value = "";
+            document.getElementById("tanggalMulaiKerja").value = "";
             document.getElementById("jumlahHari").value = "";
             document.getElementById("tanggalSelesaiPreview").value = "";
+            document.getElementById("tanggalSelesaiLokalPreview").value = "";
+            document.getElementById("tanggalSelesaiKerjaPreview").value = "";
             document.getElementById("alasan").value = "";
             document.getElementById("urgentToggle").checked = false;
             document.querySelector(".cuti-urgent-box")?.classList.remove("is-urgent");

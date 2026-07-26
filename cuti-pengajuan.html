@@ -79,12 +79,33 @@
           </div>
 
           <div>
-            <label for="jumlahHari">Jumlah Hari</label>
-            <input id="jumlahHari" type="number" min="1" max="90" readonly placeholder="Otomatis">
+            <label for="jumlahHari">Jumlah Hari <small>(per periode)</small></label>
+            <input id="jumlahHari" type="number" readonly placeholder="Otomatis mengikuti role">
           </div>
 
-          <div><label for="tanggalMulai">Tanggal Mulai</label><input id="tanggalMulai" type="date"></div>
-          <div><label for="tanggalSelesaiPreview">Tanggal Selesai</label><input id="tanggalSelesaiPreview" type="text" readonly placeholder="Otomatis mengikuti jumlah hari"></div>
+          <!-- Mode satu periode -->
+          <div id="singlePeriodFields" class="cuti-period-fields">
+            <div><label for="tanggalMulai">Tanggal Mulai</label><input id="tanggalMulai" type="date"></div>
+            <div><label for="tanggalSelesaiPreview">Tanggal Selesai</label><input id="tanggalSelesaiPreview" type="text" readonly placeholder="Otomatis mengikuti jumlah hari"></div>
+          </div>
+
+          <!-- Mode kombinasi: 2 periode terpisah -->
+          <div id="comboPeriodFields" class="cuti-period-fields cuti-form-full" hidden>
+            <div class="cuti-combo-group">
+              <p class="cuti-combo-label">📍 Periode Cuti Lokal</p>
+              <div class="cuti-combo-row">
+                <div><label for="tanggalMulaiLokal">Tanggal Mulai</label><input id="tanggalMulaiLokal" type="date"></div>
+                <div><label for="tanggalSelesaiLokalPreview">Tanggal Selesai</label><input id="tanggalSelesaiLokalPreview" type="text" readonly placeholder="Otomatis"></div>
+              </div>
+            </div>
+            <div class="cuti-combo-group">
+              <p class="cuti-combo-label">💼 Periode Cuti Kerja</p>
+              <div class="cuti-combo-row">
+                <div><label for="tanggalMulaiKerja">Tanggal Mulai</label><input id="tanggalMulaiKerja" type="date"></div>
+                <div><label for="tanggalSelesaiKerjaPreview">Tanggal Selesai</label><input id="tanggalSelesaiKerjaPreview" type="text" readonly placeholder="Otomatis"></div>
+              </div>
+            </div>
+          </div>
 
           <div class="cuti-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti"></textarea></div>
 

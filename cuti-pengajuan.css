@@ -46,6 +46,15 @@
 .cuti-form-grid input#jumlahHari.is-editable{background:#fff;color:var(--oc-text);cursor:text}
 .cuti-form-grid input#jumlahHari.is-editable:focus{border-color:rgba(14,124,134,.55);box-shadow:0 0 0 4px rgba(14,124,134,.12)}
 
+.cuti-period-fields{display:contents}
+.cuti-period-fields.cuti-form-full{display:block}
+#singlePeriodFields{display:contents}
+#comboPeriodFields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.cuti-combo-group{padding:12px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft)}
+.cuti-combo-label{margin:0 0 10px;font-size:12px;font-weight:800;color:var(--oc-text)}
+.cuti-combo-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:700px){#comboPeriodFields{grid-template-columns:1fr}}
+
 .cuti-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 14px}
 .cuti-form-full{grid-column:1/-1}
 .cuti-form-grid label{display:block;margin-bottom:7px;color:var(--oc-text-soft);font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
