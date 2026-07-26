@@ -23,9 +23,9 @@
 }
 @media (prefers-reduced-motion: reduce){.summary-pending.has-pending{animation:none}}
 
-/* ===== Baris form + kartu ketentuan ===== */
-.cuti-top-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,1fr);gap:16px;align-items:start;margin-bottom:16px}
-.cuti-form-card,.cuti-rules-card{padding:18px;border:1px solid var(--oc-line);border-radius:var(--oc-radius-lg);background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft));box-shadow:var(--oc-shadow-sm)}
+/* ===== Modal Ajukan Cuti ===== */
+.cuti-submit-modal-panel{width:min(760px,100%);max-height:90vh;overflow-y:auto}
+.cuti-form-card,.cuti-rules-card{padding:18px;border:1px solid var(--oc-line);border-radius:var(--oc-radius-lg);background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft));box-shadow:var(--oc-shadow-sm);margin-bottom:16px}
 
 .section-heading{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .section-heading::before{content:"";width:4px;height:30px;border-radius:99px;background:linear-gradient(180deg,var(--oc-primary),var(--oc-primary-strong));flex:0 0 auto}
@@ -92,16 +92,15 @@
 .cuti-urgent-copy small{display:block;margin-top:3px;color:var(--oc-muted);font-size:11px;line-height:1.5}
 .cuti-urgent-box.is-urgent .cuti-urgent-copy strong{color:#c8483a}
 
-/* ===== Kartu ketentuan (mirip offday-notice-card) ===== */
-.cuti-rules-scroll{max-height:min(560px,calc(100vh - 420px));overflow-y:auto;padding-right:8px;font-size:12px;line-height:1.65;color:var(--oc-text-soft)}
-.cuti-rules-scroll h3{margin:16px 0 8px;color:var(--oc-primary-strong);font-size:13px;font-weight:800}
-.cuti-rules-scroll h3:first-child{margin-top:0}
-.cuti-rules-scroll ul{margin:0;padding-left:18px}
-.cuti-rules-scroll li{margin-bottom:8px}
-.cuti-rules-scroll li:last-child{margin-bottom:0}
-.cuti-rules-scroll strong{color:var(--oc-text)}
+/* ===== Kartu ketentuan (sekarang lebar penuh, 3 kolom) ===== */
+.cuti-rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;font-size:12px;line-height:1.65;color:var(--oc-text-soft)}
+.cuti-rules-grid h3{margin:0 0 8px;color:var(--oc-primary-strong);font-size:13px;font-weight:800}
+.cuti-rules-grid ul{margin:0;padding-left:18px}
+.cuti-rules-grid li{margin-bottom:8px}
+.cuti-rules-grid li:last-child{margin-bottom:0}
+.cuti-rules-grid strong{color:var(--oc-text)}
 
-@media(max-width:1200px){.cuti-top-row{grid-template-columns:1fr}}
+@media(max-width:900px){.cuti-rules-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.cuti-form-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.cuti-form-grid{grid-template-columns:1fr}.cuti-summary-grid{grid-template-columns:repeat(2,1fr)}}
 

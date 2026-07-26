@@ -30,6 +30,7 @@
 
     <section class="oc-page-heading oc-enter">
       <div><span class="oc-section-kicker">CUTI STAFF</span><h1>Pengajuan Cuti</h1><p>Ajukan cuti dan pantau status persetujuannya.</p></div>
+      <button type="button" class="oc-btn oc-btn-primary" onclick="openCutiSubmitModal()">+ Ajukan Cuti</button>
     </section>
 
     <section class="cuti-summary-grid oc-enter">
@@ -51,108 +52,38 @@
       </article>
     </section>
 
-    <div class="cuti-top-row oc-enter">
-      <section id="submissionCard" class="cuti-form-card">
-        <div class="section-heading">
-          <div><h2>Ajukan Cuti</h2><p>Lengkapi data pengajuan cuti kamu.</p></div>
-        </div>
+    <section class="cuti-rules-card oc-enter">
+      <div class="section-heading">
+        <div><h2>📌 Ketentuan Cuti</h2><p>Ringkasan aturan yang berlaku sebelum mengajukan.</p></div>
+      </div>
 
-        <div id="eligibilityBanner" class="cuti-eligibility-banner" hidden></div>
-        <div id="staffProfileWarning" class="cuti-eligibility-banner rejected" hidden></div>
-
-        <div class="cuti-form-grid">
-          <div class="cuti-form-full">
-            <label>Nama &amp; Role</label>
-            <div id="staffProfileDisplay" class="cuti-profile-display">Memuat data staff...</div>
-          </div>
-
-          <div>
-            <label for="jenisCuti">Jenis Cuti</label>
-            <select id="jenisCuti">
-              <option value="">Pilih jenis cuti</option>
-              <option value="CUTI LOKAL">Cuti Lokal</option>
-              <option value="CUTI INDONESIA">Cuti Indonesia</option>
-              <option value="CUTI KERJA">Cuti Kerja</option>
-              <option value="CUTI LOKAL + CUTI KERJA">Cuti Lokal + Cuti Kerja</option>
-              <option value="SETAHUN">Setahun (25 hari)</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="jumlahHari">Jumlah Hari <small>(per periode)</small></label>
-            <input id="jumlahHari" type="number" readonly placeholder="Otomatis mengikuti role">
-          </div>
-
-          <!-- Mode satu periode -->
-          <div id="singlePeriodFields" class="cuti-period-fields">
-            <div><label for="tanggalMulai">Tanggal Mulai</label><input id="tanggalMulai" type="date"></div>
-            <div><label for="tanggalSelesaiPreview">Tanggal Selesai</label><input id="tanggalSelesaiPreview" type="text" readonly placeholder="Otomatis mengikuti jumlah hari"></div>
-          </div>
-
-          <!-- Mode kombinasi: 2 periode terpisah -->
-          <div id="comboPeriodFields" class="cuti-period-fields cuti-form-full" hidden>
-            <div class="cuti-combo-group">
-              <p class="cuti-combo-label">📍 Periode Cuti Lokal</p>
-              <div class="cuti-combo-row">
-                <div><label for="tanggalMulaiLokal">Tanggal Mulai</label><input id="tanggalMulaiLokal" type="date"></div>
-                <div><label for="tanggalSelesaiLokalPreview">Tanggal Selesai</label><input id="tanggalSelesaiLokalPreview" type="text" readonly placeholder="Otomatis"></div>
-              </div>
-            </div>
-            <div class="cuti-combo-group">
-              <p class="cuti-combo-label">💼 Periode Cuti Kerja</p>
-              <div class="cuti-combo-row">
-                <div><label for="tanggalMulaiKerja">Tanggal Mulai</label><input id="tanggalMulaiKerja" type="date"></div>
-                <div><label for="tanggalSelesaiKerjaPreview">Tanggal Selesai</label><input id="tanggalSelesaiKerjaPreview" type="text" readonly placeholder="Otomatis"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cuti-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti"></textarea></div>
-
-          <div class="cuti-form-full cuti-urgent-box">
-            <label class="cuti-urgent-toggle">
-              <span class="cuti-urgent-copy">
-                <strong>Cuti Urgent</strong>
-                <small>Mengabaikan syarat jarak 6 bulan &amp; masa kerja minimal 1 tahun. Gunakan hanya untuk keadaan mendesak.</small>
-              </span>
-              <input type="checkbox" id="urgentToggle">
-              <span class="cuti-urgent-switch" aria-hidden="true"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-actions"><button type="button" id="btnSubmitCuti" class="btn-primary">Ajukan Cuti</button></div>
-      </section>
-
-      <section class="cuti-rules-card">
-        <div class="section-heading">
-          <div><h2>📌 Ketentuan Cuti</h2><p>Ringkasan aturan yang berlaku.</p></div>
-        </div>
-
-        <div class="cuti-rules-scroll">
+      <div class="cuti-rules-grid">
+        <div>
           <h3>Jatah Hari</h3>
           <ul>
             <li>6 Bulan: <strong>KASIR 12 hari</strong>, <strong>CS/KAPTEN 14 hari</strong>.</li>
             <li>Setahun: <strong>25 hari</strong>, semua role.</li>
-            <li>ADD ON: fleksibel, tidak terikat jatah hari tetap.</li>
+            <li>Lokal + Kerja: 2 periode terpisah, masing-masing tetap ikut jatah role.</li>
           </ul>
-
+        </div>
+        <div>
           <h3>Syarat Pengajuan</h3>
           <ul>
             <li>Masa kerja minimal <strong>12 bulan</strong> untuk cuti reguler.</li>
             <li>Jarak minimal <strong>6 bulan</strong> sejak cuti terakhir.</li>
             <li>Maksimal staff cuti bersamaan per role dibatasi otomatis oleh sistem.</li>
           </ul>
-
+        </div>
+        <div>
           <h3>Cuti Urgent</h3>
           <ul>
             <li>Mengabaikan syarat masa kerja 1 tahun &amp; jarak 6 bulan.</li>
             <li>Tetap tunduk pada jatah hari &amp; kuota bentrok per role.</li>
-            <li>Gunakan hanya untuk keadaan mendesak — akan ditandai khusus di tabel persetujuan.</li>
+            <li>Ditandai khusus di tabel persetujuan.</li>
           </ul>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
     <section class="cuti-table-card oc-enter">
       <div class="cuti-toolbar">
@@ -176,6 +107,86 @@
       </div>
     </section>
   </main>
+</div>
+
+<div id="cutiSubmitModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel cuti-submit-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">CUTI STAFF</span><h2>Ajukan Cuti</h2><p>Lengkapi data pengajuan cuti kamu.</p></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeCutiSubmitModal()" aria-label="Tutup">&times;</button>
+    </div>
+
+    <div class="oc-modal-body">
+      <div id="eligibilityBanner" class="cuti-eligibility-banner" hidden></div>
+      <div id="staffProfileWarning" class="cuti-eligibility-banner rejected" hidden></div>
+
+      <div class="cuti-form-grid">
+        <div class="cuti-form-full">
+          <label>Nama &amp; Role</label>
+          <div id="staffProfileDisplay" class="cuti-profile-display">Memuat data staff...</div>
+        </div>
+
+        <div>
+          <label for="jenisCuti">Jenis Cuti</label>
+          <select id="jenisCuti">
+            <option value="">Pilih jenis cuti</option>
+            <option value="CUTI LOKAL">Cuti Lokal</option>
+            <option value="CUTI INDONESIA">Cuti Indonesia</option>
+            <option value="CUTI KERJA">Cuti Kerja</option>
+            <option value="CUTI LOKAL + CUTI KERJA">Cuti Lokal + Cuti Kerja</option>
+            <option value="SETAHUN">Setahun (25 hari)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="jumlahHari">Jumlah Hari <small>(per periode)</small></label>
+          <input id="jumlahHari" type="number" readonly placeholder="Otomatis mengikuti role">
+        </div>
+
+        <!-- Mode satu periode -->
+        <div id="singlePeriodFields" class="cuti-period-fields">
+          <div><label for="tanggalMulai">Tanggal Mulai</label><input id="tanggalMulai" type="date"></div>
+          <div><label for="tanggalSelesaiPreview">Tanggal Selesai</label><input id="tanggalSelesaiPreview" type="text" readonly placeholder="Otomatis mengikuti jumlah hari"></div>
+        </div>
+
+        <!-- Mode kombinasi: 2 periode terpisah -->
+        <div id="comboPeriodFields" class="cuti-period-fields cuti-form-full" hidden>
+          <div class="cuti-combo-group">
+            <p class="cuti-combo-label">📍 Periode Cuti Lokal</p>
+            <div class="cuti-combo-row">
+              <div><label for="tanggalMulaiLokal">Tanggal Mulai</label><input id="tanggalMulaiLokal" type="date"></div>
+              <div><label for="tanggalSelesaiLokalPreview">Tanggal Selesai</label><input id="tanggalSelesaiLokalPreview" type="text" readonly placeholder="Otomatis"></div>
+            </div>
+          </div>
+          <div class="cuti-combo-group">
+            <p class="cuti-combo-label">💼 Periode Cuti Kerja</p>
+            <div class="cuti-combo-row">
+              <div><label for="tanggalMulaiKerja">Tanggal Mulai</label><input id="tanggalMulaiKerja" type="date"></div>
+              <div><label for="tanggalSelesaiKerjaPreview">Tanggal Selesai</label><input id="tanggalSelesaiKerjaPreview" type="text" readonly placeholder="Otomatis"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuti-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti"></textarea></div>
+
+        <div class="cuti-form-full cuti-urgent-box">
+          <label class="cuti-urgent-toggle">
+            <span class="cuti-urgent-copy">
+              <strong>Cuti Urgent</strong>
+              <small>Mengabaikan syarat jarak 6 bulan &amp; masa kerja minimal 1 tahun. Gunakan hanya untuk keadaan mendesak.</small>
+            </span>
+            <input type="checkbox" id="urgentToggle">
+            <span class="cuti-urgent-switch" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeCutiSubmitModal()">Batal</button>
+      <button type="button" id="btnSubmitCuti" class="oc-btn oc-btn-primary">Ajukan Cuti</button>
+    </div>
+  </div>
 </div>
 
 <div id="cutiRejectModal" class="oc-modal" aria-hidden="true">

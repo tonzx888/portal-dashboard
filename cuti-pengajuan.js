@@ -42,7 +42,32 @@ function showToast(message, type = "success") {
     );
 }
 
+function openCutiSubmitModal() {
+    const modal = document.getElementById("cutiSubmitModal");
+    if (!modal) return;
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeCutiSubmitModal() {
+    const modal = document.getElementById("cutiSubmitModal");
+    if (!modal) return;
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    const submitModal = document.getElementById("cutiSubmitModal");
+    submitModal?.addEventListener("click", event => {
+        if (event.target === submitModal) closeCutiSubmitModal();
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && submitModal?.style.display === "flex") {
+            closeCutiSubmitModal();
+        }
+    });
+
     const tbody = document.getElementById("dataCuti");
     if (tbody && typeof ocSkeletonRows === "function") {
         tbody.innerHTML = ocSkeletonRows(12);
@@ -406,6 +431,7 @@ async function submitCuti() {
             }
 
             updateCutiDayLock();
+            closeCutiSubmitModal();
             await Promise.all([loadCuti(), loadEligibility()]);
         }
     } catch (error) {
