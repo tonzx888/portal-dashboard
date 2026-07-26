@@ -46,14 +46,21 @@
 .cuti-form-grid input#jumlahHari.is-editable{background:#fff;color:var(--oc-text);cursor:text}
 .cuti-form-grid input#jumlahHari.is-editable:focus{border-color:rgba(14,124,134,.55);box-shadow:0 0 0 4px rgba(14,124,134,.12)}
 
+.cuti-submit-modal-panel{width:min(600px,100%);max-height:88vh;overflow-y:auto;padding:22px}
+
 .cuti-period-fields{display:contents}
 .cuti-period-fields.cuti-form-full{display:block}
-#singlePeriodFields{display:contents}
-#comboPeriodFields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#singlePeriodFields:not([hidden]){display:contents}
+#comboPeriodFields[hidden],#singlePeriodFields[hidden]{display:none!important}
+#comboPeriodFields:not([hidden]){display:grid;grid-template-columns:1fr;gap:12px}
 .cuti-combo-group{padding:12px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft)}
 .cuti-combo-label{margin:0 0 10px;font-size:12px;font-weight:800;color:var(--oc-text)}
 .cuti-combo-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:700px){#comboPeriodFields{grid-template-columns:1fr}}
+.cuti-combo-row-3{display:grid;grid-template-columns:1.3fr 1fr 1.3fr;gap:8px}
+.cuti-combo-total{padding:8px 12px;border-radius:9px;background:var(--oc-surface-raised);color:var(--oc-text-soft);font-size:12px;font-weight:700;text-align:center}
+.cuti-combo-total.match{background:rgba(10,122,78,.12);color:#0a7a4e}
+.cuti-combo-total.mismatch{background:rgba(200,72,58,.12);color:#c8483a}
+@media(max-width:500px){.cuti-combo-row-3{grid-template-columns:1fr}}
 
 .cuti-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 14px}
 .cuti-form-full{grid-column:1/-1}

@@ -103,6 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("jumlahHari")?.addEventListener("input", updateCutiEndPreview);
     document.getElementById("tanggalMulaiLokal")?.addEventListener("change", updateCutiEndPreview);
     document.getElementById("tanggalMulaiKerja")?.addEventListener("change", updateCutiEndPreview);
+    document.getElementById("jumlahHariLokal")?.addEventListener("input", updateCutiEndPreview);
+    document.getElementById("jumlahHariKerja")?.addEventListener("input", updateCutiEndPreview);
 
     document.getElementById("urgentToggle")?.addEventListener("change", event => {
         document.querySelector(".cuti-urgent-box")
@@ -129,33 +131,64 @@ function updateCutiDayLock() {
 
     document.getElementById("singlePeriodFields").hidden = isCombo;
     document.getElementById("comboPeriodFields").hidden = !isCombo;
+    document.getElementById("sharedJumlahHariField").hidden = isCombo;
 
     const role = staffProfile?.jabatan || "";
     const lockedDays = jenisCuti === "SETAHUN" ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
 
-    // Kombinasi: SELALU terkunci ke role, tidak peduli urgent atau tidak.
-    // Tunggal: terkunci ke role KECUALI urgent aktif (boleh manual).
+    // Mode tunggal: terkunci ke role KECUALI urgent aktif (boleh manual).
+    // Mode kombinasi: jumlah hari diisi manual per periode (lihat updateCutiComboTotal).
     const isFleksibel = !isCombo && isUrgent;
 
     jumlahHariInput.readOnly = !isFleksibel;
     jumlahHariInput.classList.toggle("is-editable", isFleksibel);
 
-    if (!isFleksibel) {
-        jumlahHariInput.value = jenisCuti ? lockedDays : "";
-    } else if (!jumlahHariInput.value) {
-        jumlahHariInput.value = "";
-        jumlahHariInput.placeholder = "Isi manual (1-90 hari)";
+    if (!isCombo) {
+        if (!isFleksibel) {
+            jumlahHariInput.value = jenisCuti ? lockedDays : "";
+        } else if (!jumlahHariInput.value) {
+            jumlahHariInput.value = "";
+            jumlahHariInput.placeholder = "Isi manual (1-90 hari)";
+        }
     }
 
     updateCutiEndPreview();
+    updateCutiComboTotal();
 }
 
 function updateCutiEndPreview() {
     const jumlahHari = Number(document.getElementById("jumlahHari")?.value || 0);
-
     fillEndDatePreview("tanggalMulai", "tanggalSelesaiPreview", jumlahHari);
-    fillEndDatePreview("tanggalMulaiLokal", "tanggalSelesaiLokalPreview", jumlahHari);
-    fillEndDatePreview("tanggalMulaiKerja", "tanggalSelesaiKerjaPreview", jumlahHari);
+
+    const hariLokal = Number(document.getElementById("jumlahHariLokal")?.value || 0);
+    const hariKerja = Number(document.getElementById("jumlahHariKerja")?.value || 0);
+    fillEndDatePreview("tanggalMulaiLokal", "tanggalSelesaiLokalPreview", hariLokal);
+    fillEndDatePreview("tanggalMulaiKerja", "tanggalSelesaiKerjaPreview", hariKerja);
+
+    updateCutiComboTotal();
+}
+
+/**
+ * Menampilkan indikator total hari Lokal + Kerja, dan menandai
+ * hijau/merah tergantung sudah pas dengan jatah role atau belum.
+ */
+function updateCutiComboTotal() {
+    const hint = document.getElementById("cutiComboTotalHint");
+    if (!hint) return;
+
+    const jenisCuti = document.getElementById("jenisCuti")?.value || "";
+    if (jenisCuti !== "CUTI LOKAL + CUTI KERJA") return;
+
+    const hariLokal = Number(document.getElementById("jumlahHariLokal")?.value || 0);
+    const hariKerja = Number(document.getElementById("jumlahHariKerja")?.value || 0);
+    const total = hariLokal + hariKerja;
+
+    const role = staffProfile?.jabatan || "";
+    const target = CUTI_ROLE_QUOTA_DAYS[role] || 12;
+
+    hint.textContent = `Total: ${total} / ${target} hari`;
+    hint.classList.toggle("match", total === target && total > 0);
+    hint.classList.toggle("mismatch", total !== target);
 }
 
 function fillEndDatePreview(startId, previewId, jumlahHari) {
@@ -459,14 +492,25 @@ async function submitCuti() {
     if (isCombo) {
         const tanggalMulaiLokal = document.getElementById("tanggalMulaiLokal")?.value || "";
         const tanggalMulaiKerja = document.getElementById("tanggalMulaiKerja")?.value || "";
+        const hariLokal = document.getElementById("jumlahHariLokal")?.value || "";
+        const hariKerja = document.getElementById("jumlahHariKerja")?.value || "";
 
-        if (!tanggalMulaiLokal || !tanggalMulaiKerja) {
-            showToast("Tanggal mulai Cuti Lokal dan Cuti Kerja wajib diisi.", "error");
+        if (!tanggalMulaiLokal || !tanggalMulaiKerja || !hariLokal || !hariKerja) {
+            showToast("Tanggal mulai dan jumlah hari Cuti Lokal maupun Cuti Kerja wajib diisi.", "error");
+            return;
+        }
+
+        const role = staffProfile?.jabatan || "";
+        const target = CUTI_ROLE_QUOTA_DAYS[role] || 12;
+        if (Number(hariLokal) + Number(hariKerja) !== target) {
+            showToast(`Total hari Cuti Lokal + Cuti Kerja harus pas ${target} hari sesuai jatah role ${role}.`, "error");
             return;
         }
 
         params.set("tanggalMulaiLokal", tanggalMulaiLokal);
         params.set("tanggalMulaiKerja", tanggalMulaiKerja);
+        params.set("jumlahHariLokal", hariLokal);
+        params.set("jumlahHariKerja", hariKerja);
     } else {
         const tanggalMulai = document.getElementById("tanggalMulai")?.value || "";
 
@@ -497,6 +541,8 @@ async function submitCuti() {
             document.getElementById("tanggalMulai").value = "";
             document.getElementById("tanggalMulaiLokal").value = "";
             document.getElementById("tanggalMulaiKerja").value = "";
+            document.getElementById("jumlahHariLokal").value = "";
+            document.getElementById("jumlahHariKerja").value = "";
             document.getElementById("jumlahHari").value = "";
             document.getElementById("tanggalSelesaiPreview").value = "";
             document.getElementById("tanggalSelesaiLokalPreview").value = "";
