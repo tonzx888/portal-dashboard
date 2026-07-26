@@ -134,6 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
     loadCalendarData();
     loadSummary();
 
+    if (typeof ocInitCustomSelect === "function") {
+        ocInitCustomSelect(document.getElementById("role"));
+        ocInitCustomSelect(document.getElementById("shift"));
+        ocInitCustomSelect(document.getElementById("filterRole"));
+        ocInitCustomSelect(document.getElementById("filterShift"));
+        ocInitCustomSelect(document.getElementById("filterStatus"));
+    }
+
     document.getElementById("btnRefresh")?.addEventListener("click", async () => {
         await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
         showToast("Data berhasil diperbarui.");
@@ -398,6 +406,12 @@ async function submitOffday() {
         document.getElementById("shift").value = "";
         document.getElementById("tanggal").value = "";
         document.getElementById("alasan").value = "";
+
+        if (typeof ocRefreshCustomSelect === "function") {
+            ocRefreshCustomSelect(document.getElementById("role"));
+            ocRefreshCustomSelect(document.getElementById("shift"));
+        }
+
         await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
     } catch (error) {
         console.error("Gagal submit offday:", error);

@@ -300,3 +300,132 @@
   font-size: 12px;
   font-weight: 800;
 }
+
+/* ==========================================================
+   DROPDOWN CUSTOM (menggantikan tampilan <select> bawaan
+   browser sepenuhnya, termasuk saat daftar pilihan terbuka)
+========================================================== */
+
+.oc-native-select-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.oc-custom-select {
+  position: relative;
+}
+
+.oc-custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 12px;
+  background: rgba(244, 249, 248, .9);
+  color: var(--oc-text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--oc-speed) var(--oc-ease),
+    box-shadow var(--oc-speed) var(--oc-ease),
+    background var(--oc-speed) var(--oc-ease);
+}
+
+.oc-custom-select-trigger::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-right: 2px solid var(--oc-primary);
+  border-bottom: 2px solid var(--oc-primary);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform var(--oc-speed) var(--oc-ease);
+}
+
+.oc-custom-select-trigger.placeholder {
+  color: var(--oc-muted);
+}
+
+.oc-custom-select-trigger:hover {
+  border-color: rgba(14, 124, 134, .4);
+}
+
+.oc-custom-select-trigger:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.oc-custom-select.open .oc-custom-select-trigger {
+  border-color: rgba(14, 124, 134, .55);
+  background: var(--oc-surface);
+  box-shadow: 0 0 0 4px var(--oc-primary-soft);
+}
+
+.oc-custom-select.open .oc-custom-select-trigger::after {
+  transform: rotate(225deg) translate(1px, 1px);
+}
+
+.oc-custom-select-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: var(--oc-z-dropdown);
+  display: none;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 12px;
+  background: var(--oc-surface);
+  box-shadow: var(--oc-shadow-md);
+}
+
+.oc-custom-select.open .oc-custom-select-list {
+  display: block;
+  animation: ocSelectPop .16s var(--oc-ease);
+}
+
+@keyframes ocSelectPop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.oc-custom-select-option {
+  padding: 9px 11px;
+  border-radius: 8px;
+  color: var(--oc-text-soft);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background var(--oc-speed-fast) ease, color var(--oc-speed-fast) ease;
+}
+
+.oc-custom-select-option:hover {
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+}
+
+.oc-custom-select-option.selected {
+  background: var(--oc-primary);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.oc-custom-select-option.disabled {
+  color: var(--oc-muted);
+  cursor: default;
+  pointer-events: none;
+}

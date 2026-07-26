@@ -98,6 +98,123 @@
     return Array.from({ length: rowCount }, makeRow).join("");
   };
 
+  /**
+   * Mengganti tampilan <select> bawaan browser dengan dropdown
+   * custom bergaya sendiri (tombol + daftar pilihan), tapi tetap
+   * mempertahankan <select> aslinya (disembunyikan) supaya semua
+   * kode lain yang membaca/mengubah `.value` / event "change"
+   * tidak perlu diubah sama sekali.
+   *
+   * Dipanggil sekali per elemen, misalnya:
+   *   ocInitCustomSelect(document.getElementById("role"));
+   */
+  window.ocInitCustomSelect = function (selectEl) {
+    if (!selectEl || selectEl.dataset.ocCustomized === "true") return;
+    selectEl.dataset.ocCustomized = "true";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "oc-custom-select";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "oc-custom-select-trigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+    if (selectEl.disabled) trigger.disabled = true;
+
+    const triggerLabel = document.createElement("span");
+    trigger.appendChild(triggerLabel);
+
+    const list = document.createElement("div");
+    list.className = "oc-custom-select-list";
+    list.setAttribute("role", "listbox");
+
+    function buildOptions() {
+      list.innerHTML = "";
+
+      Array.from(selectEl.options).forEach(opt => {
+        const item = document.createElement("div");
+        item.className = "oc-custom-select-option";
+        item.setAttribute("role", "option");
+        item.textContent = opt.text;
+        item.dataset.value = opt.value;
+
+        if (opt.disabled) item.classList.add("disabled");
+        if (opt.value === selectEl.value) item.classList.add("selected");
+
+        item.addEventListener("click", () => {
+          if (opt.disabled) return;
+
+          selectEl.value = opt.value;
+          refresh();
+          wrapper.classList.remove("open");
+          trigger.setAttribute("aria-expanded", "false");
+          selectEl.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+
+        list.appendChild(item);
+      });
+    }
+
+    function refresh() {
+      const selected = selectEl.options[selectEl.selectedIndex];
+      triggerLabel.textContent = selected ? selected.text : "";
+      trigger.classList.toggle("placeholder", !selectEl.value);
+
+      list.querySelectorAll(".oc-custom-select-option").forEach(item => {
+        item.classList.toggle("selected", item.dataset.value === selectEl.value);
+      });
+    }
+
+    trigger.addEventListener("click", () => {
+      if (selectEl.disabled) return;
+      const willOpen = !wrapper.classList.contains("open");
+
+      document.querySelectorAll(".oc-custom-select.open")
+        .forEach(el => el.classList.remove("open"));
+
+      wrapper.classList.toggle("open", willOpen);
+      trigger.setAttribute("aria-expanded", String(willOpen));
+    });
+
+    document.addEventListener("click", event => {
+      if (!wrapper.contains(event.target)) {
+        wrapper.classList.remove("open");
+        trigger.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && wrapper.classList.contains("open")) {
+        wrapper.classList.remove("open");
+        trigger.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    buildOptions();
+    refresh();
+
+    wrapper.appendChild(trigger);
+    wrapper.appendChild(list);
+    selectEl.insertAdjacentElement("afterend", wrapper);
+    selectEl.classList.add("oc-native-select-hidden");
+
+    // Kalau kode lain mengubah selectEl.value langsung (bukan lewat
+    // klik di dropdown ini), panggil ocRefreshCustomSelect supaya
+    // tampilannya ikut sinkron.
+    selectEl.ocRefreshCustomSelect = refresh;
+  };
+
+  /**
+   * Sinkronkan ulang tampilan dropdown custom setelah kode lain
+   * mengubah select.value secara langsung (misalnya reset form).
+   */
+  window.ocRefreshCustomSelect = function (selectEl) {
+    if (selectEl && typeof selectEl.ocRefreshCustomSelect === "function") {
+      selectEl.ocRefreshCustomSelect();
+    }
+  };
+
   document.addEventListener("click", event => {
     const closeButton = event.target.closest("[data-oc-close]");
 
