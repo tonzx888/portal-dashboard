@@ -35,16 +35,16 @@
 .calendar-weekday{text-align:center;font-size:9px;font-weight:800;color:var(--oc-muted);padding-bottom:4px}
 .calendar-day{
   position:relative;display:grid;place-items:center;aspect-ratio:1;min-width:0;
-  border:0;border-radius:50%;background:transparent;color:var(--oc-text-soft);
-  font-size:11px;cursor:pointer;transition:background .15s ease,color .15s ease,transform .15s ease;
+  border:1px solid transparent;border-radius:9px;background:transparent;color:var(--oc-text-soft);
+  font-size:11px;cursor:pointer;transition:background .15s ease,color .15s ease,border-color .15s ease;
 }
 .calendar-day:disabled{cursor:default;color:var(--oc-muted);opacity:.45}
 .calendar-day.outside{visibility:hidden}
-.calendar-day.has-off{background:#2269dd;color:#fff;font-weight:700}
-#calendarKAPTEN .calendar-day.has-off{background:#8f4ce8}
-#calendarKASIR .calendar-day.has-off{background:#e99800}
-.calendar-day.full{background:#ef3340;color:#fff;font-weight:800}
-.calendar-day:not(:disabled):hover{transform:scale(1.12)}
+.calendar-day.has-off{background:rgba(34,105,221,.14);color:#2269dd;border-color:rgba(34,105,221,.25);font-weight:700}
+#calendarKAPTEN .calendar-day.has-off{background:rgba(143,76,232,.14);color:#8f4ce8;border-color:rgba(143,76,232,.25)}
+#calendarKASIR .calendar-day.has-off{background:rgba(233,152,0,.16);color:#c97a12;border-color:rgba(233,152,0,.3)}
+.calendar-day.full{background:#ef3340;color:#fff;border-color:#ef3340;font-weight:800}
+.calendar-day:not(:disabled):hover{border-color:currentColor}
 .calendar-day small{position:absolute;top:-3px;right:-3px;min-width:14px;height:14px;padding:0 3px;border-radius:999px;background:#c8483a;color:#fff;font-size:8px;font-weight:800;display:grid;place-items:center;line-height:1}
 
 .cuti-calendar-hint{margin:14px 0 0;color:var(--oc-muted);font-size:11px}
