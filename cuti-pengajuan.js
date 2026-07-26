@@ -310,15 +310,18 @@ async function loadCuti() {
 }
 
 function renderCutiSummary(data) {
-    const counts = { total: data.length, pending: 0, approved: 0, rejected: 0 };
+    const uniqueSubmissions = new Set();
+    const counts = { pending: 0, approved: 0, rejected: 0 };
 
     data.forEach(item => {
+        uniqueSubmissions.add(item.groupKey || `${item.nama}|${item.timestamp}`);
+
         if (item.status === "MENUNGGU") counts.pending++;
         else if (item.status === "DISETUJUI") counts.approved++;
         else if (item.status === "DITOLAK") counts.rejected++;
     });
 
-    setCutiText("summaryTotal", counts.total);
+    setCutiText("summaryTotal", uniqueSubmissions.size);
     setCutiText("summaryPending", counts.pending);
     setCutiText("summaryApproved", counts.approved);
     setCutiText("summaryRejected", counts.rejected);

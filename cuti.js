@@ -82,24 +82,33 @@ async function loadCutiCalendar() {
 
 function renderCutiSummary(data) {
     const today = startOfCutiVisualDay_(new Date());
-    let active = 0, upcoming = 0, done = 0;
+    const activeNames = new Set();
+    const upcomingNames = new Set();
+    const doneNames = new Set();
+    const uniqueSubmissions = new Set();
 
     data.forEach(item => {
+        // groupKey sama = 2 baris dari 1 pengajuan kombinasi (Lokal+Kerja).
+        // Dihitung sebagai SATU pengajuan, bukan dua.
+        uniqueSubmissions.add(item.groupKey || `${item.nama}|${item.timestamp}`);
+
         if (item.status === "DITOLAK") return;
 
         const start = parseCutiVisualDate_(item.tanggalMulaiInput);
         const end = parseCutiVisualDate_(item.tanggalSelesaiInput);
         if (!start || !end) return;
 
-        if (today >= start && today <= end) active++;
-        else if (today < start) upcoming++;
-        else done++;
+        const nameKey = String(item.nama || "").trim().toUpperCase();
+
+        if (today >= start && today <= end) activeNames.add(nameKey);
+        else if (today < start) upcomingNames.add(nameKey);
+        else doneNames.add(nameKey);
     });
 
-    setCutiVisualText("cutiTotal", data.length);
-    setCutiVisualText("cutiActive", active);
-    setCutiVisualText("cutiUpcoming", upcoming);
-    setCutiVisualText("cutiDone", done);
+    setCutiVisualText("cutiTotal", uniqueSubmissions.size);
+    setCutiVisualText("cutiActive", activeNames.size);
+    setCutiVisualText("cutiUpcoming", upcomingNames.size);
+    setCutiVisualText("cutiDone", doneNames.size);
 }
 
 /* ==========================================================
