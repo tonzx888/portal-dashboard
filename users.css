@@ -305,11 +305,11 @@
     width: min(620px, 100%);
     max-height: 90vh;
     overflow-y: auto;
-    padding: 24px;
+    padding: 26px;
     border: 1px solid rgba(14,43,46,.22);
     border-radius: 18px;
     background: linear-gradient(145deg, #ffffff, #f4f9f8);
-    box-shadow: 0 30px 70px rgba(0, 0, 0, .45);
+    box-shadow: 0 30px 70px rgba(14,43,46,.22);
 }
 
 .users-small-modal {
@@ -321,10 +321,17 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 18px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
+    padding-left: 14px;
+    border-left: 4px solid var(--oc-primary, #0e7c86);
 }
 
 .users-modal-header h2 {
+    margin: 4px 0 0;
+    font-size: 19px;
+}
+
+.users-eyebrow {
     margin: 0;
 }
 
@@ -337,7 +344,8 @@
     background: #f4f9f8 !important;
     color: #3e5c5c !important;
     font-size: 18px !important;
-    line-height: 1;
+    line-height: 36px !important;
+    text-align: center;
     transition: background .18s ease, color .18s ease;
 }
 
@@ -349,7 +357,7 @@
 .users-form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 18px 16px;
 }
 
 .users-wide {
@@ -358,7 +366,7 @@
 
 .users-field label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
     color: #3e5c5c;
     font-size: 11px;
     font-weight: 800;
@@ -369,11 +377,16 @@
 .users-field input,
 .users-field select {
     width: 100%;
+    min-height: 44px;
 }
 
 .users-field small,
 .users-modal-note {
+    display: block;
+    margin-top: 6px;
     color: var(--users-muted);
+    font-size: 11px;
+    line-height: 1.5;
 }
 
 .users-password-wrap {
@@ -381,18 +394,31 @@
 }
 
 .users-password-wrap input {
-    padding-right: 50px !important;
+    padding-right: 46px !important;
 }
 
 .users-password-wrap button {
     position: absolute !important;
-    top: 50% !important;
-    right: 8px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
-    padding: 4px !important;
-    transform: translateY(-50%);
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    place-items: center !important;
     background: transparent !important;
+    border: 0 !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+    color: var(--users-muted) !important;
+    transform: none !important;
+}
+
+.users-password-wrap button:hover {
+    color: var(--oc-primary, #0e7c86) !important;
 }
 
 .users-modal-footer {

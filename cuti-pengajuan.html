@@ -58,12 +58,34 @@
         </div>
 
         <div id="eligibilityBanner" class="cuti-eligibility-banner" hidden></div>
+        <div id="staffProfileWarning" class="cuti-eligibility-banner rejected" hidden></div>
 
         <div class="cuti-form-grid">
-          <div><label for="role">Role</label><select id="role"><option value="">Pilih role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></div>
-          <div><label for="jenisCuti">Jenis Cuti</label><select id="jenisCuti"><option value="">Pilih jenis cuti</option><option value="6 BULAN">6 Bulan (12/14 hari)</option><option value="SETAHUN">Setahun (25 hari)</option><option value="6 BULAN ADD ON">6 Bulan (ADD ON)</option></select></div>
+          <div class="cuti-form-full">
+            <label>Nama &amp; Role</label>
+            <div id="staffProfileDisplay" class="cuti-profile-display">Memuat data staff...</div>
+          </div>
+
+          <div>
+            <label for="jenisCuti">Jenis Cuti</label>
+            <select id="jenisCuti">
+              <option value="">Pilih jenis cuti</option>
+              <option value="CUTI LOKAL">Cuti Lokal</option>
+              <option value="CUTI INDONESIA">Cuti Indonesia</option>
+              <option value="CUTI KERJA">Cuti Kerja</option>
+              <option value="CUTI LOKAL + CUTI KERJA">Cuti Lokal + Cuti Kerja</option>
+              <option value="SETAHUN">Setahun (25 hari)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="jumlahHari">Jumlah Hari</label>
+            <input id="jumlahHari" type="number" min="1" max="90" readonly placeholder="Otomatis">
+          </div>
+
           <div><label for="tanggalMulai">Tanggal Mulai</label><input id="tanggalMulai" type="date"></div>
-          <div><label for="tanggalSelesai">Tanggal Selesai</label><input id="tanggalSelesai" type="date"></div>
+          <div><label for="tanggalSelesaiPreview">Tanggal Selesai</label><input id="tanggalSelesaiPreview" type="text" readonly placeholder="Otomatis mengikuti jumlah hari"></div>
+
           <div class="cuti-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti"></textarea></div>
 
           <div class="cuti-form-full cuti-urgent-box">

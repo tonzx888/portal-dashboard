@@ -36,7 +36,15 @@
 .cuti-eligibility-banner{margin-bottom:16px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6}
 .cuti-eligibility-banner.info{border:1px solid rgba(46,125,192,.28);background:rgba(46,125,192,.08);color:#1c507d}
 .cuti-eligibility-banner.neutral{border:1px solid var(--oc-line);background:var(--oc-surface-soft);color:var(--oc-text-soft)}
+.cuti-eligibility-banner.rejected{border:1px solid rgba(200,72,58,.3);background:rgba(200,72,58,.08);color:#8a2f24;font-weight:600}
 .cuti-eligibility-banner strong{color:inherit}
+
+.cuti-profile-display{min-height:44px;display:flex;align-items:center;padding:10px 14px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft);color:var(--oc-text);font-size:13px}
+.cuti-profile-display strong{color:var(--oc-primary-strong)}
+
+.cuti-form-grid input[readonly],.cuti-form-grid input:disabled{background:var(--oc-surface-raised);color:var(--oc-text-soft);cursor:not-allowed}
+.cuti-form-grid input#jumlahHari.is-editable{background:#fff;color:var(--oc-text);cursor:text}
+.cuti-form-grid input#jumlahHari.is-editable:focus{border-color:rgba(14,124,134,.55);box-shadow:0 0 0 4px rgba(14,124,134,.12)}
 
 .cuti-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 14px}
 .cuti-form-full{grid-column:1/-1}

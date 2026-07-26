@@ -10,7 +10,10 @@ const CUTI_LEADER_NAME = "ANTHONY";
 
 let cutiData = [];
 let staffPassportMap = {};
+let staffProfile = null;
 let pendingRejectRow = null;
+
+const CUTI_ROLE_QUOTA_DAYS = { KASIR: 12, KAPTEN: 14, CS: 14 };
 
 function handleExpiredSession_(message) {
     const text = String(message || "").toLowerCase();
@@ -46,16 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (typeof ocInitCustomSelect === "function") {
-        ocInitCustomSelect(document.getElementById("role"));
         ocInitCustomSelect(document.getElementById("jenisCuti"));
         ocInitCustomSelect(document.getElementById("filterStatus"));
     }
 
-    document.getElementById("nama") && (document.getElementById("nama").value = currentUsername);
-
     loadCuti();
     loadEligibility();
-    loadStaffPassportMap();
+    loadStaffProfileAndPassportMap();
 
     document.getElementById("btnRefresh")?.addEventListener("click", async () => {
         await Promise.all([loadCuti(), loadEligibility()]);
@@ -66,11 +66,63 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("searchCuti")?.addEventListener("input", renderCutiTable);
     document.getElementById("filterStatus")?.addEventListener("change", renderCutiTable);
 
+    document.getElementById("jenisCuti")?.addEventListener("change", updateCutiDayLock);
+    document.getElementById("tanggalMulai")?.addEventListener("change", updateCutiEndPreview);
+    document.getElementById("jumlahHari")?.addEventListener("input", updateCutiEndPreview);
+
     document.getElementById("urgentToggle")?.addEventListener("change", event => {
         document.querySelector(".cuti-urgent-box")
             ?.classList.toggle("is-urgent", event.target.checked);
+        updateCutiDayLock();
     });
 });
+
+/**
+ * Mengunci/membuka kolom Jumlah Hari:
+ * - Terkunci (otomatis) untuk jenis cuti tunggal & bukan urgent.
+ * - Terbuka (isi manual) untuk kombinasi "LOKAL + KERJA" ATAU saat
+ *   Cuti Urgent aktif.
+ */
+function updateCutiDayLock() {
+    const jenisCuti = document.getElementById("jenisCuti")?.value || "";
+    const isUrgent = document.getElementById("urgentToggle")?.checked || false;
+    const isCombo = jenisCuti.indexOf("+") >= 0;
+    const jumlahHariInput = document.getElementById("jumlahHari");
+    if (!jumlahHariInput) return;
+
+    const isFleksibel = isCombo || isUrgent;
+    jumlahHariInput.readOnly = !isFleksibel;
+    jumlahHariInput.classList.toggle("is-editable", isFleksibel);
+
+    if (!isFleksibel) {
+        const role = staffProfile?.jabatan || "";
+        const lockedDays = jenisCuti === "SETAHUN" ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
+        jumlahHariInput.value = jenisCuti ? lockedDays : "";
+    } else if (!jumlahHariInput.value) {
+        jumlahHariInput.value = "";
+        jumlahHariInput.placeholder = "Isi manual (1-90 hari)";
+    }
+
+    updateCutiEndPreview();
+}
+
+function updateCutiEndPreview() {
+    const preview = document.getElementById("tanggalSelesaiPreview");
+    const tanggalMulai = document.getElementById("tanggalMulai")?.value || "";
+    const jumlahHari = Number(document.getElementById("jumlahHari")?.value || 0);
+    if (!preview) return;
+
+    if (!tanggalMulai || !jumlahHari || jumlahHari < 1) {
+        preview.value = "";
+        return;
+    }
+
+    const start = new Date(`${tanggalMulai}T00:00:00`);
+    const end = new Date(start);
+    end.setDate(end.getDate() + jumlahHari - 1);
+
+    preview.value = end.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+}
 
 /**
  * Info kapan boleh mengajukan cuti reguler berikutnya, dari
@@ -103,7 +155,11 @@ async function loadEligibility() {
     }
 }
 
-async function loadStaffPassportMap() {
+async function loadStaffProfileAndPassportMap() {
+    const display = document.getElementById("staffProfileDisplay");
+    const warning = document.getElementById("staffProfileWarning");
+    const submitButton = document.getElementById("btnSubmitCuti");
+
     try {
         const params = new URLSearchParams({ type: "staff", token: getLoginToken() });
         const response = await fetch(`${API_BASE}?${params.toString()}`);
@@ -116,8 +172,30 @@ async function loadStaffPassportMap() {
             const key = String(item.nama || "").trim().toUpperCase();
             if (key) staffPassportMap[key] = String(item.passport || "-");
         });
+
+        const own = result.find(item =>
+            String(item.nama || "").trim().toUpperCase() === currentUsername.toUpperCase()
+        );
+
+        if (!own) {
+            if (display) display.textContent = "-";
+            if (warning) {
+                warning.hidden = false;
+                warning.textContent = `Nama "${currentUsername}" tidak ditemukan di Data Staff. Hubungi MASTER untuk mendaftarkan data staff terlebih dahulu sebelum bisa mengajukan cuti.`;
+            }
+            if (submitButton) submitButton.disabled = true;
+            return;
+        }
+
+        staffProfile = own;
+
+        if (display) {
+            display.innerHTML = `<strong>${own.nama}</strong> &middot; ${own.jabatan} &middot; Passport ${own.passport || "-"}`;
+        }
+
+        updateCutiDayLock();
     } catch (error) {
-        console.error("Gagal memuat data passport staff:", error);
+        console.error("Gagal memuat data profil staff:", error);
     }
 }
 
@@ -231,15 +309,19 @@ function cutiStatusBadge(status) {
 
 async function submitCuti() {
     const button = document.getElementById("btnSubmitCuti");
-    const role = document.getElementById("role")?.value || "";
     const jenisCuti = document.getElementById("jenisCuti")?.value || "";
     const tanggalMulai = document.getElementById("tanggalMulai")?.value || "";
-    const tanggalSelesai = document.getElementById("tanggalSelesai")?.value || "";
+    const jumlahHari = document.getElementById("jumlahHari")?.value || "";
     const alasan = document.getElementById("alasan")?.value.trim() || "";
     const urgent = document.getElementById("urgentToggle")?.checked || false;
 
-    if (!role || !jenisCuti || !tanggalMulai || !tanggalSelesai || !alasan) {
-        showToast("Role, jenis cuti, tanggal, dan alasan wajib diisi.", "error");
+    if (!staffProfile) {
+        showToast("Data staff Anda belum ditemukan, tidak bisa mengajukan cuti.", "error");
+        return;
+    }
+
+    if (!jenisCuti || !tanggalMulai || !jumlahHari || !alasan) {
+        showToast("Jenis cuti, tanggal mulai, jumlah hari, dan alasan wajib diisi.", "error");
         return;
     }
 
@@ -252,10 +334,9 @@ async function submitCuti() {
         const params = new URLSearchParams({
             type: "submitCuti",
             token: getLoginToken(),
-            role,
             jenisCuti,
             tanggalMulai,
-            tanggalSelesai,
+            jumlahHari,
             alasan,
             urgent: String(urgent)
         });
@@ -268,19 +349,19 @@ async function submitCuti() {
         showToast(result.message, result.success ? "success" : "error");
 
         if (result.success) {
-            document.getElementById("role").value = "";
             document.getElementById("jenisCuti").value = "";
             document.getElementById("tanggalMulai").value = "";
-            document.getElementById("tanggalSelesai").value = "";
+            document.getElementById("jumlahHari").value = "";
+            document.getElementById("tanggalSelesaiPreview").value = "";
             document.getElementById("alasan").value = "";
             document.getElementById("urgentToggle").checked = false;
             document.querySelector(".cuti-urgent-box")?.classList.remove("is-urgent");
 
             if (typeof ocRefreshCustomSelect === "function") {
-                ocRefreshCustomSelect(document.getElementById("role"));
                 ocRefreshCustomSelect(document.getElementById("jenisCuti"));
             }
 
+            updateCutiDayLock();
             await Promise.all([loadCuti(), loadEligibility()]);
         }
     } catch (error) {
