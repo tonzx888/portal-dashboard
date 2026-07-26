@@ -20,8 +20,35 @@
   <main class="oc-main">
     <header class="oc-topbar"><div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Jadwal Cuti</strong></div><div class="oc-topbar-actions"><div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div><button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button></div></header>
     <section class="oc-page-heading oc-enter"><div><span class="oc-section-kicker">MANAJEMEN CUTI</span><h1>Jadwal Cuti Staff</h1><p>Daftar pengajuan, periode, dan status cuti seluruh staff.</p></div><div class="oc-live-status"><span class="oc-system-pulse"></span><div><strong>Data Terhubung</strong><small>Google Sheets aktif</small></div></div></section>
+
+    <section class="oc-stat-grid cuti-stat-grid oc-enter">
+      <article class="oc-stat-card oc-stat-personnel oc-hover-lift">
+        <div class="oc-stat-top"><span class="oc-stat-label">TOTAL CUTI</span><span class="oc-stat-symbol">01</span></div>
+        <strong id="cutiTotal" class="oc-stat-number">0</strong>
+        <small class="oc-stat-caption">Semua pengajuan tercatat</small>
+      </article>
+      <article class="oc-stat-card oc-stat-offday oc-hover-lift">
+        <div class="oc-stat-top"><span class="oc-stat-label">SEDANG CUTI</span><span class="oc-stat-symbol">02</span></div>
+        <strong id="cutiActive" class="oc-stat-number">0</strong>
+        <small class="oc-stat-caption">Berlangsung hari ini</small>
+      </article>
+      <article class="oc-stat-card oc-stat-leave oc-hover-lift">
+        <div class="oc-stat-top"><span class="oc-stat-label">AKAN DATANG</span><span class="oc-stat-symbol">03</span></div>
+        <strong id="cutiUpcoming" class="oc-stat-number">0</strong>
+        <small class="oc-stat-caption">Belum dimulai</small>
+      </article>
+      <article class="oc-stat-card oc-stat-alert oc-hover-lift">
+        <div class="oc-stat-top"><span class="oc-stat-label">SELESAI</span><span class="oc-stat-symbol">04</span></div>
+        <strong id="cutiDone" class="oc-stat-number">0</strong>
+        <small class="oc-stat-caption">Sudah berakhir</small>
+      </article>
+    </section>
+
     <section class="cuti-panel oc-enter">
       <div class="cuti-panel-head"><div><span class="oc-section-kicker">DAFTAR CUTI</span><h2>Data Cuti Staff</h2><p>Status diperbarui berdasarkan tanggal mulai dan berakhir.</p></div></div>
+      <div class="cuti-toolbar">
+        <input type="text" id="cutiSearch" class="oc-input" placeholder="Cari nama, role, atau status...">
+      </div>
       <div class="cuti-table-wrap"><table class="cuti-table"><thead><tr><th>Nama</th><th>Role</th><th>Pengajuan Cuti</th><th>Start Cuti</th><th>End Cuti</th><th>Status</th></tr></thead><tbody id="dataCuti"><tr><td colspan="6" class="cuti-loading">Memuat data cuti...</td></tr></tbody></table></div>
     </section>
   </main>

@@ -1,3 +1,15 @@
+.cuti-stat-grid{margin-bottom:16px}
+
+.cuti-toolbar{padding:14px 20px;border-bottom:1px solid var(--oc-line);background:var(--oc-surface-soft)}
+.cuti-toolbar .oc-input{max-width:340px}
+
+.cuti-status-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.03em}
+.cuti-status-badge.active{background:#0a7a4e;color:#fff}
+.cuti-status-badge.upcoming{background:#2e7dc0;color:#fff}
+.cuti-status-badge.done{background:#8a8f94;color:#fff}
+.cuti-status-badge.rejected{background:#c8483a;color:#fff}
+.cuti-status-badge.other{background:#6e8788;color:#fff}
+
 .cuti-panel{overflow:hidden;border:1px solid var(--oc-line);border-radius:var(--oc-radius-lg);background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(244,249,248,.96));box-shadow:var(--oc-shadow-sm)}
 .cuti-panel-head{padding:20px;border-bottom:1px solid var(--oc-line)}.cuti-panel-head h2{margin:7px 0 0;font-size:20px}.cuti-panel-head p{margin:7px 0 0;color:var(--oc-muted);font-size:11px}
 .cuti-table-wrap{overflow:auto;max-height:calc(100vh - 230px);min-height:420px}.cuti-table{width:100%;min-width:980px;border-collapse:separate;border-spacing:0}.cuti-table th{position:sticky;top:0;z-index:2;padding:14px;border-bottom:1px solid var(--oc-line);background:rgba(238,245,244,.98);color:#0e2b2e;font-size:11px;font-weight:800;letter-spacing:.06em;text-align:left;text-transform:uppercase}.cuti-table td{padding:14px;border-bottom:1px solid var(--oc-line);color:var(--oc-text-soft);font-size:11px}.cuti-table tbody tr:hover{background:rgba(14,43,46,.035)}.cuti-loading{text-align:center;color:var(--oc-muted)!important;padding:38px!important}

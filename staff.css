@@ -17,10 +17,13 @@
 .staff-action-group{display:flex;gap:7px}.staff-action-group button{min-height:32px!important;padding:6px 10px!important}
 .staff-muted{color:var(--staff-muted)}.staff-warning{color:#c8483a;font-weight:800}.staff-safe{color:#0a5f68;font-weight:700}
 .staff-modal{padding:24px}.staff-modal-content{width:min(760px,100%);max-height:90vh;overflow:auto}.staff-detail-content{width:min(680px,100%);max-height:90vh;overflow:auto}
-.staff-modal-close{min-width:38px;min-height:38px!important;padding:3px 10px!important;background:#dc2626!important;color:#fff!important;font-size:22px!important}
 .staff-form-grid,.staff-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.staff-field-wide{grid-column:1/-1}
-.staff-field label{display:block;margin-bottom:7px;color:#3e5c5c;font-weight:700}.staff-field input,.staff-field select{width:100%}
+.staff-field span{display:block;margin-bottom:7px;color:#3e5c5c;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.staff-field input,.staff-field select{width:100%}
 .staff-auto-info,.staff-detail-item{padding:14px;border:1px solid var(--staff-border);border-radius:9px;background:#eef5f4}
 .staff-auto-info span,.staff-detail-item span{display:block;margin-bottom:5px;color:var(--staff-muted);font-size:12px}.staff-auto-info strong,.staff-detail-item strong{color:#0e2b2e}
+.oc-modal-head h2{margin:4px 0 0;font-size:19px;color:#0e2b2e}
+.oc-modal-head p{margin:4px 0 0;color:var(--staff-muted);font-size:12px}
+.staff-modal-close{min-width:36px!important;min-height:36px!important;padding:0!important;border:1px solid var(--staff-border)!important;border-radius:9px!important;background:#f4f9f8!important;color:#3e5c5c!important;font-size:18px!important;line-height:1;transition:background .18s ease,color .18s ease}
+.staff-modal-close:hover{background:rgba(200,72,58,.12)!important;color:#c8483a!important}
 @media(max-width:1050px){.staff-summary-grid{grid-template-columns:repeat(2,1fr)}.staff-toolbar{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.staff-page-header{flex-direction:column}.staff-summary-grid,.staff-toolbar,.staff-form-grid,.staff-detail-grid{grid-template-columns:1fr}.staff-field-wide{grid-column:auto}}
