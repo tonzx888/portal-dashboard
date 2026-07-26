@@ -654,10 +654,10 @@ function copyCutiReportA(filteredIndex) {
 `PENGAJUAN CUTI : ${item.jenisCuti}
 NO PASPOR : ${getPassportFor(item.nama)}
 NAMA STAFF : ${item.nama}
-STATUS: ${item.status}
+STATUS: ${item.role}
 
 
-START CUTI S/D : ${item.tanggalMulai} S/D ${item.tanggalSelesai}
+START CUTI S/D : ${formatCutiLongDate_(item.tanggalMulaiInput)} S/D ${formatCutiLongDate_(item.tanggalSelesaiInput)}
 TOTAL CUTI : ${item.totalHari} HARI
 
 ACC LDR : ${CUTI_LEADER_NAME}`;
@@ -681,6 +681,22 @@ Ket :
 Keterangan : Untuk kelengkapan SIM CARD dan token sudah di check aman. Untuk admin, dan email sudah serah terima ke Leader. Untuk passport sudah berada di tangan staff.`;
 
     copyCutiToClipboard(text, "Laporan grup admin disalin.");
+}
+
+/**
+ * Format tanggal panjang ala Indonesia (mis. "29 September 2026"),
+ * dipakai khusus di laporan Task. Menerima tanggal format ISO
+ * (yyyy-MM-dd) dari tanggalMulaiInput/tanggalSelesaiInput.
+ */
+function formatCutiLongDate_(isoDate) {
+    const text = String(isoDate || "").trim();
+    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return text || "-";
+
+    const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    if (isNaN(date.getTime())) return text;
+
+    return date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
 }
 
 function copyCutiToClipboard(text, successMessage) {
