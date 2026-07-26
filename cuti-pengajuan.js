@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typeof ocInitCustomSelect === "function") {
         ocInitCustomSelect(document.getElementById("jenisCuti"));
-        ocInitCustomSelect(document.getElementById("filterStatus"));
     }
 
     loadCuti();
@@ -89,7 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnSubmitCuti")?.addEventListener("click", submitCuti);
     document.getElementById("searchCuti")?.addEventListener("input", renderCutiTable);
-    document.getElementById("filterStatus")?.addEventListener("change", renderCutiTable);
+
+    document.querySelectorAll(".cuti-status-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            document.querySelectorAll(".cuti-status-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            cutiActiveStatusTab = tab.dataset.status || "";
+            renderCutiTable();
+        });
+    });
 
     document.getElementById("jenisCuti")?.addEventListener("change", updateCutiDayLock);
     document.getElementById("tanggalMulai")?.addEventListener("change", updateCutiEndPreview);
@@ -287,12 +294,14 @@ function renderCutiSummary(data) {
         ?.classList.toggle("has-pending", counts.pending > 0);
 }
 
+let cutiActiveStatusTab = "";
+
 function renderCutiTable() {
     const tbody = document.getElementById("dataCuti");
     if (!tbody) return;
 
     const keyword = String(document.getElementById("searchCuti")?.value || "").trim().toLowerCase();
-    const statusFilter = document.getElementById("filterStatus")?.value || "";
+    const statusFilter = cutiActiveStatusTab;
 
     const filtered = cutiData.filter(item => {
         const matchesKeyword = !keyword || [item.nama, item.role, item.status, item.jenisCuti]
@@ -306,21 +315,23 @@ function renderCutiTable() {
     });
 
     if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="12">${cutiData.length ? "Tidak ada data yang sesuai." : "Belum ada pengajuan cuti."}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11">${cutiData.length ? "Tidak ada data yang sesuai." : "Belum ada pengajuan cuti."}</td></tr>`;
         return;
     }
 
     tbody.innerHTML = filtered.map((item, index) => {
         const canApprove = currentSystemRole === "MASTER" && item.status === "MENUNGGU";
+        const isOwn = normalizeCutiNameCompare_(item.nama) === normalizeCutiNameCompare_(staffProfile?.nama || "");
+        const canDelete = currentSystemRole === "MASTER" || (isOwn && item.status === "MENUNGGU");
 
-        const actionCell = currentSystemRole === "MASTER"
-            ? `<td>
-                ${canApprove ? `
-                    <button type="button" class="cuti-action-btn approve" onclick="approveCuti(${Number(item.row)})">Setujui</button>
-                    <button type="button" class="cuti-action-btn reject" onclick="openCutiRejectModal(${Number(item.row)})">Tolak</button>
-                ` : `<span class="cuti-muted">Selesai</span>`}
-               </td>`
-            : "";
+        const actionButtons = [];
+        if (canApprove) {
+            actionButtons.push(`<button type="button" class="cuti-action-btn approve" onclick="approveCuti(${Number(item.row)})">Setujui</button>`);
+            actionButtons.push(`<button type="button" class="cuti-action-btn reject" onclick="openCutiRejectModal(${Number(item.row)})">Tolak</button>`);
+        }
+        if (canDelete) {
+            actionButtons.push(`<button type="button" class="cuti-action-btn delete" onclick="deleteCuti(${Number(item.row)})" title="Hapus pengajuan (mis. salah tanggal)">Hapus</button>`);
+        }
 
         return `
             <tr>
@@ -330,15 +341,14 @@ function renderCutiTable() {
                 <td>${escapeCutiHtml(item.jenisCuti)}</td>
                 <td>${escapeCutiHtml(item.tanggalMulai)} &ndash; ${escapeCutiHtml(item.tanggalSelesai)}</td>
                 <td>${escapeCutiHtml(item.totalHari)}</td>
-                <td class="cuti-wrap">${escapeCutiHtml(item.alasan)}</td>
                 <td>${cutiStatusBadge(item.status)}</td>
                 <td>${escapeCutiHtml(item.approvedBy || "-")}</td>
-                <td class="cuti-wrap">${escapeCutiHtml(item.catatan || "-")}</td>
+                <td><button type="button" class="cuti-detail-btn" onclick="openCutiDetailModal(${index})" title="Lihat detail">👁</button></td>
                 <td class="cuti-report-cell">
                     <button type="button" class="cuti-report-btn" onclick="copyCutiReportA(${index})" title="Copy laporan untuk task checker admin">📋 Task</button>
                     <button type="button" class="cuti-report-btn" onclick="copyCutiReportB(${index})" title="Copy laporan untuk grup admin">📋 Grup</button>
                 </td>
-                ${actionCell}
+                <td>${actionButtons.length ? actionButtons.join("") : '<span class="cuti-muted">-</span>'}</td>
             </tr>
         `;
     }).join("");
@@ -346,9 +356,73 @@ function renderCutiTable() {
     tbody.dataset.filteredIndex = JSON.stringify(filtered.map(item => cutiData.indexOf(item)));
 }
 
+function normalizeCutiNameCompare_(value) {
+    return String(value || "").trim().toUpperCase();
+}
+
 function cutiStatusBadge(status) {
     const className = status === "DISETUJUI" ? "approved" : status === "DITOLAK" ? "rejected" : "pending";
     return `<span class="cuti-status-badge ${className}">${escapeCutiHtml(status)}</span>`;
+}
+
+function openCutiDetailModal(filteredIndex) {
+    const indexMap = JSON.parse(document.getElementById("dataCuti").dataset.filteredIndex || "[]");
+    const item = cutiData[indexMap[filteredIndex]];
+    if (!item) return;
+
+    const body = document.getElementById("cutiDetailBody");
+    const modal = document.getElementById("cutiDetailModal");
+    if (!body || !modal) return;
+
+    body.innerHTML = `
+        <div class="calendar-detail-item">
+            <div class="calendar-detail-name">${escapeCutiHtml(item.nama)} &middot; ${escapeCutiHtml(item.role)}</div>
+            <div class="calendar-detail-meta">
+                <span>${escapeCutiHtml(item.jenisCuti)}</span>
+                <span>${escapeCutiHtml(item.tanggalMulai)} &ndash; ${escapeCutiHtml(item.tanggalSelesai)} (${escapeCutiHtml(item.totalHari)} hari)</span>
+                <span>${cutiStatusBadge(item.status)}</span>
+            </div>
+            <p><strong>Alasan:</strong> ${escapeCutiHtml(item.alasan || "(tidak diisi)")}</p>
+            <p><strong>Diproses oleh:</strong> ${escapeCutiHtml(item.approvedBy || "-")} ${item.approvedDate ? `(${escapeCutiHtml(item.approvedDate)})` : ""}</p>
+            <p><strong>Catatan:</strong> ${escapeCutiHtml(item.catatan || "-")}</p>
+        </div>
+    `;
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeCutiDetailModal() {
+    const modal = document.getElementById("cutiDetailModal");
+    if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
+async function deleteCuti(row) {
+    const confirmed = typeof ocConfirm === "function"
+        ? await ocConfirm({ title: "Hapus Pengajuan Cuti", message: "Yakin mau hapus pengajuan ini? Tindakan ini tidak bisa dibatalkan." })
+        : confirm("Yakin mau hapus pengajuan ini?");
+
+    if (!confirmed) return;
+
+    try {
+        const params = new URLSearchParams({ type: "deleteCuti", row: String(row), token: getLoginToken() });
+        const response = await fetch(`${API_BASE}?${params.toString()}`);
+        const result = await response.json();
+
+        if (handleExpiredSession_(result.message)) return;
+
+        showToast(result.message, result.success ? "success" : "error");
+
+        if (result.success) {
+            await loadCuti();
+        }
+    } catch (error) {
+        console.error("Gagal menghapus pengajuan cuti:", error);
+        showToast("Gagal menghapus pengajuan cuti.", "error");
+    }
 }
 
 async function submitCuti() {
@@ -364,8 +438,13 @@ async function submitCuti() {
         return;
     }
 
-    if (!jenisCuti || !alasan) {
-        showToast("Jenis cuti dan alasan wajib diisi.", "error");
+    if (!jenisCuti) {
+        showToast("Jenis cuti wajib diisi.", "error");
+        return;
+    }
+
+    if (urgent && !alasan) {
+        showToast("Alasan wajib diisi untuk Cuti Urgent.", "error");
         return;
     }
 

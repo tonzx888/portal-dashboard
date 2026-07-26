@@ -126,7 +126,96 @@ function formatMonthYear(date) {
     }).format(date);
 }
 
+function openOffdaySubmitModal() {
+    const modal = document.getElementById("offdaySubmitModal");
+    if (!modal) return;
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeOffdaySubmitModal() {
+    const modal = document.getElementById("offdaySubmitModal");
+    if (!modal) return;
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+}
+
+const OFFDAY_NOTICE_CONTENT = {
+    umum: {
+        title: "📌 Ketentuan Umum",
+        html: `<ol>
+            <li>Setiap staff mendapatkan jatah 2 kali off day dalam 1 bulan.</li>
+            <li>Pengajuan off day dilakukan minimal 3 hari sebelum tanggal yang diinginkan.</li>
+            <li>Off day hanya dapat diajukan setelah proses rolling shift minggu pertama selesai.</li>
+            <li>Pengajuan off day periode 2 baru dapat dilakukan setelah seluruh off day periode 1 selesai.</li>
+            <li>Off day tidak dapat diambil di awal bulan (karena proses rolling shift) maupun akhir bulan (karena pergantian docs).</li>
+        </ol>`
+    },
+    aturan: {
+        title: "📋 Aturan Pengambilan Off Day",
+        html: `<ul>
+            <li>Tidak boleh diambil tepat sebelum atau sesudah cuti.</li>
+            <li>Tidak boleh bersamaan dengan rekan yang memiliki posisi yang sama (CS, Kapten, atau Kasir). Maksimal 1 orang per posisi yang off dalam satu hari.</li>
+            <li>Tidak boleh mengambil off day selama 2 hari berturut-turut.</li>
+            <li>Tidak dapat diambil pada jam atau hari ramai, seperti Kamis pagi dan Sabtu malam.</li>
+        </ul>`
+    },
+    periode2: {
+        title: "🔁 Ketentuan Off Day Periode 2",
+        html: `<ul>
+            <li>Seluruh staff harus sudah mendapatkan jatah off day periode 1.</li>
+            <li>Jarak antara off day periode 1 dan periode 2 minimal 5 hari.</li>
+            <li>Khusus <strong>KAPTEN</strong>, pengajuan off day periode 2 baru dapat dilakukan setelah seluruh staff <strong>Kasir</strong> mendapatkan jatah off day periode 2.</li>
+        </ul>`
+    },
+    saat: {
+        title: "✅ Saat Off Day",
+        html: `<ul>
+            <li>Tetap wajib melakukan <strong>ABSEN</strong>.</li>
+            <li>Wajib menginformasikan di grup bahwa sedang offday.<br><em>Contoh: "Hari ini offday."</em></li>
+        </ul>`
+    }
+};
+
+function openOffdayNoticeDetail(key) {
+    const content = OFFDAY_NOTICE_CONTENT[key];
+    const modal = document.getElementById("offdayNoticeModal");
+    const title = document.getElementById("offdayNoticeTitle");
+    const body = document.getElementById("offdayNoticeBody");
+    if (!content || !modal || !title || !body) return;
+
+    title.textContent = content.title;
+    body.innerHTML = content.html;
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeOffdayNoticeDetail() {
+    const modal = document.getElementById("offdayNoticeModal");
+    if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    const offdaySubmitModal = document.getElementById("offdaySubmitModal");
+    offdaySubmitModal?.addEventListener("click", event => {
+        if (event.target === offdaySubmitModal) closeOffdaySubmitModal();
+    });
+
+    const offdayNoticeModal = document.getElementById("offdayNoticeModal");
+    offdayNoticeModal?.addEventListener("click", event => {
+        if (event.target === offdayNoticeModal) closeOffdayNoticeDetail();
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key !== "Escape") return;
+        if (offdaySubmitModal?.style.display === "flex") closeOffdaySubmitModal();
+        if (offdayNoticeModal?.style.display === "flex") closeOffdayNoticeDetail();
+    });
+
     createCalendarDetailModal();
     createOffdayBlockedModal();
     setupOffdayPage();
@@ -347,10 +436,10 @@ async function submitOffday() {
     const tanggal = document.getElementById("tanggal")?.value || "";
     const alasan = document.getElementById("alasan")?.value.trim() || "";
 
-    if (!nama || !role || !shift || !tanggal || !alasan) {
+    if (!nama || !role || !shift || !tanggal) {
         showOffdayBlockedModal(
             "Data Belum Lengkap",
-            "Role, shift, tanggal, dan alasan wajib diisi sebelum mengajukan offday."
+            "Role, shift, dan tanggal wajib diisi sebelum mengajukan offday."
         );
         return;
     }
@@ -412,6 +501,7 @@ async function submitOffday() {
             ocRefreshCustomSelect(document.getElementById("shift"));
         }
 
+        closeOffdaySubmitModal();
         await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
     } catch (error) {
         console.error("Gagal submit offday:", error);

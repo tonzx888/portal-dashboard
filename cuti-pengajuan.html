@@ -52,43 +52,16 @@
       </article>
     </section>
 
-    <section class="cuti-rules-card oc-enter">
-      <div class="section-heading">
-        <div><h2>📌 Ketentuan Cuti</h2><p>Ringkasan aturan yang berlaku sebelum mengajukan.</p></div>
-      </div>
-
-      <div class="cuti-rules-grid">
-        <div>
-          <h3>Jatah Hari</h3>
-          <ul>
-            <li>6 Bulan: <strong>KASIR 12 hari</strong>, <strong>CS/KAPTEN 14 hari</strong>.</li>
-            <li>Setahun: <strong>25 hari</strong>, semua role.</li>
-            <li>Lokal + Kerja: 2 periode terpisah, masing-masing tetap ikut jatah role.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Syarat Pengajuan</h3>
-          <ul>
-            <li>Masa kerja minimal <strong>12 bulan</strong> untuk cuti reguler.</li>
-            <li>Jarak minimal <strong>6 bulan</strong> sejak cuti terakhir.</li>
-            <li>Maksimal staff cuti bersamaan per role dibatasi otomatis oleh sistem.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Cuti Urgent</h3>
-          <ul>
-            <li>Mengabaikan syarat masa kerja 1 tahun &amp; jarak 6 bulan.</li>
-            <li>Tetap tunduk pada jatah hari &amp; kuota bentrok per role.</li>
-            <li>Ditandai khusus di tabel persetujuan.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
     <section class="cuti-table-card oc-enter">
+      <div class="cuti-status-tabs">
+        <button type="button" class="cuti-status-tab active" data-status="">Semua</button>
+        <button type="button" class="cuti-status-tab" data-status="MENUNGGU">⏳ Menunggu</button>
+        <button type="button" class="cuti-status-tab" data-status="DISETUJUI">✓ Disetujui</button>
+        <button type="button" class="cuti-status-tab" data-status="DITOLAK">✕ Ditolak</button>
+      </div>
+
       <div class="cuti-toolbar">
         <input type="text" id="searchCuti" class="oc-input" placeholder="Cari nama, role, atau status...">
-        <select id="filterStatus"><option value="">Semua Status</option><option value="MENUNGGU">MENUNGGU</option><option value="DISETUJUI">DISETUJUI</option><option value="DITOLAK">DITOLAK</option></select>
       </div>
 
       <div class="section-heading cuti-table-heading">
@@ -99,7 +72,7 @@
         <table>
           <thead>
             <tr>
-              <th>No</th><th>Nama</th><th>Role</th><th>Jenis Cuti</th><th>Tanggal</th><th>Hari</th><th>Alasan</th><th>Status</th><th>Diproses Oleh</th><th>Catatan</th><th>Laporan</th><th>Aksi</th>
+              <th>No</th><th>Nama</th><th>Role</th><th>Jenis Cuti</th><th>Tanggal</th><th>Hari</th><th>Status</th><th>Diproses Oleh</th><th>Detail</th><th>Laporan</th><th>Aksi</th>
             </tr>
           </thead>
           <tbody id="dataCuti"><tr><td colspan="12">Memuat data cuti...</td></tr></tbody>
@@ -167,7 +140,7 @@
           </div>
         </div>
 
-        <div class="cuti-form-full"><label for="alasan">Alasan</label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti"></textarea></div>
+        <div class="cuti-form-full"><label for="alasan">Alasan <small>(opsional, wajib jika Cuti Urgent)</small></label><textarea id="alasan" rows="3" placeholder="Masukkan alasan pengajuan cuti (opsional)"></textarea></div>
 
         <div class="cuti-form-full cuti-urgent-box">
           <label class="cuti-urgent-toggle">
@@ -185,6 +158,19 @@
     <div class="oc-modal-foot">
       <button type="button" class="oc-btn oc-btn-secondary" onclick="closeCutiSubmitModal()">Batal</button>
       <button type="button" id="btnSubmitCuti" class="oc-btn oc-btn-primary">Ajukan Cuti</button>
+    </div>
+  </div>
+</div>
+
+<div id="cutiDetailModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">DETAIL</span><h2>Detail Pengajuan Cuti</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeCutiDetailModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body" id="cutiDetailBody"></div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeCutiDetailModal()">Tutup</button>
     </div>
   </div>
 </div>

@@ -7,23 +7,24 @@
 
 .offday-summary-grid{display:grid!important;grid-template-columns:repeat(4,minmax(180px,1fr))!important;gap:14px!important;margin-bottom:16px}
 
-.offday-top-row{display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(360px,1fr)!important;gap:16px!important;align-items:start;margin-bottom:16px}
-.offday-top-row .offday-form-card,.offday-top-row .offday-notice-card{margin-bottom:0}
-
-.offday-notice-card{padding:18px}
-.offday-notice-scroll{max-height:min(560px,calc(100vh - 420px));overflow-y:auto;padding-right:8px;font-size:12px;line-height:1.65;color:var(--oc-text-soft)}
-.offday-notice-scroll h3{margin:16px 0 8px;color:var(--oc-primary-strong);font-size:13px;font-weight:800;letter-spacing:.03em}
-.offday-notice-scroll h3:first-child{margin-top:0}
-.offday-notice-scroll ol,.offday-notice-scroll ul{margin:0;padding-left:18px}
-.offday-notice-scroll li{margin-bottom:8px}
-.offday-notice-scroll li:last-child{margin-bottom:0}
-.offday-notice-scroll strong{color:var(--oc-text)}
-.offday-notice-scroll em{color:var(--oc-muted);font-style:italic}
-
-@media(max-width:1200px){
-  .offday-top-row{grid-template-columns:1fr!important}
-  .offday-notice-scroll{max-height:400px}
+.offday-notice-strip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.offday-notice-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border:1px solid var(--oc-line);border-radius:999px;
+  background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft));
+  color:var(--oc-text-soft);font-size:12px;font-weight:700;cursor:pointer;
+  box-shadow:var(--oc-shadow-sm);transition:border-color .15s ease,color .15s ease,transform .15s ease;
 }
+.offday-notice-chip:hover{border-color:rgba(14,124,134,.4);color:var(--oc-primary-strong);transform:translateY(-1px)}
+
+#offdayNoticeBody{font-size:13px;line-height:1.7;color:var(--oc-text-soft)}
+#offdayNoticeBody ol,#offdayNoticeBody ul{margin:0;padding-left:20px}
+#offdayNoticeBody li{margin-bottom:9px}
+#offdayNoticeBody li:last-child{margin-bottom:0}
+#offdayNoticeBody strong{color:var(--oc-text)}
+#offdayNoticeBody em{color:var(--oc-muted);font-style:italic}
+
+@media(max-width:650px){.offday-notice-strip{flex-direction:column}.offday-notice-chip{justify-content:flex-start}}
 .offday-summary-card{display:flex!important;align-items:center;gap:12px;padding:12px 14px!important;margin:0!important;min-height:70px;border-radius:11px!important;background:linear-gradient(145deg,#ffffff,#f4f9f8)!important}
 .offday-summary-card .summary-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:9px;font-size:22px;font-weight:800}
 .offday-summary-card div:last-child{display:flex;flex-direction:column;gap:1px}
