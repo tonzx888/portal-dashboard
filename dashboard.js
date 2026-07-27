@@ -298,6 +298,33 @@ function renderActivityDonut({ activeToday, staffCuti, offdayHariIni, totalStaff
     `;
 }
 
+/**
+ * Bagi 100% ke beberapa nilai secara proporsional, TAPI hasil
+ * pembulatannya dijamin totalnya selalu tepat 100% (metode largest
+ * remainder / Hamilton) -- bukan Math.round() tiap item sendiri-
+ * sendiri, yang bisa jadi 101% atau 99% kalau ada beberapa nilai
+ * yang kebetulan pas di angka ,5.
+ */
+function calculateRoundedPercentages_(values, total) {
+    if (!total) return values.map(() => 0);
+
+    const exact = values.map(value => (value / total) * 100);
+    const floors = exact.map(Math.floor);
+    let remainder = 100 - floors.reduce((sum, value) => sum + value, 0);
+
+    const order = exact
+        .map((value, index) => ({ index, frac: value - Math.floor(value) }))
+        .sort((a, b) => b.frac - a.frac);
+
+    const result = [...floors];
+    for (let i = 0; i < order.length && remainder > 0; i++) {
+        result[order[i].index] += 1;
+        remainder--;
+    }
+
+    return result;
+}
+
 function renderRoleChart(roles, totalStaff) {
     const container = document.getElementById("roleChart");
     if (!container) return;
@@ -330,14 +357,15 @@ function renderRoleChart(roles, totalStaff) {
         return circle;
     }).join("");
 
-    const legend = items.map(item => {
-        const percent = totalStaff > 0 ? Math.round((item.value / totalStaff) * 100) : 0;
+    const percentages = calculateRoundedPercentages_(items.map(item => item.value), totalStaff);
+
+    const legend = items.map((item, index) => {
         return `
             <div class="role-legend-item">
                 <span class="role-legend-dot" style="background:${item.color}"></span>
                 <span class="role-legend-label">${escapeDashboardHtml(item.label)}</span>
                 <strong class="role-legend-value">${item.value}</strong>
-                <small class="role-legend-percent">${percent}%</small>
+                <small class="role-legend-percent">${percentages[index]}%</small>
             </div>
         `;
     }).join("");
