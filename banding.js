@@ -6,6 +6,7 @@ const currentUsername = String(currentUser?.username || "").trim();
 
 let bandingData = [];
 let staffProfile = null;
+let staffPassportMap = {};
 let pendingRow = null;
 let bandingActiveStatusTab = "";
 
@@ -126,6 +127,12 @@ async function loadStaffProfile() {
         const result = await response.json();
 
         if (!Array.isArray(result)) return;
+
+        staffPassportMap = {};
+        result.forEach(item => {
+            const key = String(item.nama || "").trim().toUpperCase();
+            if (key) staffPassportMap[key] = String(item.passport || "-");
+        });
 
         const own = result.find(item =>
             String(item.username || "").trim().toUpperCase() === currentUsername.toUpperCase()
@@ -460,10 +467,7 @@ ${item.lampiranBanding || ""}`;
 }
 
 function getStaffPassportForBanding_(nama) {
-    if (staffProfile && normalizeBdCompare_(staffProfile.nama) === normalizeBdCompare_(nama)) {
-        return staffProfile.passport || "-";
-    }
-    return "-";
+    return staffPassportMap[normalizeBdCompare_(nama)] || "-";
 }
 
 /**
