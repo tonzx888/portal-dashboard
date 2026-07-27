@@ -23,12 +23,14 @@
 .rk-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px}
 .rk-form-full{grid-column:1/-1}
 .rk-form-grid label{display:block;margin-bottom:5px;color:var(--oc-text-soft);font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.rk-form-grid input{
+.rk-form-grid input,.rk-form-grid textarea{
   width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--oc-line-strong);
   border-radius:10px;background:rgba(244,249,248,.9);color:var(--oc-text);outline:none;font-size:13px;
+  font-family:inherit;
   transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
 }
-.rk-form-grid input:focus{border-color:rgba(14,124,134,.55);background:#fff;box-shadow:0 0 0 3px rgba(14,124,134,.12)}
+.rk-form-grid textarea{min-height:auto;padding:10px;resize:vertical}
+.rk-form-grid input:focus,.rk-form-grid textarea:focus{border-color:rgba(14,124,134,.55);background:#fff;box-shadow:0 0 0 3px rgba(14,124,134,.12)}
 
 .rk-section-group{padding:12px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft)}
 .rk-section-new{border-color:rgba(10,122,78,.3);background:rgba(10,122,78,.05)}
@@ -63,10 +65,12 @@
 .rk-status-badge.pending{background:#c97a12}
 .rk-status-badge.approved{background:#0a7a4e}
 .rk-status-badge.rejected{background:#c8483a}
+.rk-status-badge.note{background:#6e5da6}
 
 .rk-action-btn{min-height:30px;padding:5px 10px;margin-right:6px;margin-bottom:4px;border:0;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
 .rk-action-btn.approve{background:#0a7a4e}
 .rk-action-btn.reject{background:#c8483a}
+.rk-action-btn.note{background:#6e5da6}
 .rk-action-btn.delete{background:#6e8788}
 
 .rk-detail-btn{min-width:32px;min-height:32px;padding:0;border:1px solid var(--oc-line-strong);border-radius:8px;background:#fff;font-size:14px;cursor:pointer;transition:background .15s ease,border-color .15s ease}

@@ -92,6 +92,25 @@ function closeBandingDoneModal() {
     if (modal) { modal.style.display = "none"; modal.setAttribute("aria-hidden", "true"); }
 }
 
+function openBandingNoteModal(row) {
+    pendingRow = row;
+    document.getElementById("bandingNoteText").value = "";
+    const modal = document.getElementById("bandingNoteModal");
+    if (modal) { modal.style.display = "flex"; modal.setAttribute("aria-hidden", "false"); }
+}
+
+function closeBandingNoteModal() {
+    pendingRow = null;
+    const modal = document.getElementById("bandingNoteModal");
+    if (modal) { modal.style.display = "none"; modal.setAttribute("aria-hidden", "true"); }
+}
+
+async function confirmBandingNote() {
+    const keteranganAudit = document.getElementById("bandingNoteText")?.value.trim() || "";
+    if (pendingRow) await processBandingAudit("noteBanding", pendingRow, keteranganAudit);
+    closeBandingNoteModal();
+}
+
 /* ==========================================================
    PROFIL STAFF OTOMATIS
 ========================================================== */
@@ -157,7 +176,7 @@ async function loadBanding() {
         renderBandingTable();
     } catch (error) {
         console.error("Gagal memuat data banding:", error);
-        if (tbody) tbody.innerHTML = `<tr><td colspan="8">Gagal memuat data.</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="9">Gagal memuat data.</td></tr>`;
         showToast("Gagal memuat data banding.", "error");
     }
 }
@@ -198,7 +217,7 @@ function renderBandingTable() {
     });
 
     if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="8">${bandingData.length ? "Tidak ada data yang sesuai." : "Belum ada banding kesalahan."}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9">${bandingData.length ? "Tidak ada data yang sesuai." : "Belum ada banding kesalahan."}</td></tr>`;
         return;
     }
 
@@ -211,6 +230,7 @@ function renderBandingTable() {
         const actionButtons = [];
         if (canAudit && item.status === "MENUNGGU") {
             actionButtons.push(`<button type="button" class="rk-action-btn approve" onclick="openBandingDoneModal(${Number(item.row)})">Done</button>`);
+            actionButtons.push(`<button type="button" class="rk-action-btn note" onclick="openBandingNoteModal(${Number(item.row)})">Note</button>`);
             actionButtons.push(`<button type="button" class="rk-action-btn reject" onclick="openBandingRejectModal(${Number(item.row)})">Tolak</button>`);
         }
         if (canDelete) {
@@ -226,6 +246,7 @@ function renderBandingTable() {
                 <td>${bdStatusBadge(item.status)}</td>
                 <td>${bdEscape(item.processedBy || "-")}</td>
                 <td><button type="button" class="rk-detail-btn" onclick="openBandingDetailModal(${index})" title="Lihat detail">👁</button></td>
+                <td><button type="button" class="rk-report-btn" onclick="copyBandingReport(${index})" title="Copy laporan untuk grup auditor">📋 Copy</button></td>
                 <td>${actionButtons.length ? actionButtons.join("") : '<span class="rk-muted">-</span>'}</td>
             </tr>
         `;
@@ -239,7 +260,7 @@ function normalizeBdCompare_(value) {
 }
 
 function bdStatusBadge(status) {
-    const className = status === "DONE" ? "approved" : status === "BANDING DI TOLAK" ? "rejected" : "pending";
+    const className = status === "DONE" ? "approved" : status === "BANDING DI TOLAK" ? "rejected" : status === "NOTE" ? "note" : "pending";
     return `<span class="rk-status-badge ${className}">${bdEscape(status)}</span>`;
 }
 
@@ -408,6 +429,85 @@ async function deleteBanding(row) {
         console.error("Gagal menghapus banding:", error);
         showToast("Gagal menghapus banding.", "error");
     }
+}
+
+/* ==========================================================
+   LAPORAN COPY-PASTE (GRUP AUDITOR)
+========================================================== */
+
+// Nama situs yang tertulis di laporan grup auditor.
+const BANDING_SITUS_NAME = "Togelup";
+
+function copyBandingReport(filteredIndex) {
+    const indexMap = JSON.parse(document.getElementById("dataBanding").dataset.filteredIndex || "[]");
+    const item = bandingData[indexMap[filteredIndex]];
+    if (!item) return;
+
+    const text =
+`Situs : ${BANDING_SITUS_NAME}
+Tanggal : ${formatBandingLongDate_(item.tanggalKesalahan)}
+${item.nama} - ${getStaffPassportForBanding_(item.nama)}
+Lampiran Kesalahan :
+${item.linkKesalahan || "-"}
+
+Banding : 
+${item.keteranganBanding}
+
+Lampiran Banding :
+${item.lampiranBanding || ""}`;
+
+    copyBdToClipboard(text, "Laporan grup auditor disalin.");
+}
+
+function getStaffPassportForBanding_(nama) {
+    if (staffProfile && normalizeBdCompare_(staffProfile.nama) === normalizeBdCompare_(nama)) {
+        return staffProfile.passport || "-";
+    }
+    return "-";
+}
+
+/**
+ * Format tanggal panjang gaya Inggris (mis. "22 July 2026"), sesuai
+ * contoh laporan grup auditor. Menerima tanggal format DD/MM/YYYY
+ * dari kolom tanggalKesalahan.
+ */
+function formatBandingLongDate_(ddmmyyyy) {
+    const text = String(ddmmyyyy || "").trim();
+    const match = text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+    if (!match) return text || "-";
+
+    const date = new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+    if (isNaN(date.getTime())) return text;
+
+    return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function copyBdToClipboard(text, successMessage) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast(successMessage))
+            .catch(() => fallbackBdCopy(text, successMessage));
+    } else {
+        fallbackBdCopy(text, successMessage);
+    }
+}
+
+function fallbackBdCopy(text, successMessage) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+        document.execCommand("copy");
+        showToast(successMessage);
+    } catch (error) {
+        showToast("Gagal menyalin laporan.", "error");
+    }
+
+    document.body.removeChild(textarea);
 }
 
 /* ==========================================================

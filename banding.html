@@ -58,6 +58,7 @@
         <button type="button" class="rk-status-tab active" data-status="">Semua</button>
         <button type="button" class="rk-status-tab" data-status="MENUNGGU">⏳ Menunggu</button>
         <button type="button" class="rk-status-tab" data-status="DONE">✓ Done</button>
+        <button type="button" class="rk-status-tab" data-status="NOTE">📝 Note</button>
         <button type="button" class="rk-status-tab" data-status="BANDING DI TOLAK">✕ Ditolak</button>
       </div>
 
@@ -73,7 +74,7 @@
         <table>
           <thead>
             <tr>
-              <th>No</th><th>Tanggal Kesalahan</th><th>Nama CS</th><th>Kode Livechat</th><th>Status</th><th>Diproses Oleh</th><th>Detail</th><th>Aksi</th>
+              <th>No</th><th>Tanggal Kesalahan</th><th>Nama CS</th><th>Kode Livechat</th><th>Status</th><th>Diproses Oleh</th><th>Detail</th><th>Laporan</th><th>Aksi</th>
             </tr>
           </thead>
           <tbody id="dataBanding"><tr><td colspan="8">Memuat data...</td></tr></tbody>
@@ -158,6 +159,22 @@
     <div class="oc-modal-foot">
       <button type="button" class="oc-btn oc-btn-secondary" onclick="closeBandingDoneModal()">Batal</button>
       <button type="button" class="oc-btn oc-btn-primary" onclick="confirmBandingDone()">Tandai Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="bandingNoteModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">TANDAI NOTE</span><h2>Keterangan Audit</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeBandingNoteModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body">
+      <textarea id="bandingNoteText" class="oc-textarea" rows="3" placeholder="Catatan (mis. sudah diganti jadi kesalahan lain)..."></textarea>
+    </div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeBandingNoteModal()">Batal</button>
+      <button type="button" class="oc-btn oc-btn-primary" onclick="confirmBandingNote()">Tandai Note</button>
     </div>
   </div>
 </div>

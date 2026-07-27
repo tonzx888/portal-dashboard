@@ -436,12 +436,11 @@ function copyRekeningReport(filteredIndex) {
 `NO PASPOR : ${getStaffPassport_(item.nama)}
 NAMA STAFF : ${item.nama}
 
-NO REK SEBELUM NYA :
-BANK/NO REKENING/NAMA PEMILIK REK : ${item.bankLama} / ${item.noRekLama} / ${item.pemilikLama}
+NO REK SEBELUM NYA : ${item.bankLama} / ${item.noRekLama}
+BANK/NO REKENING/NAMA PEMILIK REK : ${item.pemilikLama}
 
-
-GANTI/NO REK TERBARUNYA :
-NAMA BANK/NAMA PEMILIK REK : ${item.bankBaru} / ${item.noRekBaru} / ${item.pemilikBaru}`;
+GANTI/NO REK TERBARUNYA : ${item.bankBaru} / ${item.noRekBaru}
+NAMA BANK/NAMA PEMILIK REK : ${item.pemilikBaru}`;
 
     copyRkToClipboard(text, "Laporan ganti rekening disalin.");
 }
