@@ -452,3 +452,87 @@
   cursor: default;
   pointer-events: none;
 }
+
+/* ===== Dropdown akun (Ganti Password) di user chip ===== */
+.oc-account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: var(--oc-z-dropdown, 9999);
+  display: none;
+  min-width: 190px;
+  padding: 6px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 12px;
+  background: var(--oc-surface);
+  box-shadow: var(--oc-shadow-md);
+}
+
+.oc-account-dropdown.open {
+  display: block;
+  animation: ocSelectPop .16s var(--oc-ease);
+}
+
+.oc-account-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--oc-text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--oc-speed-fast) ease, color var(--oc-speed-fast) ease;
+}
+
+.oc-account-dropdown-item:hover {
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+}
+
+.oc-account-field {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.oc-account-field span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--oc-text-soft);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.oc-account-field input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 10px;
+  background: rgba(244, 249, 248, .9);
+  color: var(--oc-text);
+  outline: none;
+  font-size: 13px;
+  transition: border-color var(--oc-speed) var(--oc-ease), box-shadow var(--oc-speed) var(--oc-ease), background var(--oc-speed) var(--oc-ease);
+}
+
+.oc-account-field input:focus {
+  border-color: rgba(14, 124, 134, .55);
+  background: var(--oc-surface);
+  box-shadow: 0 0 0 3px var(--oc-primary-soft);
+}
+
+.oc-account-hint {
+  margin: 0;
+  color: var(--oc-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
