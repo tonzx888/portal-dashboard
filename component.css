@@ -12,6 +12,14 @@
   background: var(--oc-surface-soft);
 }
 
+/* Pastikan atribut `hidden` SELALU menang, apa pun class display
+   yang dipasang di elemen tersebut (mis. .oc-btn pakai display:
+   inline-flex yang tanpa ini bisa mengalahkan [hidden] bawaan
+   browser, karena keduanya sama-sama gaya dari file CSS kita). */
+[hidden] {
+  display: none !important;
+}
+
 .oc-btn {
   display: inline-flex;
   align-items: center;

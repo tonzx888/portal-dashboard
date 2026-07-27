@@ -109,7 +109,7 @@
 .form-actions .btn-primary:disabled,.form-actions #btnSubmitOffday:disabled{opacity:.55;cursor:not-allowed;transform:none}
 .offday-table-card{padding:10px!important;margin-bottom:18px!important;overflow:hidden!important;max-height:none!important}
 .offday-toolbar{display:grid;grid-template-columns:minmax(260px,1.7fr) repeat(3,minmax(140px,.7fr));gap:10px;margin-bottom:10px}
-.table-title-row{padding:5px 2px 10px}.table-title-row h2{margin:0 0 3px;font-size:18px}.table-title-row p{margin:0;color:#6e8788;font-size:12px}
+.table-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:5px 2px 14px}.table-title-row h2{margin:0 0 3px;font-size:18px}.table-title-row p{margin:0;color:#6e8788;font-size:12px}.table-title-row>div:first-child{flex:1;min-width:200px}#btnClearOffdayData{flex:0 0 auto}
 .table-scroll{overflow:auto;border:1px solid rgba(14,43,46,.18);border-radius:9px}.offday-table-card table{min-width:1120px!important}.offday-table-card th,.offday-table-card td{padding:10px 11px!important;font-size:12px!important}.offday-action-cell{white-space:nowrap}.offday-action-btn{min-height:30px!important;padding:5px 9px!important;font-size:11px!important}.offday-action-btn.approve{background:#08a950!important}.offday-action-btn.reject{background:#e43a42!important}
 .offday-status{min-width:82px!important;padding:5px 8px!important;font-size:10px!important;font-weight:800!important;letter-spacing:.03em}
 .offday-status.pending{background:#c97a12!important;color:#fff!important}
