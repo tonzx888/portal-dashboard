@@ -163,6 +163,9 @@ function applyStaffFilters() {
 
 function renderTable(data) {
   const tbody = document.getElementById("dataStaff");
+  const resultCount = document.getElementById("staffResultCount");
+  if (resultCount) resultCount.textContent = `${data.length} data`;
+
   if (!data.length) return tbody.innerHTML = `<tr><td colspan="12">Tidak ada data yang sesuai.</td></tr>`;
   tbody.innerHTML = data.map((x,i)=>{
     const row = Number(x.row);
