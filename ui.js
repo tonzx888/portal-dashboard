@@ -147,8 +147,7 @@
 
           selectEl.value = opt.value;
           refresh();
-          wrapper.classList.remove("open");
-          trigger.setAttribute("aria-expanded", "false");
+          closeList();
           selectEl.dispatchEvent(new Event("change", { bubbles: true }));
         });
 
@@ -166,6 +165,31 @@
       });
     }
 
+    function positionList() {
+      const rect = trigger.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const estimatedHeight = Math.min(240, list.scrollHeight || 240);
+      const openUpward = spaceBelow < estimatedHeight + 12 && rect.top > spaceBelow;
+
+      list.style.left = `${rect.left}px`;
+      list.style.width = `${rect.width}px`;
+
+      if (openUpward) {
+        list.style.top = "auto";
+        list.style.bottom = `${window.innerHeight - rect.top + 6}px`;
+      } else {
+        list.style.bottom = "auto";
+        list.style.top = `${rect.bottom + 6}px`;
+      }
+    }
+
+    function closeList() {
+      wrapper.classList.remove("open");
+      trigger.setAttribute("aria-expanded", "false");
+      window.removeEventListener("scroll", positionList, true);
+      window.removeEventListener("resize", positionList);
+    }
+
     trigger.addEventListener("click", () => {
       if (selectEl.disabled) return;
       const willOpen = !wrapper.classList.contains("open");
@@ -173,21 +197,26 @@
       document.querySelectorAll(".oc-custom-select.open")
         .forEach(el => el.classList.remove("open"));
 
-      wrapper.classList.toggle("open", willOpen);
-      trigger.setAttribute("aria-expanded", String(willOpen));
+      if (willOpen) {
+        positionList();
+        wrapper.classList.add("open");
+        trigger.setAttribute("aria-expanded", "true");
+        window.addEventListener("scroll", positionList, true);
+        window.addEventListener("resize", positionList);
+      } else {
+        closeList();
+      }
     });
 
     document.addEventListener("click", event => {
-      if (!wrapper.contains(event.target)) {
-        wrapper.classList.remove("open");
-        trigger.setAttribute("aria-expanded", "false");
+      if (!wrapper.contains(event.target) && !list.contains(event.target)) {
+        closeList();
       }
     });
 
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && wrapper.classList.contains("open")) {
-        wrapper.classList.remove("open");
-        trigger.setAttribute("aria-expanded", "false");
+        closeList();
       }
     });
 

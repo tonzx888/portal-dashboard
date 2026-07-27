@@ -347,20 +347,27 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 40px;
+  padding: 8px 12px;
   border: 1px solid var(--oc-line-strong);
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(244, 249, 248, .9);
   color: var(--oc-text);
   font: inherit;
   font-size: 13px;
   text-align: left;
   cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   transition:
     border-color var(--oc-speed) var(--oc-ease),
     box-shadow var(--oc-speed) var(--oc-ease),
     background var(--oc-speed) var(--oc-ease);
+}
+
+.oc-custom-select-trigger:focus-visible {
+  border-color: rgba(14, 124, 134, .55);
+  box-shadow: 0 0 0 3px var(--oc-primary-soft);
 }
 
 .oc-custom-select-trigger::after {
@@ -398,11 +405,8 @@
 }
 
 .oc-custom-select-list {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 6px);
-  z-index: var(--oc-z-dropdown);
+  position: fixed;
+  z-index: var(--oc-z-dropdown, 9999);
   display: none;
   max-height: 240px;
   overflow-y: auto;
