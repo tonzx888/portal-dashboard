@@ -215,6 +215,26 @@
   flex: 1;
 }
 
+.oc-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff6b4a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.oc-nav a span:not(.oc-nav-icon):not(.oc-nav-badge) {
+  flex: 1;
+}
+
 .oc-nav-chevron {
   display: grid;
   place-items: center;
@@ -941,4 +961,68 @@
   .quick-stat-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ===== Section "Perlu Perhatian" di Home (khusus MASTER) ===== */
+.oc-attention-panel {
+  border-color: rgba(255, 107, 74, .28) !important;
+  background: linear-gradient(145deg, #ffffff, rgba(255, 107, 74, .04)) !important;
+}
+
+.oc-attention-list {
+  display: grid;
+  gap: 8px;
+}
+
+.oc-attention-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--oc-line);
+  border-radius: 12px;
+  background: var(--oc-surface-soft);
+  color: var(--oc-text);
+  text-decoration: none;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+
+.oc-attention-item:hover {
+  border-color: rgba(255, 107, 74, .4);
+  background: rgba(255, 107, 74, .06);
+  transform: translateX(2px);
+}
+
+.oc-attention-icon {
+  font-size: 16px;
+  flex: 0 0 auto;
+}
+
+.oc-attention-text {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.oc-attention-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #ff6b4a;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.oc-attention-empty {
+  margin: 0;
+  padding: 16px;
+  text-align: center;
+  color: var(--oc-muted);
+  font-size: 12px;
 }

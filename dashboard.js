@@ -173,6 +173,80 @@ function renderDashboard(data) {
     renderWarningList("passportWarningList", passportWarnings);
     renderWarningList("visaWarningList", visaWarnings);
     renderNewStaff(data.newStaff || []);
+    renderAttentionSection(data);
+}
+
+/**
+ * Section "Perlu Diproses" & "Belum Ada Username" -- cuma untuk
+ * MASTER (yang memang bertanggung jawab approve & lengkapi Data
+ * Staff). Section ini tersembunyi total buat ADMIN/STAFF supaya
+ * tidak membingungkan (bukan urusan mereka).
+ */
+function renderAttentionSection(data) {
+    const section = document.getElementById("attentionSection");
+    if (!section) return;
+
+    const currentRole = String(loginUser?.role || "").toUpperCase();
+    if (currentRole !== "MASTER") {
+        section.hidden = true;
+        return;
+    }
+
+    const pending = data.pending || {};
+    const pendingItems = [
+        { key: "cuti", label: "Pengajuan Cuti", href: "cuti-pengajuan.html", icon: "🌴" },
+        { key: "offday", label: "Pengajuan Offday", href: "offday.html", icon: "📅" },
+        { key: "rekening", label: "Req Ganti Rekening", href: "rekening.html", icon: "🏦" },
+        { key: "banding", label: "Banding Kesalahan", href: "banding.html", icon: "🛡️" }
+    ].filter(item => Number(pending[item.key] || 0) > 0);
+
+    const totalPending = pendingItems.reduce((sum, item) => sum + Number(pending[item.key] || 0), 0);
+
+    setText("attentionPendingBadge", totalPending);
+
+    const pendingListEl = document.getElementById("attentionPendingList");
+    if (pendingListEl) {
+        pendingListEl.innerHTML = pendingItems.length
+            ? pendingItems.map(item => `
+                <a class="oc-attention-item" href="${item.href}">
+                    <span class="oc-attention-icon" aria-hidden="true">${item.icon}</span>
+                    <span class="oc-attention-text">${item.label}</span>
+                    <span class="oc-attention-count">${pending[item.key]}</span>
+                </a>
+            `).join("")
+            : `<p class="oc-attention-empty">✓ Tidak ada pengajuan yang menunggu. Semua sudah diproses.</p>`;
+    }
+
+    const usernamePanel = document.getElementById("attentionUsernamePanel");
+    const missingUsernameNames = Array.isArray(data.missingUsernameNames) ? data.missingUsernameNames : [];
+    const missingUsernameCount = Number(data.missingUsernameCount || missingUsernameNames.length || 0);
+
+    if (usernamePanel) {
+        usernamePanel.hidden = missingUsernameCount === 0;
+    }
+
+    setText("attentionUsernameBadge", missingUsernameCount);
+
+    const usernameListEl = document.getElementById("attentionUsernameList");
+    if (usernameListEl) {
+        usernameListEl.innerHTML = missingUsernameNames.map(nama => `
+            <a class="oc-attention-item" href="staff.html">
+                <span class="oc-attention-icon" aria-hidden="true">⚠️</span>
+                <span class="oc-attention-text">${escapeDashboardHtml_(nama)}</span>
+            </a>
+        `).join("");
+    }
+
+    section.hidden = pendingItems.length === 0 && missingUsernameCount === 0;
+}
+
+function escapeDashboardHtml_(value) {
+    return String(value ?? "-")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 /**

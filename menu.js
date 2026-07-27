@@ -37,6 +37,8 @@ const menuItems = [
     icon: menuIcons.cuti,
     label: "Cuti Staff",
     roles: ["MASTER", "ADMIN", "STAFF"],
+    pendingKey: "cuti",
+    pendingRoles: ["MASTER"],
     children: [
       { href: "cuti-pengajuan.html", icon: menuIcons.send, label: "Pengajuan Cuti" },
       { href: "cuti.html", icon: menuIcons.calendarDays, label: "Jadwal Cuti" }
@@ -46,19 +48,25 @@ const menuItems = [
     href: "offday.html",
     icon: menuIcons.offday,
     label: "Jadwal Offday",
-    roles: ["MASTER", "ADMIN", "STAFF"]
+    roles: ["MASTER", "ADMIN", "STAFF"],
+    pendingKey: "offday",
+    pendingRoles: ["MASTER"]
   },
   {
     href: "rekening.html",
     icon: menuIcons.rekening,
     label: "Req Ganti Rek",
-    roles: ["MASTER", "ADMIN", "STAFF"]
+    roles: ["MASTER", "ADMIN", "STAFF"],
+    pendingKey: "rekening",
+    pendingRoles: ["MASTER"]
   },
   {
     href: "banding.html",
     icon: menuIcons.banding,
     label: "Banding Kesalahan",
-    roles: ["MASTER", "ADMIN", "STAFF"]
+    roles: ["MASTER", "ADMIN", "STAFF"],
+    pendingKey: "banding",
+    pendingRoles: ["MASTER", "ADMIN"]
   },
   {
     href: "users.html",
@@ -97,6 +105,7 @@ if (menu) {
               onclick="this.closest('.oc-nav-group').classList.toggle('open')">
               <span class="oc-nav-icon" aria-hidden="true">${item.icon}</span>
               <span class="oc-nav-group-label">${item.label}</span>
+              ${item.pendingKey ? `<span class="oc-nav-badge" data-pending-key="${item.pendingKey}" hidden></span>` : ""}
               <span class="oc-nav-chevron" aria-hidden="true">${menuIcons.chevron}</span>
             </button>
             <div class="oc-nav-sub-collapse">
@@ -113,9 +122,53 @@ if (menu) {
             class="${item.href === currentPage ? "active" : ""}">
             <span class="oc-nav-icon" aria-hidden="true">${item.icon}</span>
             <span>${item.label}</span>
+            ${item.pendingKey ? `<span class="oc-nav-badge" data-pending-key="${item.pendingKey}" hidden></span>` : ""}
           </a>
         </li>
       `;
     })
     .join("");
+
+  loadSidebarPendingBadges_();
+}
+
+/**
+ * Ambil jumlah pending semua modul (Cuti/Offday/Rekening/Banding)
+ * lewat endpoint dashboard yang sudah ada, lalu tampilkan sebagai
+ * badge merah di sidebar -- cuma untuk role yang relevan approve
+ * modul tersebut (supaya STAFF tidak lihat badge yang bukan
+ * urusannya).
+ */
+async function loadSidebarPendingBadges_() {
+  const badgeEls = document.querySelectorAll(".oc-nav-badge[data-pending-key]");
+  if (!badgeEls.length) return;
+
+  try {
+    const token = loginUser?.token ? String(loginUser.token) : "";
+    const params = new URLSearchParams({ type: "dashboard", token });
+    const response = await fetch(
+      `https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?${params.toString()}`
+    );
+    const result = await response.json();
+    const pending = result?.pending || {};
+
+    const menuLookup = {};
+    menuItems.forEach(item => {
+      if (item.pendingKey) menuLookup[item.pendingKey] = item;
+    });
+
+    badgeEls.forEach(el => {
+      const key = el.dataset.pendingKey;
+      const menuItem = menuLookup[key];
+      const allowedRoles = menuItem?.pendingRoles || [];
+      const count = Number(pending[key] || 0);
+
+      if (allowedRoles.includes(role) && count > 0) {
+        el.textContent = count > 99 ? "99+" : String(count);
+        el.removeAttribute("hidden");
+      }
+    });
+  } catch (error) {
+    console.error("Gagal memuat notifikasi pending sidebar:", error);
+  }
 }
