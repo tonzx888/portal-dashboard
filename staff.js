@@ -72,9 +72,30 @@ function isExpiryWarning(value, days = 180) {
 document.addEventListener("DOMContentLoaded", () => {
   if (currentStaffSystemRole !== "MASTER") document.getElementById("btnTambahStaff").style.display = "none";
   loadStaff();
+
+  if (typeof ocInitCustomSelect === "function") {
+    ocInitCustomSelect(document.getElementById("filterJabatan"));
+    ocInitCustomSelect(document.getElementById("jabatan"));
+    // filterDomisili SENGAJA tidak di-init di sini, karena opsinya
+    // masih kosong sampai data staff selesai dimuat -- diinit di
+    // dalam populateDomisiliFilter() setelah opsi asli terisi.
+  }
+
   document.getElementById("searchStaff")?.addEventListener("input", applyStaffFilters);
   document.getElementById("filterJabatan")?.addEventListener("change", applyStaffFilters);
   document.getElementById("filterDomisili")?.addEventListener("change", applyStaffFilters);
+  document.getElementById("btnResetFilter")?.addEventListener("click", () => {
+    document.getElementById("searchStaff").value = "";
+    document.getElementById("filterJabatan").value = "";
+    document.getElementById("filterDomisili").value = "";
+
+    if (typeof ocRefreshCustomSelect === "function") {
+      ocRefreshCustomSelect(document.getElementById("filterJabatan"));
+      ocRefreshCustomSelect(document.getElementById("filterDomisili"));
+    }
+
+    applyStaffFilters();
+  });
   document.getElementById("btnRefreshStaff")?.addEventListener("click", loadStaff);
   document.getElementById("btnSave")?.addEventListener("click", saveStaff);
   document.getElementById("tanggalLahir")?.addEventListener("change", updateComputedPreview);
@@ -118,6 +139,13 @@ function populateDomisiliFilter() {
   const values = [...new Set(staffData.map(x=>String(x.domisili||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"id"));
   select.innerHTML = `<option value="">Semua Domisili</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
   if (values.includes(current)) select.value = current;
+
+  if (typeof ocInitCustomSelect === "function") {
+    ocInitCustomSelect(select);
+  }
+  if (typeof ocRefreshCustomSelect === "function") {
+    ocRefreshCustomSelect(select);
+  }
 }
 
 function applyStaffFilters() {
@@ -168,6 +196,7 @@ function openTambahStaff() {
   if (currentStaffSystemRole!=="MASTER") return;
   modalTitle.textContent="Tambah Staff";
   ["rowStaff","nama","username","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
+  if (typeof ocRefreshCustomSelect === "function") ocRefreshCustomSelect(document.getElementById("jabatan"));
   updateComputedPreview();
   modalStaff.style.display="flex";
   nama.focus();
@@ -187,6 +216,7 @@ function editStaff(x) {
   document.getElementById("username").value=x.username||"";
   passport.value=x.passport||"";
   jabatan.value=String(x.jabatan||"").toUpperCase();
+  if (typeof ocRefreshCustomSelect === "function") ocRefreshCustomSelect(document.getElementById("jabatan"));
   tanggalLahir.value=convertDate(x.tanggalLahir);
   domisili.value=x.domisili||"";
   tanggalJoin.value=convertDate(x.tanggalJoin);
