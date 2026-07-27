@@ -168,11 +168,26 @@ async function loadNotifications_() {
         // STAFF: tampilkan pengajuan MEREKA SENDIRI yang baru diproses.
         titleEl.textContent = "Status Pengajuan Saya";
 
+        // Perlu nama lengkap staff (bukan username login) untuk
+        // menyaring modul Banding, karena endpoint Banding sekarang
+        // menampilkan data SEMUA staff (bisa dilihat siapa saja),
+        // bukan cuma milik sendiri seperti Cuti/Offday/Rekening.
+        let ownNama = "";
+        try {
+            const staffParams = new URLSearchParams({ type: "staff", token: getLoginToken() });
+            const staffResponse = await fetch(`${AUTH_API_BASE}?${staffParams.toString()}`);
+            const staffResult = await staffResponse.json();
+            const own = Array.isArray(staffResult)
+                ? staffResult.find(item => String(item.username || "").trim().toUpperCase() === String(authenticatedUser?.username || "").trim().toUpperCase())
+                : null;
+            ownNama = own ? String(own.nama || "").trim().toUpperCase() : "";
+        } catch (err) { /* biarkan kosong, banding tidak difilter kalau gagal */ }
+
         const modules = [
-            { key: "cuti", type: "cuti", href: "cuti-pengajuan.html", icon: "🌴", label: item => `Cuti (${item.jenisCuti || "-"})` },
-            { key: "offday", type: "offday", href: "offday.html", icon: "📅", label: item => `Offday (${item.tanggal || "-"})` },
-            { key: "rekening", type: "rekening", href: "rekening.html", icon: "🏦", label: () => "Req Ganti Rekening" },
-            { key: "banding", type: "banding", href: "banding.html", icon: "🛡️", label: item => `Banding (${item.kodeLivechat || "-"})` }
+            { key: "cuti", type: "cuti", href: "cuti-pengajuan.html", icon: "🌴", pendingStatus: "MENUNGGU", label: item => `Cuti (${item.jenisCuti || "-"})` },
+            { key: "offday", type: "offday", href: "offday.html", icon: "📅", pendingStatus: "MENUNGGU", label: item => `Offday (${item.tanggal || "-"})` },
+            { key: "rekening", type: "rekening", href: "rekening.html", icon: "🏦", pendingStatus: "MENUNGGU", label: () => "Req Ganti Rekening" },
+            { key: "banding", type: "banding", href: "banding.html", icon: "🛡️", pendingStatus: "PENDING", label: item => `Banding (${item.kodeLivechat || "-"})` }
         ];
 
         const results = await Promise.all(modules.map(async module => {
@@ -183,7 +198,8 @@ async function loadNotifications_() {
                 if (!Array.isArray(data)) return [];
 
                 return data
-                    .filter(item => item.status && item.status !== "MENUNGGU")
+                    .filter(item => item.status && item.status !== module.pendingStatus)
+                    .filter(item => module.key !== "banding" || String(item.nama || "").trim().toUpperCase() === ownNama)
                     .map(item => ({
                         module: module.key,
                         row: item.row,
@@ -222,6 +238,15 @@ async function loadNotifications_() {
                 `;
             }).join("")
             : `<p class="oc-notif-empty">Belum ada pengajuan yang diproses.</p>`;
+
+        // Kalau user sempat klik bell SEBELUM data ini selesai dimuat
+        // (dropdown sudah kepencet duluan), tandai langsung terlihat
+        // sekarang -- supaya badge tidak nyangkut nyala walau sudah
+        // benar-benar dibuka.
+        const dropdownEl = document.getElementById("notifDropdown");
+        if (dropdownEl?.classList.contains("open")) {
+            markNotificationsSeen_();
+        }
     } catch (error) {
         console.error("Gagal memuat notifikasi:", error);
         bodyEl.innerHTML = `<p class="oc-notif-empty">Gagal memuat notifikasi.</p>`;

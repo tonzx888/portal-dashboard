@@ -192,7 +192,7 @@ function renderBandingSummary(data) {
     const counts = { total: data.length, pending: 0, done: 0, tolak: 0 };
 
     data.forEach(item => {
-        if (item.status === "MENUNGGU") counts.pending++;
+        if (item.status === "PENDING") counts.pending++;
         else if (item.status === "DONE") counts.done++;
         else if (item.status === "BANDING DI TOLAK") counts.tolak++;
     });
@@ -232,10 +232,10 @@ function renderBandingTable() {
 
     tbody.innerHTML = filtered.map((item, index) => {
         const isOwn = normalizeBdCompare_(item.nama) === normalizeBdCompare_(staffProfile?.nama || "");
-        const canDelete = canAudit || (isOwn && item.status === "MENUNGGU");
+        const canDelete = canAudit || (isOwn && item.status === "PENDING");
 
         const actionButtons = [];
-        if (canAudit && item.status === "MENUNGGU") {
+        if (canAudit && item.status === "PENDING") {
             actionButtons.push(`<button type="button" class="rk-action-btn approve" onclick="openBandingDoneModal(${Number(item.row)})">Done</button>`);
             actionButtons.push(`<button type="button" class="rk-action-btn note" onclick="openBandingNoteModal(${Number(item.row)})">Note</button>`);
             actionButtons.push(`<button type="button" class="rk-action-btn reject" onclick="openBandingRejectModal(${Number(item.row)})">Tolak</button>`);
