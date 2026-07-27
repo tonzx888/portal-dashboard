@@ -15,6 +15,13 @@ if (loggedInRole !== "MASTER") {
 document.addEventListener("DOMContentLoaded", () => {
     loadUsers();
 
+    if (typeof ocInitCustomSelect === "function") {
+        ocInitCustomSelect(document.getElementById("filterRole"));
+        ocInitCustomSelect(document.getElementById("filterStatus"));
+        ocInitCustomSelect(document.getElementById("modalRole"));
+        ocInitCustomSelect(document.getElementById("modalStatus"));
+    }
+
     document.getElementById("searchUser")
         ?.addEventListener("input", applyUserFilters);
 
@@ -314,6 +321,11 @@ function openAddUserModal() {
     document.getElementById("passwordHelp").textContent =
         "Password wajib untuk user baru.";
 
+    if (typeof ocRefreshCustomSelect === "function") {
+        ocRefreshCustomSelect(document.getElementById("modalRole"));
+        ocRefreshCustomSelect(document.getElementById("modalStatus"));
+    }
+
     document.getElementById("userModal").style.display = "flex";
     document.getElementById("modalUsername").focus();
 }
@@ -336,6 +348,11 @@ function openEditUserModal(encodedUsername) {
     document.getElementById("modalStatus").value = user.status;
     document.getElementById("passwordHelp").textContent =
         "Kosongkan password agar password lama tetap digunakan.";
+
+    if (typeof ocRefreshCustomSelect === "function") {
+        ocRefreshCustomSelect(document.getElementById("modalRole"));
+        ocRefreshCustomSelect(document.getElementById("modalStatus"));
+    }
 
     document.getElementById("userModal").style.display = "flex";
 }
