@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Req Ganti Rekening | Operation Center</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="component.css">
+  <link rel="stylesheet" href="animation.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="rekening.css">
+</head>
+<body class="oc-dashboard-body">
+<div class="oc-shell">
+  <aside class="oc-sidebar">
+    <div class="oc-brand"><div class="oc-brand-mark"><span>OC</span></div><div class="oc-brand-copy"><strong>OPERATION CENTER</strong><small>Pusat Operasional</small></div></div>
+    <div class="oc-sidebar-label">MENU UTAMA</div><ul id="sidebarMenu" class="oc-nav"></ul>
+    <div class="oc-sidebar-footer"><div class="oc-system-card"><div class="oc-system-head"><span class="oc-system-pulse"></span><strong>Sistem Aktif</strong></div><small>Seluruh layanan berjalan normal</small></div></div>
+  </aside>
+
+  <main class="oc-main">
+    <header class="oc-topbar">
+      <div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Req Ganti Rekening</strong></div>
+      <div class="oc-topbar-actions">
+        <button type="button" id="btnRefresh" class="oc-btn oc-btn-secondary oc-refresh-btn">Perbarui Data</button>
+        <div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div>
+        <button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button>
+      </div>
+    </header>
+
+    <section class="oc-page-heading oc-enter">
+      <div><span class="oc-section-kicker">DATA REKENING</span><h1>Req Ganti Rekening</h1><p>Ajukan permintaan pergantian rekening gaji dan pantau statusnya.</p></div>
+      <button type="button" class="oc-btn oc-btn-primary" onclick="openRekeningSubmitModal()">+ Ajukan Ganti Rekening</button>
+    </section>
+
+    <section class="rk-summary-grid oc-enter">
+      <article class="rk-summary-card summary-total">
+        <div class="summary-icon">▣</div>
+        <div><span>Total Pengajuan</span><strong id="summaryTotal">0</strong><small>Semua pengajuan</small></div>
+      </article>
+      <article class="rk-summary-card summary-pending">
+        <div class="summary-icon">◷</div>
+        <div><span>Menunggu</span><strong id="summaryPending">0</strong><small>Belum diproses</small></div>
+      </article>
+      <article class="rk-summary-card summary-approved">
+        <div class="summary-icon">✓</div>
+        <div><span>Disetujui</span><strong id="summaryApproved">0</strong><small>Sudah disetujui</small></div>
+      </article>
+      <article class="rk-summary-card summary-rejected">
+        <div class="summary-icon">×</div>
+        <div><span>Ditolak</span><strong id="summaryRejected">0</strong><small>Pengajuan ditolak</small></div>
+      </article>
+    </section>
+
+    <section class="rk-table-card oc-enter">
+      <div class="rk-status-tabs">
+        <button type="button" class="rk-status-tab active" data-status="">Semua</button>
+        <button type="button" class="rk-status-tab" data-status="MENUNGGU">⏳ Menunggu</button>
+        <button type="button" class="rk-status-tab" data-status="DISETUJUI">✓ Disetujui</button>
+        <button type="button" class="rk-status-tab" data-status="DITOLAK">✕ Ditolak</button>
+      </div>
+
+      <div class="rk-toolbar">
+        <input type="text" id="searchRekening" class="oc-input" placeholder="Cari nama, role, atau status...">
+      </div>
+
+      <div class="section-heading rk-table-heading">
+        <div><h2>Approval Ganti Rekening</h2><p>MASTER dapat menyetujui atau menolak pengajuan yang masih menunggu.</p></div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th><th>Nama</th><th>Role</th><th>Rekening Lama</th><th>Rekening Baru</th><th>Status</th><th>Diproses Oleh</th><th>Detail</th><th>Laporan</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="dataRekening"><tr><td colspan="10">Memuat data...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="rekeningSubmitModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel rk-submit-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">GANTI REKENING</span><h2>Ajukan Ganti Rekening</h2><p>Lengkapi data rekening lama & baru dengan benar.</p></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeRekeningSubmitModal()" aria-label="Tutup">&times;</button>
+    </div>
+
+    <div class="oc-modal-body">
+      <div id="staffProfileWarning" class="rk-warning-banner" hidden></div>
+
+      <div class="rk-form-grid">
+        <div class="rk-form-full">
+          <label>Nama &amp; Role</label>
+          <div id="staffProfileDisplay" class="rk-profile-display">Memuat data staff...</div>
+        </div>
+
+        <div class="rk-form-full rk-section-group">
+          <p class="rk-section-label">🏦 Rekening Lama</p>
+          <div class="rk-section-row">
+            <div><label for="bankLama">Nama Bank</label><input id="bankLama" type="text" placeholder="mis. BCA"></div>
+            <div><label for="noRekLama">No Rekening</label><input id="noRekLama" type="text" placeholder="mis. 1234567890"></div>
+            <div><label for="pemilikLama">Nama Pemilik</label><input id="pemilikLama" type="text" placeholder="Nama sesuai buku rekening"></div>
+          </div>
+        </div>
+
+        <div class="rk-form-full rk-section-group rk-section-new">
+          <p class="rk-section-label">✅ Rekening Baru</p>
+          <div class="rk-section-row">
+            <div><label for="bankBaru">Nama Bank</label><input id="bankBaru" type="text" placeholder="mis. BNI"></div>
+            <div><label for="noRekBaru">No Rekening</label><input id="noRekBaru" type="text" placeholder="mis. 0987654321"></div>
+            <div><label for="pemilikBaru">Nama Pemilik</label><input id="pemilikBaru" type="text" placeholder="Nama sesuai buku rekening"></div>
+          </div>
+        </div>
+
+        <div class="rk-form-full">
+          <label for="linkValidasi">Link/Screenshot Hasil Validasi</label>
+          <input id="linkValidasi" type="text" placeholder="Tempel link screenshot (mis. dari Google Drive/Imgur)">
+        </div>
+      </div>
+    </div>
+
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeRekeningSubmitModal()">Batal</button>
+      <button type="button" id="btnSubmitRekening" class="oc-btn oc-btn-primary">Ajukan Ganti Rekening</button>
+    </div>
+  </div>
+</div>
+
+<div id="rekeningDetailModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">DETAIL</span><h2>Detail Pengajuan</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeRekeningDetailModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body" id="rekeningDetailBody"></div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeRekeningDetailModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div id="rekeningRejectModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">TOLAK PENGAJUAN</span><h2>Alasan Penolakan</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeRekeningRejectModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body">
+      <textarea id="rekeningRejectReason" class="oc-textarea" rows="3" placeholder="Jelaskan alasan penolakan..."></textarea>
+    </div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeRekeningRejectModal()">Batal</button>
+      <button type="button" class="oc-btn oc-btn-danger" onclick="confirmRekeningReject()">Tolak Pengajuan</button>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="menu.js"></script>
+<script src="ui.js"></script>
+<script src="rekening.js"></script>
+</body>
+</html>

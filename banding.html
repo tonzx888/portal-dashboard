@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banding Kesalahan | Operation Center</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="component.css">
+  <link rel="stylesheet" href="animation.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="rekening.css">
+  <link rel="stylesheet" href="banding.css">
+</head>
+<body class="oc-dashboard-body">
+<div class="oc-shell">
+  <aside class="oc-sidebar">
+    <div class="oc-brand"><div class="oc-brand-mark"><span>OC</span></div><div class="oc-brand-copy"><strong>OPERATION CENTER</strong><small>Pusat Operasional</small></div></div>
+    <div class="oc-sidebar-label">MENU UTAMA</div><ul id="sidebarMenu" class="oc-nav"></ul>
+    <div class="oc-sidebar-footer"><div class="oc-system-card"><div class="oc-system-head"><span class="oc-system-pulse"></span><strong>Sistem Aktif</strong></div><small>Seluruh layanan berjalan normal</small></div></div>
+  </aside>
+
+  <main class="oc-main">
+    <header class="oc-topbar">
+      <div><span class="oc-topbar-eyebrow">OPERATION CENTER</span><strong class="oc-topbar-title">Banding Kesalahan</strong></div>
+      <div class="oc-topbar-actions">
+        <button type="button" id="btnRefresh" class="oc-btn oc-btn-secondary oc-refresh-btn">Perbarui Data</button>
+        <div class="oc-user-chip"><div id="userInitial" class="oc-avatar">OC</div><div class="oc-user-copy"><strong id="userInfo">Memuat pengguna...</strong><small>Sesi pengguna aktif</small></div></div>
+        <button type="button" id="btnLogout" class="oc-btn oc-btn-ghost">Keluar</button>
+      </div>
+    </header>
+
+    <section class="oc-page-heading oc-enter">
+      <div><span class="oc-section-kicker">LIVECHAT CS</span><h1>Banding Kesalahan</h1><p>Ajukan banding kesalahan livechat dan pantau hasil audit.</p></div>
+      <button type="button" class="oc-btn oc-btn-primary" onclick="openBandingSubmitModal()">+ Ajukan Banding</button>
+    </section>
+
+    <section class="rk-summary-grid oc-enter">
+      <article class="rk-summary-card summary-total">
+        <div class="summary-icon">▣</div>
+        <div><span>Total Banding</span><strong id="summaryTotal">0</strong><small>Semua pengajuan</small></div>
+      </article>
+      <article class="rk-summary-card summary-pending">
+        <div class="summary-icon">◷</div>
+        <div><span>Menunggu Audit</span><strong id="summaryPending">0</strong><small>Belum diproses</small></div>
+      </article>
+      <article class="rk-summary-card summary-approved">
+        <div class="summary-icon">✓</div>
+        <div><span>Done</span><strong id="summaryDone">0</strong><small>Banding diterima</small></div>
+      </article>
+      <article class="rk-summary-card summary-rejected">
+        <div class="summary-icon">×</div>
+        <div><span>Ditolak</span><strong id="summaryTolak">0</strong><small>Banding ditolak</small></div>
+      </article>
+    </section>
+
+    <section class="rk-table-card oc-enter">
+      <div class="rk-status-tabs">
+        <button type="button" class="rk-status-tab active" data-status="">Semua</button>
+        <button type="button" class="rk-status-tab" data-status="MENUNGGU">⏳ Menunggu</button>
+        <button type="button" class="rk-status-tab" data-status="DONE">✓ Done</button>
+        <button type="button" class="rk-status-tab" data-status="BANDING DI TOLAK">✕ Ditolak</button>
+      </div>
+
+      <div class="rk-toolbar">
+        <input type="text" id="searchBanding" class="oc-input" placeholder="Cari nama CS, kode livechat, atau status...">
+      </div>
+
+      <div class="section-heading rk-table-heading">
+        <div><h2>Audit Banding Kesalahan</h2><p>Tim ADM/MASTER dapat menandai DONE atau menolak banding yang masih menunggu.</p></div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th><th>Tanggal Kesalahan</th><th>Nama CS</th><th>Kode Livechat</th><th>Status</th><th>Diproses Oleh</th><th>Detail</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="dataBanding"><tr><td colspan="8">Memuat data...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="bandingSubmitModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel rk-submit-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">BANDING</span><h2>Ajukan Banding Kesalahan</h2><p>Lengkapi data kesalahan yang mau dibanding.</p></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeBandingSubmitModal()" aria-label="Tutup">&times;</button>
+    </div>
+
+    <div class="oc-modal-body">
+      <div id="staffProfileWarning" class="rk-warning-banner" hidden></div>
+
+      <div class="rk-form-grid">
+        <div class="rk-form-full">
+          <label>Nama &amp; Role</label>
+          <div id="staffProfileDisplay" class="rk-profile-display">Memuat data staff...</div>
+        </div>
+
+        <div><label for="tanggalKesalahan">Tanggal Kesalahan</label><input id="tanggalKesalahan" type="date"></div>
+        <div><label for="kodeLivechat">Kode Livechat</label><input id="kodeLivechat" type="text" placeholder="mis. TH0j6r0zxu"></div>
+
+        <div class="rk-form-full"><label for="linkKesalahan">Link Kesalahan</label><input id="linkKesalahan" type="text" placeholder="Link bukti/screenshot kesalahan"></div>
+
+        <div class="rk-form-full"><label for="keteranganBanding">Keterangan Banding</label><textarea id="keteranganBanding" rows="4" placeholder="Jelaskan alasan banding..."></textarea></div>
+
+        <div class="rk-form-full"><label for="lampiranBanding">Lampiran Banding <small>(opsional)</small></label><input id="lampiranBanding" type="text" placeholder="Link lampiran tambahan (opsional)"></div>
+      </div>
+    </div>
+
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeBandingSubmitModal()">Batal</button>
+      <button type="button" id="btnSubmitBanding" class="oc-btn oc-btn-primary">Ajukan Banding</button>
+    </div>
+  </div>
+</div>
+
+<div id="bandingDetailModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">DETAIL</span><h2>Detail Banding</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeBandingDetailModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body" id="bandingDetailBody"></div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeBandingDetailModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div id="bandingRejectModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">TOLAK BANDING</span><h2>Keterangan Audit</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeBandingRejectModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body">
+      <textarea id="bandingRejectReason" class="oc-textarea" rows="3" placeholder="Jelaskan alasan penolakan banding..."></textarea>
+    </div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeBandingRejectModal()">Batal</button>
+      <button type="button" class="oc-btn oc-btn-danger" onclick="confirmBandingReject()">Tolak Banding</button>
+    </div>
+  </div>
+</div>
+
+<div id="bandingDoneModal" class="oc-modal" aria-hidden="true">
+  <div class="oc-modal-panel" role="dialog" aria-modal="true">
+    <div class="oc-modal-head">
+      <div><span class="oc-section-kicker">TANDAI DONE</span><h2>Keterangan Audit</h2></div>
+      <button type="button" class="oc-btn oc-btn-ghost" onclick="closeBandingDoneModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="oc-modal-body">
+      <textarea id="bandingDoneNote" class="oc-textarea" rows="3" placeholder="Catatan audit (opsional)..."></textarea>
+    </div>
+    <div class="oc-modal-foot">
+      <button type="button" class="oc-btn oc-btn-secondary" onclick="closeBandingDoneModal()">Batal</button>
+      <button type="button" class="oc-btn oc-btn-primary" onclick="confirmBandingDone()">Tandai Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="menu.js"></script>
+<script src="ui.js"></script>
+<script src="banding.js"></script>
+</body>
+</html>

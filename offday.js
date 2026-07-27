@@ -258,6 +258,7 @@ function setupOffdayPage() {
     if (currentSystemRole === "MASTER") {
         if (tableTitle) tableTitle.textContent = "Approval Pengajuan Offday";
         if (tableSubtitle) tableSubtitle.textContent = "MASTER dapat menyetujui atau menolak pengajuan yang masih menunggu.";
+        document.getElementById("btnClearOffdayData")?.removeAttribute("hidden");
     } else if (currentSystemRole === "ADMIN") {
         if (actionHeader) actionHeader.style.display = "none";
         if (tableTitle) tableTitle.textContent = "Monitoring Offday";
@@ -464,6 +465,34 @@ function renderOffday(data) {
     });
 
     tbody.innerHTML = html;
+}
+
+async function clearOffdayData() {
+    const confirmed = typeof ocConfirm === "function"
+        ? await ocConfirm({
+              title: "Hapus Data Offday Selesai",
+              message: "Semua data offday yang tanggalnya sudah lewat (selesai) akan dihapus permanen. Data hari ini & akan datang tidak terpengaruh. Lanjutkan?"
+          })
+        : confirm("Semua data offday yang sudah lewat akan dihapus permanen. Lanjutkan?");
+
+    if (!confirmed) return;
+
+    try {
+        const params = new URLSearchParams({ type: "clearOffdayData", token: getLoginToken() });
+        const response = await fetch(`${API_BASE}?${params.toString()}`);
+        const result = await response.json();
+
+        if (handleExpiredSession_(result.message)) return;
+
+        showToast(result.message, result.success ? "success" : "error");
+
+        if (result.success) {
+            await Promise.all([loadOffday(), loadCalendarData(), loadSummary()]);
+        }
+    } catch (error) {
+        console.error("Gagal membersihkan data offday:", error);
+        showToast("Gagal membersihkan data offday.", "error");
+    }
 }
 
 async function submitOffday() {

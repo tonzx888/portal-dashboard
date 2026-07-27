@@ -1,0 +1,84 @@
+/* ===== Kartu ringkasan ===== */
+.rk-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:14px;margin-bottom:16px}
+.rk-summary-card{display:flex;align-items:center;gap:12px;padding:12px 14px;min-height:70px;border:1px solid var(--oc-line);border-radius:11px;background:linear-gradient(145deg,#ffffff,#f4f9f8);box-shadow:var(--oc-shadow-sm)}
+.rk-summary-card .summary-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:9px;font-size:20px;font-weight:800;color:#fff}
+.rk-summary-card div:last-child{display:flex;flex-direction:column;gap:1px}
+.rk-summary-card span{font-size:11px;color:#3e5c5c}
+.rk-summary-card strong{font-size:20px;line-height:1;color:#0e2b2e}
+.rk-summary-card small{color:#6e8788;font-size:11px}
+.summary-total .summary-icon{background:#155ed6}
+.summary-pending .summary-icon{background:#c97a12}
+.summary-approved .summary-icon{background:#0a7a4e}
+.summary-rejected .summary-icon{background:#c8483a}
+.summary-pending.has-pending{border-color:rgba(255,107,74,.45)!important;box-shadow:0 0 0 3px rgba(255,107,74,.12),var(--oc-shadow-sm)!important}
+
+/* ===== Modal Ajukan Ganti Rekening ===== */
+.rk-submit-modal-panel{width:min(600px,100%);max-height:88vh;overflow-y:auto;padding:20px}
+
+.rk-warning-banner{grid-column:1/-1;margin-bottom:14px;padding:10px 12px;border-radius:9px;background:rgba(200,72,58,.08);border:1px solid rgba(200,72,58,.28);color:#8a2f24;font-size:12px;font-weight:600}
+
+.rk-profile-display{min-height:44px;display:flex;align-items:center;padding:10px 14px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft);color:var(--oc-text);font-size:13px}
+.rk-profile-display strong{color:var(--oc-primary-strong)}
+
+.rk-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px}
+.rk-form-full{grid-column:1/-1}
+.rk-form-grid label{display:block;margin-bottom:5px;color:var(--oc-text-soft);font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.rk-form-grid input{
+  width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--oc-line-strong);
+  border-radius:10px;background:rgba(244,249,248,.9);color:var(--oc-text);outline:none;font-size:13px;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.rk-form-grid input:focus{border-color:rgba(14,124,134,.55);background:#fff;box-shadow:0 0 0 3px rgba(14,124,134,.12)}
+
+.rk-section-group{padding:12px;border:1px solid var(--oc-line);border-radius:12px;background:var(--oc-surface-soft)}
+.rk-section-new{border-color:rgba(10,122,78,.3);background:rgba(10,122,78,.05)}
+.rk-section-label{margin:0 0 10px;font-size:12px;font-weight:800;color:var(--oc-text)}
+.rk-section-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:560px){.rk-section-row{grid-template-columns:1fr}.rk-form-grid{grid-template-columns:1fr}}
+
+/* ===== Tab status ===== */
+.rk-status-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.rk-status-tab{min-height:36px;padding:8px 16px;border:1px solid var(--oc-line-strong);border-radius:999px;background:#fff;color:var(--oc-text-soft);font-size:12px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.rk-status-tab:hover{border-color:rgba(14,124,134,.4)}
+.rk-status-tab.active{background:linear-gradient(135deg,var(--oc-primary-strong),var(--oc-primary));border-color:transparent;color:#fff}
+
+/* ===== Tabel ===== */
+.rk-table-card{padding:18px;border:1px solid var(--oc-line);border-radius:var(--oc-radius-lg);background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft));box-shadow:var(--oc-shadow-sm)}
+.rk-toolbar{margin-bottom:16px}
+.section-heading{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.section-heading::before{content:"";width:4px;height:28px;border-radius:99px;background:linear-gradient(180deg,var(--oc-primary),var(--oc-primary-strong));flex:0 0 auto}
+.section-heading h2{margin:0;font-size:17px}
+.section-heading p{margin:3px 0 0;color:var(--oc-muted);font-size:11px}
+
+.table-scroll{overflow:auto;border:1px solid var(--oc-line);border-radius:9px}
+.table-scroll table{width:100%;min-width:1100px;border-collapse:separate;border-spacing:0}
+.table-scroll th{position:sticky;top:0;background:rgba(238,245,244,.98);color:#0e2b2e;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:11px;text-align:left;border-bottom:1px solid var(--oc-line)}
+.table-scroll td{padding:11px;font-size:12px;color:var(--oc-text-soft);border-bottom:1px solid var(--oc-line);vertical-align:top}
+.table-scroll tbody tr:hover{background:rgba(14,43,46,.03)}
+.rk-wrap{white-space:normal;max-width:220px}
+.rk-wrap small{color:var(--oc-muted)}
+.rk-muted{color:var(--oc-muted);font-size:11px}
+
+.rk-status-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.03em;color:#fff;white-space:nowrap}
+.rk-status-badge.pending{background:#c97a12}
+.rk-status-badge.approved{background:#0a7a4e}
+.rk-status-badge.rejected{background:#c8483a}
+
+.rk-action-btn{min-height:30px;padding:5px 10px;margin-right:6px;margin-bottom:4px;border:0;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.rk-action-btn.approve{background:#0a7a4e}
+.rk-action-btn.reject{background:#c8483a}
+.rk-action-btn.delete{background:#6e8788}
+
+.rk-detail-btn{min-width:32px;min-height:32px;padding:0;border:1px solid var(--oc-line-strong);border-radius:8px;background:#fff;font-size:14px;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.rk-detail-btn:hover{background:var(--oc-primary-soft);border-color:rgba(14,124,134,.4)}
+
+.rk-report-btn{min-height:28px;padding:4px 10px;border:1px solid var(--oc-line-strong);border-radius:8px;background:#fff;color:var(--oc-text-soft);font-size:10px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.rk-report-btn:hover{border-color:rgba(14,124,134,.4);background:var(--oc-primary-soft);color:var(--oc-primary-strong)}
+
+.calendar-detail-item{padding:4px 0}
+.calendar-detail-name{font-weight:800;font-size:14px;margin-bottom:8px;color:var(--oc-text)}
+#rekeningDetailBody p{margin:0 0 8px;font-size:12px;color:var(--oc-text-soft);line-height:1.6}
+#rekeningDetailBody p strong{color:var(--oc-text)}
+#rekeningDetailBody a{color:var(--oc-primary-strong);word-break:break-all}
+
+@media(max-width:760px){.rk-summary-grid{grid-template-columns:repeat(2,1fr)}}
