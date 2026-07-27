@@ -169,9 +169,9 @@ async function loadNotifications_() {
         titleEl.textContent = "Status Pengajuan Saya";
 
         // Perlu nama lengkap staff (bukan username login) untuk
-        // menyaring modul Banding, karena endpoint Banding sekarang
-        // menampilkan data SEMUA staff (bisa dilihat siapa saja),
-        // bukan cuma milik sendiri seperti Cuti/Offday/Rekening.
+        // menyaring modul Cuti & Banding, karena kedua endpoint itu
+        // sekarang menampilkan data SEMUA staff (bisa dilihat siapa
+        // saja), bukan cuma milik sendiri seperti Offday/Rekening.
         let ownNama = "";
         try {
             const staffParams = new URLSearchParams({ type: "staff", token: getLoginToken() });
@@ -199,7 +199,7 @@ async function loadNotifications_() {
 
                 return data
                     .filter(item => item.status && item.status !== module.pendingStatus)
-                    .filter(item => module.key !== "banding" || String(item.nama || "").trim().toUpperCase() === ownNama)
+                    .filter(item => !["banding", "cuti"].includes(module.key) || String(item.nama || "").trim().toUpperCase() === ownNama)
                     .map(item => ({
                         module: module.key,
                         row: item.row,
