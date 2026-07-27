@@ -544,3 +544,162 @@
   font-size: 11px;
   line-height: 1.6;
 }
+
+/* ===== Bell notifikasi di topbar ===== */
+.oc-notif-wrapper {
+  position: relative;
+}
+
+.oc-notif-bell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 12px;
+  background: var(--oc-surface);
+  font-size: 17px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.oc-notif-bell:hover {
+  border-color: rgba(14, 124, 134, .4);
+  background: var(--oc-primary-soft);
+}
+
+.oc-notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border: 2px solid var(--oc-surface);
+  border-radius: 999px;
+  background: #ff6b4a;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.oc-notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: var(--oc-z-dropdown, 9999);
+  display: none;
+  width: min(340px, 90vw);
+  max-height: 420px;
+  overflow: hidden;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 14px;
+  background: var(--oc-surface);
+  box-shadow: var(--oc-shadow-lg);
+}
+
+.oc-notif-dropdown.open {
+  display: flex;
+  flex-direction: column;
+  animation: ocSelectPop .16s var(--oc-ease);
+}
+
+.oc-notif-dropdown-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--oc-line);
+  background: var(--oc-surface-soft);
+}
+
+.oc-notif-dropdown-head strong {
+  font-size: 13px;
+  color: var(--oc-text);
+}
+
+.oc-notif-dropdown-body {
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.oc-notif-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 2px;
+  border-radius: 10px;
+  color: var(--oc-text);
+  text-decoration: none;
+  transition: background .15s ease;
+}
+
+.oc-notif-item:hover {
+  background: var(--oc-primary-soft);
+}
+
+.oc-notif-item.unread {
+  background: rgba(255, 107, 74, .06);
+}
+
+.oc-notif-item.unread::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff6b4a;
+}
+
+.oc-notif-icon {
+  font-size: 16px;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.oc-notif-text {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.oc-notif-status {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+
+.oc-notif-status.approved { color: #0a7a4e; }
+.oc-notif-status.rejected { color: #c8483a; }
+
+.oc-notif-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ff6b4a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.oc-notif-empty {
+  margin: 0;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--oc-muted);
+  font-size: 12px;
+}

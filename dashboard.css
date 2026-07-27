@@ -501,8 +501,8 @@
 
 .oc-stat-card {
   position: relative;
-  min-height: 148px;
-  padding: 18px;
+  min-height: 96px;
+  padding: 13px 14px;
   overflow: hidden;
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
@@ -525,9 +525,9 @@
 
 .oc-stat-card::before {
   position: absolute;
-  right: 22px;
-  bottom: 18px;
-  width: 38px;
+  right: 16px;
+  bottom: 12px;
+  width: 26px;
   height: 1px;
   background: currentColor;
   content: "";
@@ -547,29 +547,29 @@
 
 .oc-stat-label {
   color: var(--oc-text-soft);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: .09em;
+  letter-spacing: .08em;
 }
 
 .oc-stat-symbol {
   color: currentColor;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
 }
 
 .oc-stat-number {
   display: block;
-  margin-top: 22px;
+  margin-top: 10px;
   color: var(--oc-text);
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 800;
   line-height: 1;
 }
 
 .oc-stat-caption {
   display: block;
-  margin-top: 9px;
+  margin-top: 5px;
   color: var(--oc-muted);
   font-size: 10px;
 }
@@ -650,7 +650,13 @@
   line-height: 1.5;
 }
 
-.role-chart,
+.role-chart {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 .activity-list,
 .warning-list,
 .new-staff-list {
@@ -658,44 +664,75 @@
   gap: 10px;
 }
 
-.role-row {
-  display: grid;
-  grid-template-columns: 82px minmax(0, 1fr) 38px;
-  align-items: center;
-  gap: 12px;
-  min-height: 42px;
+.role-donut-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: 120px;
+  height: 120px;
 }
 
-.role-label,
-.role-value {
+.role-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.role-donut-center strong {
+  font-size: 22px;
+  color: var(--oc-text);
+  line-height: 1;
+}
+
+.role-donut-center small {
+  margin-top: 3px;
+  color: var(--oc-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.role-legend {
+  flex: 1;
+  min-width: 160px;
+  display: grid;
+  gap: 10px;
+}
+
+.role-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.role-legend-label {
+  flex: 1;
   color: var(--oc-text-soft);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
-.role-value {
+.role-legend-value {
+  color: var(--oc-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.role-legend-percent {
+  min-width: 32px;
   text-align: right;
-}
-
-.role-track {
-  height: 8px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--oc-bg-soft);
-}
-
-.role-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--oc-primary-strong), var(--oc-primary));
-}
-
-.role-row:nth-child(2) .role-fill {
-  background: linear-gradient(90deg, #6688cf, var(--oc-blue));
-}
-
-.role-row:nth-child(3) .role-fill {
-  background: linear-gradient(90deg, #bf974a, var(--oc-warning));
+  color: var(--oc-muted);
+  font-size: 11px;
 }
 
 .activity-item,
@@ -1025,4 +1062,100 @@
   text-align: center;
   color: var(--oc-muted);
   font-size: 12px;
+}
+
+/* ===== Warning passport/visa versi ringkas (chip + klik popup) ===== */
+.warning-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.warning-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 13px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 999px;
+  background: var(--oc-surface-soft);
+  color: var(--oc-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+
+.warning-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(14, 124, 134, .4);
+}
+
+.warning-chip.urgent {
+  border-color: rgba(201, 122, 18, .35);
+  background: var(--oc-warning-soft, rgba(201, 122, 18, .08));
+}
+
+.warning-chip.expired {
+  border-color: rgba(200, 72, 58, .4);
+  background: var(--oc-danger-soft, rgba(200, 72, 58, .08));
+}
+
+.warning-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--oc-primary);
+  flex: 0 0 auto;
+}
+
+.warning-chip-dot.urgent { background: var(--oc-warning, #c97a12); }
+.warning-chip-dot.expired { background: var(--oc-danger, #c8483a); }
+
+.dashboard-warning-modal-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dashboard-warning-modal-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  background: var(--oc-primary-soft);
+  font-size: 24px;
+}
+
+.dashboard-warning-modal-body p {
+  margin: 0 0 6px;
+  color: var(--oc-text-soft);
+  font-size: 13px;
+}
+
+.dashboard-warning-modal-body p strong {
+  color: var(--oc-text);
+}
+
+.dashboard-warning-days {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-warning-days.urgent {
+  background: var(--oc-warning-soft, rgba(201, 122, 18, .12));
+  color: var(--oc-warning, #c97a12);
+}
+
+.dashboard-warning-days.expired {
+  background: var(--oc-danger-soft, rgba(200, 72, 58, .12));
+  color: var(--oc-danger, #c8483a);
 }

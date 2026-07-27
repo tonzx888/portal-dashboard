@@ -303,26 +303,58 @@ function renderRoleChart(roles, totalStaff) {
     if (!container) return;
 
     const items = [
-        { label: "CS", value: Number(roles.cs || 0) },
-        { label: "Kapten", value: Number(roles.kapten || 0) },
-        { label: "Kasir", value: Number(roles.kasir || 0) }
+        { label: "CS", value: Number(roles.cs || 0), color: "var(--oc-blue, #2269dd)" },
+        { label: "Kapten", value: Number(roles.kapten || 0), color: "var(--oc-purple, #8f4ce8)" },
+        { label: "Kasir", value: Number(roles.kasir || 0), color: "#e99800" }
     ];
 
-    container.innerHTML = items.map(item => {
-        const percent = totalStaff > 0
-            ? Math.max((item.value / totalStaff) * 100, item.value > 0 ? 3 : 0)
-            : 0;
+    const total = Math.max(totalStaff, 1);
+    const radius = 52;
+    const circumference = 2 * Math.PI * radius;
 
+    let offset = 0;
+    const circles = items.map(item => {
+        const fraction = item.value / total;
+        const dash = Math.max(fraction * circumference, item.value > 0 ? 3 : 0);
+        const circle = `
+            <circle
+                cx="60" cy="60" r="${radius}"
+                fill="none" stroke="${item.color}" stroke-width="16"
+                stroke-dasharray="${dash} ${circumference - dash}"
+                stroke-dashoffset="${-offset}"
+                stroke-linecap="round"
+                transform="rotate(-90 60 60)"
+            />
+        `;
+        offset += dash;
+        return circle;
+    }).join("");
+
+    const legend = items.map(item => {
+        const percent = totalStaff > 0 ? Math.round((item.value / totalStaff) * 100) : 0;
         return `
-            <div class="role-row">
-                <span class="role-label">${escapeDashboardHtml(item.label)}</span>
-                <div class="role-track">
-                    <div class="role-fill" style="width:${Math.min(percent, 100)}%"></div>
-                </div>
-                <strong class="role-value">${item.value}</strong>
+            <div class="role-legend-item">
+                <span class="role-legend-dot" style="background:${item.color}"></span>
+                <span class="role-legend-label">${escapeDashboardHtml(item.label)}</span>
+                <strong class="role-legend-value">${item.value}</strong>
+                <small class="role-legend-percent">${percent}%</small>
             </div>
         `;
     }).join("");
+
+    container.innerHTML = `
+        <div class="role-donut-wrap">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+                <circle cx="60" cy="60" r="${radius}" fill="none" stroke="var(--oc-line)" stroke-width="16"/>
+                ${circles}
+            </svg>
+            <div class="role-donut-center">
+                <strong>${totalStaff}</strong>
+                <small>Staff</small>
+            </div>
+        </div>
+        <div class="role-legend">${legend}</div>
+    `;
 }
 
 const dashboardIcons = {
@@ -387,13 +419,14 @@ function renderActivity(data) {
     `).join("");
 }
 
+let dashboardWarningData = { passport: [], visa: [] };
+
 function renderWarningList(containerId, items) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const icon = containerId === "visaWarningList"
-        ? dashboardIcons.visa
-        : dashboardIcons.passport;
+    const type = containerId === "visaWarningList" ? "visa" : "passport";
+    dashboardWarningData[type] = items;
 
     if (!items.length) {
         container.innerHTML = `
@@ -404,32 +437,89 @@ function renderWarningList(containerId, items) {
         return;
     }
 
-    container.innerHTML = items.map(item => {
-        const days = Number(item.daysLeft);
-        const expired = days < 0;
-        const urgent = !expired && days <= 30;
+    container.innerHTML = `
+        <div class="warning-chip-row">
+            ${items.map((item, index) => {
+                const days = Number(item.daysLeft);
+                const expired = days < 0;
+                const urgent = !expired && days <= 30;
+                const urgencyClass = expired ? "expired" : urgent ? "urgent" : "";
 
-        const daysText = expired
-            ? `Lewat ${Math.abs(days)} hari`
-            : days === 0
-                ? "Habis hari ini"
-                : `${days} hari`;
+                return `
+                    <button type="button" class="warning-chip ${urgencyClass}" onclick="openDashboardWarningDetail('${type}', ${index})">
+                        <span class="warning-chip-dot ${urgencyClass}"></span>
+                        ${escapeDashboardHtml(item.nama || "-")}
+                    </button>
+                `;
+            }).join("")}
+        </div>
+    `;
+}
 
-        const urgencyClass = expired ? "expired" : urgent ? "urgent" : "";
+function openDashboardWarningDetail(type, index) {
+    const item = dashboardWarningData[type]?.[index];
+    if (!item) return;
 
-        return `
-            <div class="warning-item">
-                <span class="warning-icon ${urgencyClass}">${icon}</span>
-                <div class="warning-left">
-                    <strong>${escapeDashboardHtml(item.nama || "-")}</strong>
-                    <small>${escapeDashboardHtml(item.expiryDate || "-")}</small>
-                </div>
-                <span class="warning-days ${urgencyClass}">
-                    ${escapeDashboardHtml(daysText)}
-                </span>
+    const days = Number(item.daysLeft);
+    const expired = days < 0;
+    const daysText = expired
+        ? `Sudah lewat ${Math.abs(days)} hari`
+        : days === 0
+            ? "Habis hari ini"
+            : `${days} hari lagi`;
+
+    const modal = document.getElementById("dashboardWarningModal") || createDashboardWarningModal_();
+    document.getElementById("dashboardWarningModalIcon").textContent = type === "visa" ? "🛂" : "📔";
+    document.getElementById("dashboardWarningModalTitle").textContent = item.nama || "-";
+    document.getElementById("dashboardWarningModalKicker").textContent = type === "visa" ? "VISA" : "PASSPORT";
+    document.getElementById("dashboardWarningModalDate").textContent = item.expiryDate || "-";
+    document.getElementById("dashboardWarningModalDays").textContent = daysText;
+    document.getElementById("dashboardWarningModalDays").className = expired ? "dashboard-warning-days expired" : days <= 30 ? "dashboard-warning-days urgent" : "dashboard-warning-days";
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeDashboardWarningModal() {
+    const modal = document.getElementById("dashboardWarningModal");
+    if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
+function createDashboardWarningModal_() {
+    const modal = document.createElement("div");
+    modal.id = "dashboardWarningModal";
+    modal.className = "oc-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+        <div class="oc-modal-panel" style="width:min(380px,100%)" role="dialog" aria-modal="true">
+            <div class="oc-modal-head">
+                <div><span class="oc-section-kicker" id="dashboardWarningModalKicker">-</span><h2 id="dashboardWarningModalTitle">-</h2></div>
+                <button type="button" class="oc-btn oc-btn-ghost" onclick="closeDashboardWarningModal()" aria-label="Tutup">&times;</button>
             </div>
-        `;
-    }).join("");
+            <div class="oc-modal-body">
+                <div class="dashboard-warning-modal-body">
+                    <span id="dashboardWarningModalIcon" class="dashboard-warning-modal-icon">📔</span>
+                    <div>
+                        <p>Tanggal expired: <strong id="dashboardWarningModalDate">-</strong></p>
+                        <p id="dashboardWarningModalDays" class="dashboard-warning-days">-</p>
+                    </div>
+                </div>
+            </div>
+            <div class="oc-modal-foot">
+                <button type="button" class="oc-btn oc-btn-secondary" onclick="closeDashboardWarningModal()">Tutup</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) closeDashboardWarningModal();
+    });
+
+    return modal;
 }
 
 function renderNewStaff(items) {

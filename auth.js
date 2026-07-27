@@ -58,7 +58,209 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setupAccountMenu_();
+    setupNotificationBell_();
 });
+
+/**
+ * Tombol lonceng notifikasi di topbar (kiri dari user chip).
+ * Isinya beda per role:
+ * - MASTER: jumlah pending semua modul (Cuti/Offday/Rekening/Banding)
+ * - ADMIN: jumlah pending Banding saja (satu-satunya modul yang
+ *   memang jadi tanggung jawab ADMIN untuk audit)
+ * - STAFF: daftar pengajuan MEREKA SENDIRI yang baru saja diproses
+ *   (disetujui/ditolak), supaya tahu tanpa perlu buka satu-satu.
+ */
+function setupNotificationBell_() {
+    const userChip = document.querySelector(".oc-user-chip");
+    if (!userChip || document.getElementById("notifBellButton")) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "oc-notif-wrapper";
+    wrapper.innerHTML = `
+        <button type="button" id="notifBellButton" class="oc-notif-bell" aria-haspopup="true" aria-expanded="false">
+            <span aria-hidden="true">🔔</span>
+            <span id="notifBellBadge" class="oc-notif-badge" hidden>0</span>
+        </button>
+        <div id="notifDropdown" class="oc-notif-dropdown">
+            <div class="oc-notif-dropdown-head">
+                <strong id="notifDropdownTitle">Notifikasi</strong>
+            </div>
+            <div id="notifDropdownBody" class="oc-notif-dropdown-body">
+                <p class="oc-notif-empty">Memuat notifikasi...</p>
+            </div>
+        </div>
+    `;
+
+    userChip.insertAdjacentElement("beforebegin", wrapper);
+
+    const bellButton = document.getElementById("notifBellButton");
+    const dropdown = document.getElementById("notifDropdown");
+
+    bellButton.addEventListener("click", event => {
+        event.stopPropagation();
+        const willOpen = !dropdown.classList.contains("open");
+        dropdown.classList.toggle("open", willOpen);
+        bellButton.setAttribute("aria-expanded", String(willOpen));
+
+        if (willOpen) markNotificationsSeen_();
+    });
+
+    document.addEventListener("click", () => {
+        dropdown.classList.remove("open");
+        bellButton.setAttribute("aria-expanded", "false");
+    });
+
+    loadNotifications_();
+}
+
+let notifCurrentRole_ = "";
+let notifCurrentItems_ = [];
+
+async function loadNotifications_() {
+    const role = String(authenticatedUser?.role || "").toUpperCase();
+    notifCurrentRole_ = role;
+
+    const titleEl = document.getElementById("notifDropdownTitle");
+    const bodyEl = document.getElementById("notifDropdownBody");
+    const badgeEl = document.getElementById("notifBellBadge");
+    if (!bodyEl) return;
+
+    try {
+        if (role === "MASTER" || role === "ADMIN") {
+            titleEl.textContent = "Perlu Diproses";
+
+            const params = new URLSearchParams({ type: "dashboard", token: getLoginToken() });
+            const response = await fetch(`${AUTH_API_BASE}?${params.toString()}`);
+            const result = await response.json();
+            const pending = result?.pending || {};
+
+            const categories = role === "MASTER"
+                ? [
+                    { key: "cuti", label: "Pengajuan Cuti", href: "cuti-pengajuan.html", icon: "🌴" },
+                    { key: "offday", label: "Pengajuan Offday", href: "offday.html", icon: "📅" },
+                    { key: "rekening", label: "Req Ganti Rekening", href: "rekening.html", icon: "🏦" },
+                    { key: "banding", label: "Banding Kesalahan", href: "banding.html", icon: "🛡️" }
+                  ]
+                : [
+                    { key: "banding", label: "Banding Kesalahan", href: "banding.html", icon: "🛡️" }
+                  ];
+
+            const items = categories
+                .map(cat => ({ ...cat, count: Number(pending[cat.key] || 0) }))
+                .filter(cat => cat.count > 0);
+
+            const totalCount = items.reduce((sum, item) => sum + item.count, 0);
+            setNotifBadge_(badgeEl, totalCount);
+
+            bodyEl.innerHTML = items.length
+                ? items.map(item => `
+                    <a class="oc-notif-item" href="${item.href}">
+                        <span class="oc-notif-icon" aria-hidden="true">${item.icon}</span>
+                        <span class="oc-notif-text">${item.label}</span>
+                        <span class="oc-notif-count">${item.count}</span>
+                    </a>
+                `).join("")
+                : `<p class="oc-notif-empty">✓ Tidak ada yang perlu diproses.</p>`;
+
+            return;
+        }
+
+        // STAFF: tampilkan pengajuan MEREKA SENDIRI yang baru diproses.
+        titleEl.textContent = "Status Pengajuan Saya";
+
+        const modules = [
+            { key: "cuti", type: "cuti", href: "cuti-pengajuan.html", icon: "🌴", label: item => `Cuti (${item.jenisCuti || "-"})` },
+            { key: "offday", type: "offday", href: "offday.html", icon: "📅", label: item => `Offday (${item.tanggal || "-"})` },
+            { key: "rekening", type: "rekening", href: "rekening.html", icon: "🏦", label: () => "Req Ganti Rekening" },
+            { key: "banding", type: "banding", href: "banding.html", icon: "🛡️", label: item => `Banding (${item.kodeLivechat || "-"})` }
+        ];
+
+        const results = await Promise.all(modules.map(async module => {
+            try {
+                const params = new URLSearchParams({ type: module.type, token: getLoginToken() });
+                const response = await fetch(`${AUTH_API_BASE}?${params.toString()}`);
+                const data = await response.json();
+                if (!Array.isArray(data)) return [];
+
+                return data
+                    .filter(item => item.status && item.status !== "MENUNGGU")
+                    .map(item => ({
+                        module: module.key,
+                        row: item.row,
+                        status: item.status,
+                        href: module.href,
+                        icon: module.icon,
+                        text: module.label(item),
+                        processedAt: item.approvedDate || item.processedDate || item.timestamp || ""
+                    }));
+            } catch (err) {
+                return [];
+            }
+        }));
+
+        const allItems = results.flat().slice(0, 15);
+        notifCurrentItems_ = allItems;
+
+        const seenKeys = getSeenNotifKeys_();
+        const unseenCount = allItems.filter(item => !seenKeys.has(`${item.module}-${item.row}-${item.status}`)).length;
+        setNotifBadge_(badgeEl, unseenCount);
+
+        bodyEl.innerHTML = allItems.length
+            ? allItems.map(item => {
+                const key = `${item.module}-${item.row}-${item.status}`;
+                const isNew = !seenKeys.has(key);
+                const statusClass = item.status === "DISETUJUI" || item.status === "DONE" ? "approved" : "rejected";
+
+                return `
+                    <a class="oc-notif-item ${isNew ? "unread" : ""}" href="${item.href}">
+                        <span class="oc-notif-icon" aria-hidden="true">${item.icon}</span>
+                        <span class="oc-notif-text">
+                            ${item.text}
+                            <small class="oc-notif-status ${statusClass}">${item.status}</small>
+                        </span>
+                    </a>
+                `;
+            }).join("")
+            : `<p class="oc-notif-empty">Belum ada pengajuan yang diproses.</p>`;
+    } catch (error) {
+        console.error("Gagal memuat notifikasi:", error);
+        bodyEl.innerHTML = `<p class="oc-notif-empty">Gagal memuat notifikasi.</p>`;
+    }
+}
+
+function setNotifBadge_(badgeEl, count) {
+    if (!badgeEl) return;
+
+    if (count > 0) {
+        badgeEl.textContent = count > 99 ? "99+" : String(count);
+        badgeEl.removeAttribute("hidden");
+    } else {
+        badgeEl.setAttribute("hidden", "true");
+    }
+}
+
+function getSeenNotifKeys_() {
+    try {
+        const raw = localStorage.getItem(`ocSeenNotif_${authenticatedUser?.username || "guest"}`);
+        return new Set(raw ? JSON.parse(raw) : []);
+    } catch (error) {
+        return new Set();
+    }
+}
+
+function markNotificationsSeen_() {
+    // Cuma relevan untuk STAFF (pending-based badge MASTER/ADMIN
+    // memang seharusnya tetap nyala sampai benar-benar diproses).
+    if (notifCurrentRole_ !== "STAFF" || !notifCurrentItems_.length) return;
+
+    const keys = notifCurrentItems_.map(item => `${item.module}-${item.row}-${item.status}`);
+    localStorage.setItem(`ocSeenNotif_${authenticatedUser?.username || "guest"}`, JSON.stringify(keys));
+
+    const badgeEl = document.getElementById("notifBellBadge");
+    if (badgeEl) badgeEl.setAttribute("hidden", "true");
+
+    document.querySelectorAll(".oc-notif-item.unread").forEach(el => el.classList.remove("unread"));
+}
 
 /**
  * Membuat dropdown "Ganti Password" di user chip (pojok kanan atas)
