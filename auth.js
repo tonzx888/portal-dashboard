@@ -50,6 +50,40 @@ const authenticatedUser = requireLogin();
 
 const AUTH_API_BASE = "https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec";
 
+/**
+ * Ambil data endpoint `type=dashboard` dengan cache 15 detik di
+ * sessionStorage. Endpoint ini dipanggil dari BEBERAPA tempat di
+ * setiap halaman (badge sidebar, lonceng notifikasi, halaman Home),
+ * padahal isinya berat (baca banyak sheet). Dengan cache ini, dalam
+ * jendela 15 detik semua pemanggil cukup pakai hasil yang sama,
+ * tidak perlu request baru ke server tiap kali -- inilah yang bikin
+ * halaman terasa lama "Memuat...".
+ */
+window.ocFetchDashboardCached = async function () {
+    const CACHE_KEY = "ocDashboardCache";
+    const CACHE_TTL_MS = 15000;
+
+    try {
+        const raw = sessionStorage.getItem(CACHE_KEY);
+        if (raw) {
+            const cached = JSON.parse(raw);
+            if (Date.now() - cached.savedAt < CACHE_TTL_MS) {
+                return cached.data;
+            }
+        }
+    } catch (error) { /* cache rusak/tidak ada, lanjut fetch normal */ }
+
+    const params = new URLSearchParams({ type: "dashboard", token: getLoginToken() });
+    const response = await fetch(`${AUTH_API_BASE}?${params.toString()}`);
+    const data = await response.json();
+
+    try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    } catch (error) { /* penuh/private mode, tidak masalah */ }
+
+    return data;
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     const userInfo = document.getElementById("userInfo");
 
@@ -129,9 +163,7 @@ async function loadNotifications_() {
         if (role === "MASTER" || role === "ADMIN") {
             titleEl.textContent = "Perlu Diproses";
 
-            const params = new URLSearchParams({ type: "dashboard", token: getLoginToken() });
-            const response = await fetch(`${AUTH_API_BASE}?${params.toString()}`);
-            const result = await response.json();
+            const result = await window.ocFetchDashboardCached();
             const pending = result?.pending || {};
 
             const categories = role === "MASTER"

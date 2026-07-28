@@ -5,10 +5,10 @@ const dashboardUser = getLoginUser();
 
 document.addEventListener("DOMContentLoaded", () => {
     setupDashboardHeader();
-    loadDashboard();
+    loadDashboard(true); // load awal: boleh pakai cache 15 detik biar cepat
 
     document.getElementById("btnRefreshDashboard")
-        ?.addEventListener("click", loadDashboard);
+        ?.addEventListener("click", () => loadDashboard(false)); // tombol manual: selalu fresh
 
     document.getElementById("btnLogout")
         ?.addEventListener("click", logout);
@@ -48,7 +48,7 @@ function setupDashboardHeader() {
     );
 }
 
-async function loadDashboard() {
+async function loadDashboard(useCache = false) {
     const button = document.getElementById("btnRefreshDashboard");
     const errorBox = document.getElementById("dashboardError");
 
@@ -67,18 +67,31 @@ async function loadDashboard() {
     }
 
     try {
-        const cacheBuster = Date.now();
+        let payload;
 
-        const response = await fetch(
-            `${DASHBOARD_API_BASE}?type=dashboard&token=${encodeURIComponent(getLoginToken())}&_=${cacheBuster}`,
-            { cache: "no-store" }
-        );
+        if (useCache && typeof window.ocFetchDashboardCached === "function") {
+            payload = await window.ocFetchDashboardCached();
+        } else {
+            const cacheBuster = Date.now();
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+            const response = await fetch(
+                `${DASHBOARD_API_BASE}?type=dashboard&token=${encodeURIComponent(getLoginToken())}&_=${cacheBuster}`,
+                { cache: "no-store" }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            payload = await response.json();
+
+            // Refresh manual: buang cache lama supaya halaman lain
+            // (badge sidebar, lonceng notif) juga ikut lihat data baru
+            // di navigasi berikutnya, bukan sisa cache 15 detik tadi.
+            try { sessionStorage.removeItem("ocDashboardCache"); } catch (err) { /* abaikan */ }
         }
 
-        const data = await response.json();
+        const data = payload;
 
         if (data?.success === false) {
             const message = String(data.message || "").toLowerCase();

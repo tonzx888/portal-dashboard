@@ -151,12 +151,12 @@ async function loadSidebarPendingBadges_() {
   if (!badgeEls.length) return;
 
   try {
-    const token = loginUser?.token ? String(loginUser.token) : "";
-    const params = new URLSearchParams({ type: "dashboard", token });
-    const response = await fetch(
-      `https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?${params.toString()}`
-    );
-    const result = await response.json();
+    const result = typeof window.ocFetchDashboardCached === "function"
+      ? await window.ocFetchDashboardCached()
+      : await fetch(
+          `https://script.google.com/macros/s/AKfycbyGSUSD7xeGMBTonsc6sEdRQwcI8EYNHTJvC-_ibouo5YCe5OqHw8ARNjXaK-VtDoKMgA/exec?${new URLSearchParams({ type: "dashboard", token: loginUser?.token ? String(loginUser.token) : "" }).toString()}`
+        ).then(res => res.json());
+
     const pending = result?.pending || {};
 
     const menuLookup = {};
