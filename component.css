@@ -458,8 +458,8 @@
 
 .oc-custom-select-option.selected {
   background: var(--oc-primary);
-  color: #ffffff;
-  font-weight: 700;
+  color: #04141a;
+  font-weight: 800;
 }
 
 .oc-custom-select-option.disabled {
