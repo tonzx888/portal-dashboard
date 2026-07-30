@@ -249,13 +249,24 @@ function showStaffDetail(row) {
   roleBadge.textContent=x.jabatan||"-";
   roleBadge.className=`staff-detail-role-badge role-${String(x.jabatan||"").toLowerCase()}`;
 
+  const svgUser=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`;
+  const svgMail=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 6-10 7L2 6"/></svg>`;
+  const svgPassport=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2"/><path d="M15 12h2"/><path d="M7 16h10"/></svg>`;
+  const svgCalendar=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>`;
+  const svgShield=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>`;
+  const svgCake=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2 1 3.5 1 2-1 3.5-1 2 1 3.5 1 2-1 2-1"/><path d="M12 4v3"/><path d="M12 2v.01"/></svg>`;
+  const svgHourglass=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.17a2 2 0 0 0-.59-1.41L12 12l-4.41 4.42A2 2 0 0 0 7 17.83V22"/><path d="M7 2v4.17a2 2 0 0 0 .59 1.41L12 12l4.41-4.42A2 2 0 0 0 17 6.17V2"/></svg>`;
+  const svgPin=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+  const svgDoor=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M18 22V4a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v18"/><path d="M15 12h.01"/></svg>`;
+  const svgTrophy=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`;
+
   const fields=[
-    ["👤","Username",x.username||"Belum diisi"],
-    ["✉️","Gmail",x.gmail||"Belum diisi"],
-    ["🪪","No Passport",x.passport],["📅","Exp Passport",x.expPassport],
-    ["🛂","Exp Visa",x.expVisa],["🎂","Tanggal Lahir",x.tanggalLahir],
-    ["⏳","Usia",x.usia||calculateAge(x.tanggalLahir)],["📍","Domisili",x.domisili],
-    ["🚪","Tanggal Join",x.tanggalJoin],["🏆","Masa Kerja",x.masaKerja||calculateServicePeriod(x.tanggalJoin)]
+    [svgUser,"Username",x.username||"Belum diisi"],
+    [svgMail,"Gmail",x.gmail||"Belum diisi"],
+    [svgPassport,"No Passport",x.passport],[svgCalendar,"Exp Passport",x.expPassport],
+    [svgShield,"Exp Visa",x.expVisa],[svgCake,"Tanggal Lahir",x.tanggalLahir],
+    [svgHourglass,"Usia",x.usia||calculateAge(x.tanggalLahir)],[svgPin,"Domisili",x.domisili],
+    [svgDoor,"Tanggal Join",x.tanggalJoin],[svgTrophy,"Masa Kerja",x.masaKerja||calculateServicePeriod(x.tanggalJoin)]
   ];
   detailStaffBody.innerHTML=fields.map(([icon,a,b])=>`<div class="staff-detail-item"><span class="staff-detail-icon">${icon}</span><div><span>${escapeHtml(a)}</span><strong>${escapeHtml(b||"-")}</strong></div></div>`).join("");
   btnDetailEdit.style.display=currentStaffSystemRole==="MASTER"?"inline-flex":"none";
