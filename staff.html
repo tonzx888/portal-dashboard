@@ -147,6 +147,7 @@
         <div class="staff-form-grid">
           <label class="staff-field staff-field-wide"><span>Nama Staff</span><input class="oc-input" type="text" id="nama" autocomplete="off"></label>
           <label class="staff-field"><span>Username Login</span><input class="oc-input" type="text" id="username" autocomplete="off" placeholder="Harus sama dengan username login staff"></label>
+          <label class="staff-field"><span>Gmail</span><input class="oc-input" type="email" id="gmail" autocomplete="off" placeholder="nama@gmail.com (opsional)"></label>
           <label class="staff-field"><span>No Passport</span><input class="oc-input" type="text" id="passport" autocomplete="off"></label>
           <label class="staff-field"><span>Jabatan</span><select class="oc-select" id="jabatan"><option value="">Pilih Jabatan</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select></label>
           <label class="staff-field"><span>Tanggal Lahir</span><input class="oc-input" type="date" id="tanggalLahir"></label>
@@ -167,10 +168,18 @@
 
   <div id="modalDetailStaff" class="oc-modal" aria-hidden="true">
     <div class="oc-modal-panel staff-detail-content" role="dialog" aria-modal="true" aria-labelledby="detailNama">
-      <div class="oc-modal-head">
-        <div><span class="oc-section-kicker">DETAIL STAFF</span><h2 id="detailNama">-</h2><p>Informasi personel yang tersimpan pada sistem.</p></div>
-        <button type="button" class="oc-btn oc-btn-ghost staff-modal-close" onclick="closeDetailModal()" aria-label="Tutup">&times;</button>
+      <button type="button" class="staff-detail-close" onclick="closeDetailModal()" aria-label="Tutup">&times;</button>
+
+      <div class="staff-detail-hero">
+        <div class="staff-detail-hero-glow" aria-hidden="true"></div>
+        <div class="staff-detail-avatar" id="detailAvatar">--</div>
+        <div class="staff-detail-hero-copy">
+          <span class="staff-detail-kicker">DETAIL STAFF</span>
+          <h2 id="detailNama">-</h2>
+          <span class="staff-detail-role-badge" id="detailRoleBadge">-</span>
+        </div>
       </div>
+
       <div class="oc-modal-body"><div id="detailStaffBody" class="staff-detail-grid"></div></div>
       <div class="oc-modal-foot">
         <button type="button" class="oc-btn oc-btn-secondary" onclick="closeDetailModal()">Tutup</button>

@@ -197,7 +197,7 @@ function renderTable(data) {
 function openTambahStaff() {
   if (currentStaffSystemRole!=="MASTER") return;
   modalTitle.textContent="Tambah Staff";
-  ["rowStaff","nama","username","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
+  ["rowStaff","nama","username","gmail","passport","jabatan","tanggalLahir","domisili","tanggalJoin"].forEach(id=>document.getElementById(id).value="");
   if (typeof ocRefreshCustomSelect === "function") ocRefreshCustomSelect(document.getElementById("jabatan"));
   updateComputedPreview();
   modalStaff.style.display="flex";
@@ -216,6 +216,7 @@ function editStaff(x) {
   rowStaff.value=x.row||"";
   nama.value=x.nama||"";
   document.getElementById("username").value=x.username||"";
+  document.getElementById("gmail").value=x.gmail||"";
   passport.value=x.passport||"";
   jabatan.value=String(x.jabatan||"").toUpperCase();
   if (typeof ocRefreshCustomSelect === "function") ocRefreshCustomSelect(document.getElementById("jabatan"));
@@ -238,15 +239,25 @@ function closeDetailModal(){modalDetailStaff.style.display="none"}
 function showStaffDetail(row) {
   const x = staffData.find(v=>Number(v.row)===Number(row));
   if (!x) return showToast("Data staff tidak ditemukan.","error");
+
   detailNama.textContent=x.nama||"Detail Staff";
+
+  const initials=String(x.nama||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase()||"?";
+  document.getElementById("detailAvatar").textContent=initials;
+
+  const roleBadge=document.getElementById("detailRoleBadge");
+  roleBadge.textContent=x.jabatan||"-";
+  roleBadge.className=`staff-detail-role-badge role-${String(x.jabatan||"").toLowerCase()}`;
+
   const fields=[
-    ["Username",x.username||"Belum diisi"],
-    ["Jabatan",x.jabatan],["No Passport",x.passport],["Exp Passport",x.expPassport],
-    ["Exp Visa",x.expVisa],["Tanggal Lahir",x.tanggalLahir],
-    ["Usia",x.usia||calculateAge(x.tanggalLahir)],["Domisili",x.domisili],
-    ["Tanggal Join",x.tanggalJoin],["Masa Kerja",x.masaKerja||calculateServicePeriod(x.tanggalJoin)]
+    ["👤","Username",x.username||"Belum diisi"],
+    ["✉️","Gmail",x.gmail||"Belum diisi"],
+    ["🪪","No Passport",x.passport],["📅","Exp Passport",x.expPassport],
+    ["🛂","Exp Visa",x.expVisa],["🎂","Tanggal Lahir",x.tanggalLahir],
+    ["⏳","Usia",x.usia||calculateAge(x.tanggalLahir)],["📍","Domisili",x.domisili],
+    ["🚪","Tanggal Join",x.tanggalJoin],["🏆","Masa Kerja",x.masaKerja||calculateServicePeriod(x.tanggalJoin)]
   ];
-  detailStaffBody.innerHTML=fields.map(([a,b])=>`<div class="staff-detail-item"><span>${escapeHtml(a)}</span><strong>${escapeHtml(b||"-")}</strong></div>`).join("");
+  detailStaffBody.innerHTML=fields.map(([icon,a,b])=>`<div class="staff-detail-item"><span class="staff-detail-icon">${icon}</span><div><span>${escapeHtml(a)}</span><strong>${escapeHtml(b||"-")}</strong></div></div>`).join("");
   btnDetailEdit.style.display=currentStaffSystemRole==="MASTER"?"inline-flex":"none";
   btnDetailEdit.onclick=()=>editStaffByRow(row);
   modalDetailStaff.style.display="flex";
@@ -257,6 +268,7 @@ async function saveStaff() {
   const payload={
     row:rowStaff.value.trim(),nama:nama.value.trim(),
     username:document.getElementById("username").value.trim(),
+    gmail:document.getElementById("gmail").value.trim(),
     passport:passport.value.trim(),
     jabatan:jabatan.value.trim(),
     tanggalLahir:tanggalLahir.value,domisili:domisili.value.trim(),tanggalJoin:tanggalJoin.value

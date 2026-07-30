@@ -39,13 +39,87 @@
 .staff-icon-btn.delete:hover{background:rgba(200,72,58,.1);border-color:rgba(200,72,58,.35);transform:translateY(-1px)}
 .staff-muted{color:var(--staff-muted)}.staff-warning{color:#c8483a;font-weight:800}.staff-safe{color:#0a5f68;font-weight:700}
 .staff-modal{padding:24px}.staff-modal-content{width:min(760px,100%);max-height:90vh;overflow:auto}.staff-detail-content{width:min(680px,100%);max-height:90vh;overflow:auto}
-.staff-form-grid,.staff-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.staff-field-wide{grid-column:1/-1}
+.staff-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.staff-field-wide{grid-column:1/-1}
+.staff-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:20px 24px 24px}
 .staff-field span{display:block;margin-bottom:7px;color:#3e5c5c;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.staff-field input,.staff-field select{width:100%}
-.staff-auto-info,.staff-detail-item{padding:14px;border:1px solid var(--staff-border);border-radius:9px;background:#eef5f4}
-.staff-auto-info span,.staff-detail-item span{display:block;margin-bottom:5px;color:var(--staff-muted);font-size:12px}.staff-auto-info strong,.staff-detail-item strong{color:#0e2b2e}
+.staff-auto-info{padding:14px;border:1px solid var(--staff-border);border-radius:9px;background:#eef5f4}
+.staff-auto-info span{display:block;margin-bottom:5px;color:var(--staff-muted);font-size:12px}.staff-auto-info strong{color:#0e2b2e}
 .oc-modal-head h2{margin:4px 0 0;font-size:19px;color:#0e2b2e}
 .oc-modal-head p{margin:4px 0 0;color:var(--staff-muted);font-size:12px}
 .staff-modal-close{min-width:36px!important;min-height:36px!important;padding:0!important;border:1px solid var(--staff-border)!important;border-radius:9px!important;background:#f4f9f8!important;color:#3e5c5c!important;font-size:18px!important;line-height:1;transition:background .18s ease,color .18s ease}
 .staff-modal-close:hover{background:rgba(200,72,58,.12)!important;color:#c8483a!important}
 @media(max-width:1050px){.staff-summary-grid{grid-template-columns:repeat(2,1fr)}.staff-toolbar{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.staff-page-header{flex-direction:column}.staff-summary-grid,.staff-toolbar,.staff-form-grid,.staff-detail-grid{grid-template-columns:1fr}.staff-field-wide{grid-column:auto}}
+
+/* ===== Modal Detail Staff — versi futuristik ===== */
+.staff-detail-content{position:relative;width:min(640px,100%);max-height:90vh;overflow:auto;padding:0!important;border-radius:22px!important;background:#fff!important}
+.staff-detail-content .oc-modal-body{padding:0}
+
+.staff-detail-close{
+  position:absolute;top:16px;right:16px;z-index:5;
+  width:34px;height:34px;border:1px solid rgba(255,255,255,.35);border-radius:50%;
+  background:rgba(255,255,255,.12);backdrop-filter:blur(6px);color:#fff;font-size:18px;line-height:1;
+  cursor:pointer;transition:background .18s ease,transform .18s ease;
+}
+.staff-detail-close:hover{background:rgba(255,255,255,.25);transform:rotate(90deg)}
+
+.staff-detail-hero{
+  position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;
+  padding:32px 28px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,107,74,.35), transparent 55%),
+    radial-gradient(circle at 85% 80%, rgba(14,124,134,.55), transparent 55%),
+    linear-gradient(135deg,#0a2e33 0%,#0e1f24 55%,#081418 100%);
+  border-radius:22px 22px 0 0;
+}
+
+.staff-detail-hero-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 2px,transparent 2px 34px);
+  mix-blend-mode:overlay;opacity:.6;
+}
+
+.staff-detail-avatar{
+  position:relative;flex:0 0 auto;display:grid;place-items:center;
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,#14b8a6,#0e7c86);
+  color:#fff;font-size:22px;font-weight:800;letter-spacing:.02em;
+  box-shadow:0 0 0 3px rgba(255,255,255,.18),0 0 24px rgba(20,184,166,.55);
+}
+
+.staff-detail-hero-copy{position:relative;min-width:0}
+.staff-detail-kicker{display:block;margin-bottom:4px;color:#7dd8cf;font-size:10px;font-weight:800;letter-spacing:.14em}
+.staff-detail-hero-copy h2{margin:0 0 8px;color:#fff;font-size:21px;font-weight:800;letter-spacing:.01em}
+
+.staff-detail-role-badge{
+  display:inline-block;padding:4px 12px;border-radius:999px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+  color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+}
+.staff-detail-role-badge.role-cs{background:rgba(34,105,221,.28);border-color:rgba(34,105,221,.5)}
+.staff-detail-role-badge.role-kapten{background:rgba(143,76,232,.28);border-color:rgba(143,76,232,.5)}
+.staff-detail-role-badge.role-kasir{background:rgba(233,152,0,.28);border-color:rgba(233,152,0,.5)}
+
+.staff-detail-item{
+  position:relative;display:flex;align-items:flex-start;gap:11px;
+  padding:12px 14px;border:1px solid var(--staff-border);border-radius:12px;
+  background:linear-gradient(150deg,#ffffff,#f2f8f7);
+  overflow:hidden;transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.staff-detail-item::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#14b8a6,#0e7c86);opacity:0;transition:opacity .18s ease;
+}
+.staff-detail-item:hover{border-color:rgba(14,124,134,.4);transform:translateY(-1px);box-shadow:0 8px 18px rgba(14,43,46,.08)}
+.staff-detail-item:hover::before{opacity:1}
+
+.staff-detail-icon{
+  flex:0 0 auto;display:grid;place-items:center;width:30px;height:30px;
+  border-radius:9px;background:rgba(14,124,134,.1);font-size:14px;
+}
+
+.staff-detail-item div{min-width:0}
+.staff-detail-item span{display:block;margin-bottom:3px;color:var(--staff-muted);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.staff-detail-item strong{display:block;color:#0e2b2e;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+
+@media(max-width:520px){.staff-detail-hero{padding:26px 20px}.staff-detail-grid{grid-template-columns:1fr;padding:16px 18px 20px}}
