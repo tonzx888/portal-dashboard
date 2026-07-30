@@ -467,9 +467,10 @@
   gap: 11px;
   min-width: 190px;
   padding: 13px 15px;
-  border: 1px solid rgba(14, 124, 134, .18);
+  border: 1px solid rgba(46, 230, 214, .28);
   border-radius: 16px;
-  background: rgba(14, 124, 134, .06);
+  background: rgba(46, 230, 214, .08);
+  box-shadow: 0 0 20px rgba(46, 230, 214, .08);
 }
 
 .oc-live-status strong,
@@ -590,13 +591,35 @@
 }
 
 .oc-panel {
+  position: relative;
   min-width: 0;
   padding: 18px;
+  overflow: hidden;
   border: 1px solid var(--oc-line);
   border-radius: var(--oc-radius-lg);
   background:
     linear-gradient(145deg, var(--oc-surface), var(--oc-surface-soft));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--oc-shadow-sm);
+}
+
+.oc-panel::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  border-top: 1px solid rgba(46, 230, 214, .3);
+  border-right: 1px solid rgba(46, 230, 214, .3);
+  border-radius: 0 var(--oc-radius-lg) 0 0;
+  content: "";
+  opacity: .8;
+  pointer-events: none;
+}
+
+.oc-panel-wide {
+  grid-column: 1 / -1;
 }
 
 .oc-panel-header {
@@ -605,6 +628,74 @@
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 16px;
+}
+
+.oc-panel-header > div:first-child {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.oc-panel-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(46, 230, 214, .3);
+  border-radius: 11px;
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary);
+  box-shadow: 0 0 16px rgba(46, 230, 214, .12);
+}
+
+.oc-panel-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.oc-doc-tabs {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.oc-doc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 999px;
+  background: var(--oc-surface-soft);
+  color: var(--oc-text-soft);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+.oc-doc-tab .oc-badge {
+  min-width: 18px;
+  padding: 0 5px;
+  font-size: 9px;
+}
+
+.oc-doc-tab:hover {
+  border-color: rgba(46, 230, 214, .4);
+}
+
+.oc-doc-tab.active {
+  background: linear-gradient(135deg, var(--oc-primary-strong), var(--oc-primary));
+  border-color: transparent;
+  color: #04141a;
+}
+
+.oc-doc-tab.active .oc-badge {
+  background: rgba(4, 20, 26, .25);
+  color: #04141a;
 }
 
 .activity-donut {

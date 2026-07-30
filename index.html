@@ -92,6 +92,44 @@
 
       <div id="dashboardError" class="oc-dashboard-error" hidden></div>
 
+      <section id="attentionSection" class="oc-dashboard-grid oc-enter" hidden>
+        <article class="oc-panel oc-attention-panel">
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">PERLU DIPROSES</span>
+                <h2>Pengajuan Menunggu</h2>
+                <p>Ringkasan semua modul yang masih butuh persetujuan.</p>
+              </div>
+            </div>
+            <span id="attentionPendingBadge" class="oc-badge oc-badge-warning">0</span>
+          </div>
+
+          <div id="attentionPendingList" class="oc-attention-list"></div>
+        </article>
+
+        <article id="attentionUsernamePanel" class="oc-panel oc-attention-panel" hidden>
+          <div class="oc-panel-header">
+            <div>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 8v6"/><path d="M19 11h6"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">DATA STAFF</span>
+                <h2>Belum Ada Username</h2>
+                <p>Staff ini belum bisa ajukan Cuti/Offday sampai username dilengkapi.</p>
+              </div>
+            </div>
+            <span id="attentionUsernameBadge" class="oc-badge oc-badge-warning">0</span>
+          </div>
+
+          <div id="attentionUsernameList" class="oc-attention-list"></div>
+        </article>
+      </section>
+
       <section class="oc-stat-grid oc-enter">
         <article class="oc-stat-card oc-stat-personnel oc-hover-lift">
           <div class="oc-stat-top">
@@ -134,41 +172,18 @@
         </article>
       </section>
 
-      <section id="attentionSection" class="oc-dashboard-grid oc-enter" hidden>
-        <article class="oc-panel oc-attention-panel">
-          <div class="oc-panel-header">
-            <div>
-              <span class="oc-section-kicker">PERLU DIPROSES</span>
-              <h2>Pengajuan Menunggu</h2>
-              <p>Ringkasan semua modul yang masih butuh persetujuan.</p>
-            </div>
-            <span id="attentionPendingBadge" class="oc-badge oc-badge-warning">0</span>
-          </div>
-
-          <div id="attentionPendingList" class="oc-attention-list"></div>
-        </article>
-
-        <article id="attentionUsernamePanel" class="oc-panel oc-attention-panel" hidden>
-          <div class="oc-panel-header">
-            <div>
-              <span class="oc-section-kicker">DATA STAFF</span>
-              <h2>Belum Ada Username</h2>
-              <p>Staff ini belum bisa ajukan Cuti/Offday sampai username dilengkapi.</p>
-            </div>
-            <span id="attentionUsernameBadge" class="oc-badge oc-badge-warning">0</span>
-          </div>
-
-          <div id="attentionUsernameList" class="oc-attention-list"></div>
-        </article>
-      </section>
-
       <section class="oc-dashboard-grid oc-dashboard-grid-primary">
         <article class="oc-panel oc-enter">
           <div class="oc-panel-header">
             <div>
-              <span class="oc-section-kicker">KOMPOSISI STAFF</span>
-              <h2>Komposisi Tim</h2>
-              <p>Perbandingan jumlah staff berdasarkan jabatan.</p>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">KOMPOSISI STAFF</span>
+                <h2>Komposisi Tim</h2>
+                <p>Perbandingan jumlah staff berdasarkan jabatan.</p>
+              </div>
             </div>
           </div>
 
@@ -180,9 +195,14 @@
         <article class="oc-panel oc-enter">
           <div class="oc-panel-header">
             <div>
-              <span class="oc-section-kicker">HARI INI</span>
-              <h2>Aktivitas Operasional</h2>
-              <p>Ringkasan kondisi staff hari ini.</p>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">HARI INI</span>
+                <h2>Aktivitas Operasional</h2>
+                <p>Ringkasan kondisi staff hari ini.</p>
+              </div>
             </div>
 
             <div id="activityDonut" class="activity-donut" aria-hidden="true"></div>
@@ -195,32 +215,31 @@
       </section>
 
       <section class="oc-dashboard-grid">
-        <article class="oc-panel oc-enter">
+        <article class="oc-panel oc-enter oc-panel-wide">
           <div class="oc-panel-header">
             <div>
-              <span class="oc-section-kicker">PASSPORT</span>
-              <h2>Segera Kedaluwarsa</h2>
-              <p>Dokumen yang masuk periode peringatan.</p>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/><path d="M9 9h1"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">DOKUMEN</span>
+                <h2>Segera Kedaluwarsa</h2>
+                <p>Passport &amp; visa yang membutuhkan perhatian.</p>
+              </div>
             </div>
 
-            <span id="passportWarningBadge" class="oc-badge oc-badge-warning">0</span>
+            <div class="oc-doc-tabs">
+              <button type="button" class="oc-doc-tab active" data-doc-tab="passport">
+                Passport <span id="passportWarningBadge" class="oc-badge oc-badge-warning">0</span>
+              </button>
+              <button type="button" class="oc-doc-tab" data-doc-tab="visa">
+                Visa <span id="visaWarningBadge" class="oc-badge oc-badge-warning">0</span>
+              </button>
+            </div>
           </div>
 
           <div id="passportWarningList" class="warning-list"></div>
-        </article>
-
-        <article class="oc-panel oc-enter">
-          <div class="oc-panel-header">
-            <div>
-              <span class="oc-section-kicker">VISA</span>
-              <h2>Segera Kedaluwarsa</h2>
-              <p>Data visa yang membutuhkan perhatian.</p>
-            </div>
-
-            <span id="visaWarningBadge" class="oc-badge oc-badge-warning">0</span>
-          </div>
-
-          <div id="visaWarningList" class="warning-list"></div>
+          <div id="visaWarningList" class="warning-list" hidden></div>
         </article>
       </section>
 
@@ -228,9 +247,14 @@
         <article class="oc-panel oc-enter">
           <div class="oc-panel-header">
             <div>
-              <span class="oc-section-kicker">STAFF TERBARU</span>
-              <h2>Staff Baru Bergabung</h2>
-              <p>Data staff yang terakhir bergabung.</p>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">STAFF TERBARU</span>
+                <h2>Staff Baru Bergabung</h2>
+                <p>Data staff yang terakhir bergabung.</p>
+              </div>
             </div>
           </div>
 
@@ -240,9 +264,14 @@
         <article class="oc-panel oc-enter">
           <div class="oc-panel-header">
             <div>
-              <span class="oc-section-kicker">RINGKASAN CEPAT</span>
-              <h2>Ringkasan Staff</h2>
-              <p>Informasi singkat dari database staff.</p>
+              <span class="oc-panel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="13" width="3" height="5"/><rect x="12" y="9" width="3" height="9"/><rect x="17" y="5" width="3" height="13"/></svg>
+              </span>
+              <div>
+                <span class="oc-section-kicker">RINGKASAN CEPAT</span>
+                <h2>Ringkasan Staff</h2>
+                <p>Informasi singkat dari database staff.</p>
+              </div>
             </div>
           </div>
 

@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnLogout")
         ?.addEventListener("click", logout);
+
+    document.querySelectorAll(".oc-doc-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            document.querySelectorAll(".oc-doc-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            const target = tab.dataset.docTab;
+            document.getElementById("passportWarningList").hidden = target !== "passport";
+            document.getElementById("visaWarningList").hidden = target !== "visa";
+        });
+    });
 });
 
 function setupDashboardHeader() {
