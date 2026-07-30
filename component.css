@@ -421,7 +421,7 @@
 
 .oc-custom-select-list {
   position: fixed;
-  z-index: var(--oc-z-dropdown, 9999);
+  z-index: 10000;
   display: none;
   max-height: 240px;
   overflow-y: auto;
