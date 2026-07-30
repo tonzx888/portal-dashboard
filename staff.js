@@ -166,7 +166,7 @@ function renderTable(data) {
   const resultCount = document.getElementById("staffResultCount");
   if (resultCount) resultCount.textContent = `${data.length} data`;
 
-  if (!data.length) return tbody.innerHTML = `<tr><td colspan="12">Tidak ada data yang sesuai.</td></tr>`;
+  if (!data.length) return tbody.innerHTML = `<tr><td colspan="11">Tidak ada data yang sesuai.</td></tr>`;
   tbody.innerHTML = data.map((x,i)=>{
     const row = Number(x.row);
     const actions = currentStaffSystemRole==="MASTER" ? `
@@ -181,7 +181,6 @@ function renderTable(data) {
     return `<tr>
       <td>${i+1}</td>
       <td><button class="staff-name-button" onclick="showStaffDetail(${row})">${escapeHtml(x.nama||"-")}</button></td>
-      <td class="staff-username-cell">${x.username ? escapeHtml(x.username) : '<span class="staff-username-missing">Belum diisi</span>'}</td>
       <td>${escapeHtml(x.jabatan||"-")}</td>
       <td>${escapeHtml(x.usia||calculateAge(x.tanggalLahir))}</td>
       <td>${escapeHtml(x.domisili||"-")}</td>
@@ -241,6 +240,7 @@ function showStaffDetail(row) {
   if (!x) return showToast("Data staff tidak ditemukan.","error");
   detailNama.textContent=x.nama||"Detail Staff";
   const fields=[
+    ["Username",x.username||"Belum diisi"],
     ["Jabatan",x.jabatan],["No Passport",x.passport],["Exp Passport",x.expPassport],
     ["Exp Visa",x.expVisa],["Tanggal Lahir",x.tanggalLahir],
     ["Usia",x.usia||calculateAge(x.tanggalLahir)],["Domisili",x.domisili],
