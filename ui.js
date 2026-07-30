@@ -185,6 +185,7 @@
 
     function closeList() {
       wrapper.classList.remove("open");
+      list.classList.remove("open");
       trigger.setAttribute("aria-expanded", "false");
       window.removeEventListener("scroll", positionList, true);
       window.removeEventListener("resize", positionList);
@@ -196,10 +197,13 @@
 
       document.querySelectorAll(".oc-custom-select.open")
         .forEach(el => el.classList.remove("open"));
+      document.querySelectorAll(".oc-custom-select-list.open")
+        .forEach(el => el.classList.remove("open"));
 
       if (willOpen) {
         positionList();
         wrapper.classList.add("open");
+        list.classList.add("open");
         trigger.setAttribute("aria-expanded", "true");
         window.addEventListener("scroll", positionList, true);
         window.addEventListener("resize", positionList);
@@ -224,7 +228,13 @@
     refresh();
 
     wrapper.appendChild(trigger);
-    wrapper.appendChild(list);
+    // PENTING: list SENGAJA dijadikan anak langsung <body>, BUKAN
+    // anak wrapper. Kalau list ditaruh di dalam wrapper yang ada di
+    // dalam elemen ber-backdrop-filter/transform (mis. modal kaca),
+    // "position: fixed" pada list jadi terikat ke elemen itu, bukan
+    // ke layar penuh -- itulah sebab dropdown pernah muncul "nyasar"
+    // di posisi yang salah saat dipakai di dalam modal.
+    document.body.appendChild(list);
     selectEl.insertAdjacentElement("afterend", wrapper);
     selectEl.classList.add("oc-native-select-hidden");
 

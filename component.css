@@ -432,7 +432,7 @@
   box-shadow: var(--oc-shadow-md);
 }
 
-.oc-custom-select.open .oc-custom-select-list {
+.oc-custom-select-list.open {
   display: block;
   animation: ocSelectPop .16s var(--oc-ease);
 }
