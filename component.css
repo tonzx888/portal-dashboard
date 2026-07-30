@@ -108,7 +108,7 @@
 .oc-input:focus,
 .oc-select:focus,
 .oc-textarea:focus {
-  border-color: rgba(34, 211, 238, .55);
+  border-color: rgba(46, 230, 214, .55);
   background: var(--oc-surface);
   box-shadow: 0 0 0 4px var(--oc-primary-soft);
 }
@@ -381,7 +381,7 @@
 }
 
 .oc-custom-select-trigger:focus-visible {
-  border-color: rgba(34, 211, 238, .55);
+  border-color: rgba(46, 230, 214, .55);
   box-shadow: 0 0 0 3px var(--oc-primary-soft);
 }
 
@@ -401,7 +401,7 @@
 }
 
 .oc-custom-select-trigger:hover {
-  border-color: rgba(34, 211, 238, .4);
+  border-color: rgba(46, 230, 214, .4);
 }
 
 .oc-custom-select-trigger:disabled {
@@ -410,7 +410,7 @@
 }
 
 .oc-custom-select.open .oc-custom-select-trigger {
-  border-color: rgba(34, 211, 238, .55);
+  border-color: rgba(46, 230, 214, .55);
   background: var(--oc-surface);
   box-shadow: 0 0 0 4px var(--oc-primary-soft);
 }
@@ -540,7 +540,7 @@
 }
 
 .oc-account-field input:focus {
-  border-color: rgba(34, 211, 238, .55);
+  border-color: rgba(46, 230, 214, .55);
   background: var(--oc-surface);
   box-shadow: 0 0 0 3px var(--oc-primary-soft);
 }
@@ -573,7 +573,7 @@
 }
 
 .oc-notif-bell:hover {
-  border-color: rgba(34, 211, 238, .4);
+  border-color: rgba(46, 230, 214, .4);
   background: var(--oc-primary-soft);
 }
 

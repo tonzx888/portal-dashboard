@@ -21,7 +21,7 @@
   background: linear-gradient(180deg, rgba(10, 16, 30, .92), rgba(6, 10, 20, .96));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 1px 0 0 rgba(34, 211, 238, .06), 8px 0 40px rgba(0, 0, 0, .35);
+  box-shadow: 1px 0 0 rgba(46, 230, 214, .06), 8px 0 40px rgba(0, 0, 0, .35);
 }
 
 .oc-brand {
@@ -39,13 +39,13 @@
   flex: 0 0 auto;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(34, 211, 238, .4);
+  border: 1px solid rgba(46, 230, 214, .4);
   border-radius: 15px;
   background:
     radial-gradient(circle at 28% 24%, rgba(255,255,255,.16), transparent 55%),
     linear-gradient(145deg, rgba(34,211,238,.35), rgba(167,139,250,.25));
   color: #eafcff;
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, .2), 0 0 22px rgba(34, 211, 238, .4);
+  box-shadow: 0 0 0 1px rgba(46, 230, 214, .2), 0 0 22px rgba(46, 230, 214, .4);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .08em;
@@ -57,7 +57,7 @@
   bottom: -18px;
   width: 44px;
   height: 44px;
-  border: 1px solid rgba(34, 211, 238, .3);
+  border: 1px solid rgba(46, 230, 214, .3);
   border-radius: 50%;
   content: "";
 }
@@ -375,7 +375,7 @@
   background: rgba(8, 13, 24, .78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 1px 0 rgba(34, 211, 238, .08);
+  box-shadow: 0 1px 0 rgba(46, 230, 214, .08);
 }
 
 .oc-topbar-eyebrow,

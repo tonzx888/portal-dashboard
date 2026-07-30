@@ -14,34 +14,34 @@
   --oc-font: "Sora", "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --oc-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --oc-bg: #060a14;
-  --oc-bg-soft: #0a1120;
-  --oc-surface: rgba(17, 25, 43, .78);
-  --oc-surface-soft: rgba(22, 32, 54, .6);
-  --oc-surface-raised: rgba(28, 40, 66, .72);
+  --oc-bg: #10163a;
+  --oc-bg-soft: #161d48;
+  --oc-surface: rgba(35, 43, 92, .82);
+  --oc-surface-soft: rgba(42, 52, 104, .62);
+  --oc-surface-raised: rgba(52, 63, 122, .76);
 
-  --oc-text: #eaf2ff;
-  --oc-text-soft: #a9bcdc;
-  --oc-muted: #6b7fa3;
+  --oc-text: #f7f9ff;
+  --oc-text-soft: #c9d2f4;
+  --oc-muted: #93a0d4;
 
-  --oc-line: rgba(125, 200, 255, .14);
-  --oc-line-strong: rgba(125, 200, 255, .3);
+  --oc-line: rgba(160, 190, 255, .2);
+  --oc-line-strong: rgba(160, 190, 255, .38);
 
-  --oc-primary: #22d3ee;
-  --oc-primary-strong: #06b6d4;
-  --oc-primary-soft: rgba(34, 211, 238, .15);
+  --oc-primary: #2ee6d6;
+  --oc-primary-strong: #12c2b0;
+  --oc-primary-soft: rgba(46, 230, 214, .17);
 
-  --oc-blue: #4d8dff;
-  --oc-blue-soft: rgba(77, 141, 255, .15);
+  --oc-blue: #5b9bff;
+  --oc-blue-soft: rgba(91, 155, 255, .17);
 
-  --oc-warning: #fbbf24;
-  --oc-warning-soft: rgba(251, 191, 36, .15);
+  --oc-warning: #ffc247;
+  --oc-warning-soft: rgba(255, 194, 71, .17);
 
-  --oc-danger: #fb7185;
-  --oc-danger-soft: rgba(251, 113, 133, .15);
+  --oc-danger: #ff7a93;
+  --oc-danger-soft: rgba(255, 122, 147, .17);
 
-  --oc-purple: #a78bfa;
-  --oc-purple-soft: rgba(167, 139, 250, .16);
+  --oc-purple: #b79bff;
+  --oc-purple-soft: rgba(183, 155, 255, .18);
 
   /* Aksen "suar" — dipakai TERBATAS: menu aktif, status mendesak. */
   --oc-accent: #ff5da2;
@@ -58,8 +58,8 @@
   --oc-shadow-md: 0 18px 44px rgba(0, 0, 6, .55), inset 0 1px 0 rgba(255, 255, 255, .05);
   --oc-shadow-lg: 0 32px 80px rgba(0, 0, 6, .65), inset 0 1px 0 rgba(255, 255, 255, .06);
 
-  --oc-glow-primary: 0 0 0 1px rgba(34, 211, 238, .35), 0 0 26px rgba(34, 211, 238, .28);
-  --oc-glow-accent: 0 0 0 1px rgba(255, 93, 162, .4), 0 0 26px rgba(255, 93, 162, .32);
+  --oc-glow-primary: 0 0 0 1px rgba(46, 230, 214, .38), 0 0 26px rgba(46, 230, 214, .3);
+  --oc-glow-accent: 0 0 0 1px rgba(255, 93, 162, .42), 0 0 26px rgba(255, 93, 162, .34);
 
   --oc-speed-fast: 140ms;
   --oc-speed: 190ms;
@@ -90,12 +90,12 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 10% 0%, rgba(34, 211, 238, .16), transparent 34rem),
-    radial-gradient(circle at 92% 6%, rgba(167, 139, 250, .14), transparent 30rem),
-    radial-gradient(circle at 50% 100%, rgba(255, 93, 162, .08), transparent 40rem),
-    repeating-linear-gradient(90deg, rgba(125, 200, 255, .035) 0 1px, transparent 1px 88px),
-    repeating-linear-gradient(0deg, rgba(125, 200, 255, .035) 0 1px, transparent 1px 88px),
-    linear-gradient(160deg, #060a14 0%, #080d1a 55%, #050810 100%);
+    radial-gradient(circle at 10% 0%, rgba(46, 230, 214, .22), transparent 34rem),
+    radial-gradient(circle at 92% 6%, rgba(183, 155, 255, .2), transparent 30rem),
+    radial-gradient(circle at 50% 100%, rgba(255, 93, 162, .13), transparent 40rem),
+    repeating-linear-gradient(90deg, rgba(160, 190, 255, .045) 0 1px, transparent 1px 88px),
+    repeating-linear-gradient(0deg, rgba(160, 190, 255, .045) 0 1px, transparent 1px 88px),
+    linear-gradient(160deg, #141b42 0%, #10173a 55%, #0d1330 100%);
   color: var(--oc-text);
   font-family: var(--oc-font);
   text-rendering: optimizeLegibility;
