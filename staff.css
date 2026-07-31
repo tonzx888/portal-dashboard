@@ -52,7 +52,7 @@
 @media(max-width:700px){.staff-page-header{flex-direction:column}.staff-summary-grid,.staff-toolbar,.staff-form-grid,.staff-detail-grid{grid-template-columns:1fr}.staff-field-wide{grid-column:auto}}
 
 /* ===== Modal Detail Staff — versi futuristik ===== */
-.staff-detail-content{position:relative;width:min(640px,100%);max-height:90vh;overflow:auto;padding:0!important;border-radius:22px!important;background:linear-gradient(165deg,rgba(42,52,104,.97),rgba(22,29,60,.97))!important}
+.staff-detail-content{position:relative;width:min(640px,100%);max-height:90vh;overflow:auto;padding:0!important;border-radius:22px!important;background:linear-gradient(165deg,#ffffff,var(--oc-surface-soft))!important}
 .staff-detail-content .oc-modal-body{padding:0}
 
 .staff-detail-close{

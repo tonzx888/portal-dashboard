@@ -55,7 +55,7 @@
 
 .oc-btn-primary {
   background: linear-gradient(135deg, var(--oc-primary-strong), var(--oc-primary));
-  color: #04141a;
+  color: #ffffff;
   font-weight: 800;
   box-shadow: var(--oc-glow-primary);
 }
@@ -195,7 +195,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(2, 4, 10, .72);
+  background: rgba(30, 39, 73, .35);
   backdrop-filter: blur(8px);
 }
 
@@ -209,7 +209,7 @@
   overflow: auto;
   border: 1px solid var(--oc-line-strong);
   border-radius: var(--oc-radius-xl);
-  background: linear-gradient(165deg, rgba(22, 32, 54, .96), rgba(12, 18, 32, .96));
+  background: linear-gradient(165deg, #ffffff, var(--oc-surface-soft));
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   box-shadow: var(--oc-shadow-lg);

@@ -18,10 +18,10 @@
   padding: 22px 16px 16px;
   overflow-y: auto;
   border-right: 1px solid var(--oc-line);
-  background: linear-gradient(180deg, rgba(10, 16, 30, .92), rgba(6, 10, 20, .96));
+  background: linear-gradient(180deg, #ffffff, var(--oc-surface-soft));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 1px 0 0 rgba(46, 230, 214, .06), 8px 0 40px rgba(0, 0, 0, .35);
+  box-shadow: 1px 0 0 rgba(33, 201, 166, .08), 8px 0 30px rgba(30, 39, 73, .06);
 }
 
 .oc-brand {
@@ -39,13 +39,13 @@
   flex: 0 0 auto;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(46, 230, 214, .4);
+  border: 1px solid rgba(33, 201, 166, .3);
   border-radius: 15px;
   background:
-    radial-gradient(circle at 28% 24%, rgba(255,255,255,.16), transparent 55%),
-    linear-gradient(145deg, rgba(34,211,238,.35), rgba(167,139,250,.25));
-  color: #eafcff;
-  box-shadow: 0 0 0 1px rgba(46, 230, 214, .2), 0 0 22px rgba(46, 230, 214, .4);
+    radial-gradient(circle at 28% 24%, rgba(255,255,255,.35), transparent 55%),
+    linear-gradient(145deg, var(--oc-primary-strong), var(--oc-primary));
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(33, 201, 166, .32);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .08em;
@@ -120,11 +120,11 @@
 }
 
 .oc-nav a.active {
-  border-color: rgba(255, 93, 162, .35);
+  border-color: rgba(255, 107, 129, .4);
   background:
-    linear-gradient(90deg, rgba(255,93,162,.16), rgba(255,93,162,.02));
-  color: #ffe1f0;
-  box-shadow: inset 0 0 0 1px rgba(255,93,162,.06), 0 0 18px rgba(255,93,162,.12);
+    linear-gradient(90deg, rgba(255,107,129,.16), rgba(255,107,129,.03));
+  color: var(--oc-accent-strong);
+  box-shadow: inset 0 0 0 1px rgba(255,107,129,.08);
 }
 
 .oc-nav a.active::before {
@@ -372,7 +372,7 @@
   margin: 0 -28px 26px;
   padding: 0 28px;
   border-bottom: 1px solid var(--oc-line);
-  background: rgba(8, 13, 24, .78);
+  background: rgba(255, 255, 255, .82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 1px 0 rgba(46, 230, 214, .08);

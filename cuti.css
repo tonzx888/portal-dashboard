@@ -53,7 +53,7 @@
 
 /* ===== Modal detail hari ===== */
 .calendar-detail-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,6,16,.72)}
-.calendar-detail-panel{width:min(460px,100%);max-height:78vh;overflow-y:auto;padding:18px;border:1px solid var(--oc-line-strong);border-radius:14px;background:linear-gradient(165deg,rgba(42,52,104,.97),rgba(22,29,60,.97));box-shadow:var(--oc-shadow-lg)}
+.calendar-detail-panel{width:min(460px,100%);max-height:78vh;overflow-y:auto;padding:18px;border:1px solid var(--oc-line-strong);border-radius:14px;background:linear-gradient(165deg,#ffffff,var(--oc-surface-soft));box-shadow:var(--oc-shadow-lg)}
 .calendar-detail-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .calendar-detail-head strong{font-size:15px;color:var(--oc-text)}
 .calendar-detail-head button{border:0;background:transparent;font-size:20px;color:var(--oc-muted);cursor:pointer;line-height:1}
@@ -74,9 +74,9 @@
 
 .table-scroll{overflow:auto;border:1px solid var(--oc-line);border-radius:9px}
 .cuti-table{width:100%;min-width:820px;border-collapse:separate;border-spacing:0}
-.cuti-table th{position:sticky;top:0;background:rgba(42,52,104,.92);color:var(--oc-text);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:12px;text-align:left;border-bottom:1px solid var(--oc-line)}
+.cuti-table th{position:sticky;top:0;background:rgba(246,248,253,.94);color:var(--oc-text);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:12px;text-align:left;border-bottom:1px solid var(--oc-line)}
 .cuti-table td{padding:12px;font-size:12px;color:var(--oc-text-soft);border-bottom:1px solid var(--oc-line)}
-.cuti-table tbody tr:hover{background:rgba(160,190,255,.06)}
+.cuti-table tbody tr:hover{background:rgba(30,39,73,.045)}
 .cuti-loading{text-align:center;color:var(--oc-muted)!important;padding:32px!important}
 
 .cuti-status-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;color:#fff;white-space:nowrap}

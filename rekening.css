@@ -54,9 +54,9 @@
 
 .table-scroll{overflow:auto;border:1px solid var(--oc-line);border-radius:9px}
 .table-scroll table{width:100%;min-width:1100px;border-collapse:separate;border-spacing:0}
-.table-scroll th{position:sticky;top:0;background:rgba(42,52,104,.92);color:var(--oc-text);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:11px;text-align:left;border-bottom:1px solid var(--oc-line)}
+.table-scroll th{position:sticky;top:0;background:rgba(246,248,253,.94);color:var(--oc-text);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:11px;text-align:left;border-bottom:1px solid var(--oc-line)}
 .table-scroll td{padding:11px;font-size:12px;color:var(--oc-text-soft);border-bottom:1px solid var(--oc-line);vertical-align:top}
-.table-scroll tbody tr:hover{background:rgba(160,190,255,.06)}
+.table-scroll tbody tr:hover{background:rgba(30,39,73,.045)}
 .rk-wrap{white-space:normal;max-width:220px}
 .rk-wrap small{color:var(--oc-muted)}
 .rk-muted{color:var(--oc-muted);font-size:11px}
