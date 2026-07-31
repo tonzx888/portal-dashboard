@@ -138,12 +138,13 @@
 
 .users-primary-btn {
     background: linear-gradient(90deg, var(--oc-primary-strong), var(--oc-primary)) !important;
-    color: #04141a !important;
-    box-shadow: 0 10px 22px rgba(46,230,214,.28);
+    color: #ffffff !important;
+    box-shadow: 0 10px 22px rgba(33,201,166,.3);
 }
 
 .users-secondary-btn {
-    background: rgba(30,39,73,.22) !important;
+    background: rgba(30,39,73,.08) !important;
+    color: var(--oc-text) !important;
 }
 
 .users-table-card {
@@ -198,10 +199,10 @@
     height: 38px;
     flex: 0 0 38px;
     place-items: center;
-    border: 1px solid rgba(96, 165, 250, .25);
+    border: 1px solid rgba(33, 201, 166, .3);
     border-radius: 11px;
-    background: rgba(37, 99, 235, .16);
-    color: var(--oc-primary);
+    background: var(--oc-primary-soft);
+    color: var(--oc-primary-strong);
     font-weight: 900;
 }
 
@@ -282,7 +283,8 @@
     border: 1px solid rgba(255,122,147,.35);
     border-radius: 10px;
     background: rgba(255,122,147,.14);
-    color: #ffb4c2;
+    color: #c8283f;
+    font-weight: 600;
 }
 
 .users-loading {
@@ -298,7 +300,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: rgba(3,6,16,.78);
+    background: rgba(30,39,73,.4);
     backdrop-filter: blur(7px);
 }
 
@@ -461,6 +463,6 @@
 
 /* Dashboard V2 shell normalization */
 .users-page{min-width:0}.users-heading{margin-top:0!important}.users-heading h1{font-size:clamp(28px,3vw,42px)!important}.users-eyebrow{color:var(--oc-primary)!important}.users-subtitle{color:var(--oc-muted)!important}
-.users-summary-card,.users-toolbar,.users-table-card{border-color:var(--oc-line)!important;background:linear-gradient(145deg,rgba(35,43,92,.85),rgba(246,248,253,.92))!important;box-shadow:var(--oc-shadow-sm)}.users-summary-card{border-radius:var(--oc-radius-lg)!important}.users-summary-card span,.users-summary-card small{color:var(--oc-muted)!important}.users-summary-card strong{color:var(--oc-text)!important}
-.users-toolbar input,.users-toolbar select,.users-field input,.users-field select{border:1px solid var(--oc-line-strong)!important;background:var(--oc-surface-soft)!important;color:var(--oc-text)!important;border-radius:12px!important;outline:none}.users-table th{background:rgba(246,248,253,.94)!important;color:var(--oc-text)!important;border-color:var(--oc-line)!important;font-size:11px!important;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.users-table td{color:var(--oc-text-soft)!important;border-color:var(--oc-line)!important}.users-modal{background:rgba(3,6,16,.72)!important;backdrop-filter:blur(10px)}.users-modal-panel{border-color:var(--oc-line-strong)!important;background:linear-gradient(145deg,rgba(35,43,92,.95),rgba(246,248,253,.96))!important;border-radius:var(--oc-radius-xl)!important}
+.users-summary-card,.users-toolbar,.users-table-card{border-color:var(--oc-line)!important;background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft))!important;box-shadow:var(--oc-shadow-sm)}.users-summary-card{border-radius:var(--oc-radius-lg)!important}.users-summary-card span,.users-summary-card small{color:var(--oc-muted)!important}.users-summary-card strong{color:var(--oc-text)!important}
+.users-toolbar input,.users-toolbar select,.users-field input,.users-field select{border:1px solid var(--oc-line-strong)!important;background:var(--oc-surface-soft)!important;color:var(--oc-text)!important;border-radius:12px!important;outline:none}.users-table th{background:rgba(246,248,253,.94)!important;color:var(--oc-text)!important;border-color:var(--oc-line)!important;font-size:11px!important;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.users-table td{color:var(--oc-text-soft)!important;border-color:var(--oc-line)!important}.users-modal{background:rgba(30,39,73,.4)!important;backdrop-filter:blur(10px)}.users-modal-panel{border-color:var(--oc-line-strong)!important;background:linear-gradient(145deg,#ffffff,var(--oc-surface-soft))!important;border-radius:var(--oc-radius-xl)!important}
 @media(max-width:900px){.users-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.oc-topbar-actions #btnRefreshUsersTop{display:none}}@media(max-width:600px){.users-summary-grid{grid-template-columns:1fr!important}}
