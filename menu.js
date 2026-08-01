@@ -41,15 +41,12 @@ const menuItems = [
     roles: ["MASTER", "ADMIN", "STAFF"]
   },
   {
+    href: "cuti-pengajuan.html",
     icon: menuIcons.cuti,
     label: "Cuti Staff",
     roles: ["MASTER", "ADMIN", "STAFF"],
     pendingKey: "cuti",
-    pendingRoles: ["MASTER"],
-    children: [
-      { href: "cuti-pengajuan.html", icon: menuIcons.send, label: "Pengajuan Cuti" },
-      { href: "cuti.html", icon: menuIcons.calendarDays, label: "Jadwal Cuti" }
-    ]
+    pendingRoles: ["MASTER"]
   },
   {
     href: "offday.html",

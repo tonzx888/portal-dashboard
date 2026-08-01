@@ -77,6 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
         ocInitCustomSelect(document.getElementById("jenisCuti"));
     }
 
+    document.getElementById("calendarPrev")?.addEventListener("click", () => changeCutiMonth(-1));
+    document.getElementById("calendarNext")?.addEventListener("click", () => changeCutiMonth(1));
+
     loadCuti();
     loadEligibility();
     loadStaffProfileAndPassportMap();
@@ -302,6 +305,7 @@ async function loadCuti() {
         cutiData = result;
         renderCutiSummary(result);
         renderCutiTable();
+        renderCalendar();
     } catch (error) {
         console.error("Gagal memuat data cuti:", error);
         if (tbody) tbody.innerHTML = `<tr><td colspan="12">Gagal memuat data cuti.</td></tr>`;
@@ -745,4 +749,148 @@ function escapeCutiHtml(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+}
+
+/* ==========================================================
+   KALENDER VISUAL PER ROLE
+   (dipindahkan dari halaman Jadwal Cuti ke Pengajuan Cuti --
+   pakai data yang sama dengan tabel approval di atas, TIDAK
+   fetch ulang ke server)
+========================================================== */
+
+const CUTI_ROLE_CONCURRENT_QUOTA = { CS: 2, KAPTEN: 1, KASIR: 2 };
+
+let calendarViewDate = new Date();
+
+function changeCutiMonth(offset) {
+    calendarViewDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + offset, 1);
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const monthLabel = document.getElementById("calendarMonthLabel");
+    if (monthLabel) monthLabel.textContent = formatCutiMonthYear_(calendarViewDate);
+
+    ["CS", "KAPTEN", "KASIR"].forEach(role => renderRoleCalendar(role));
+}
+
+function renderRoleCalendar(role) {
+    const container = document.querySelector(`#calendar${role} .calendar-body`);
+    if (!container) return;
+
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const firstDayIndex = firstDay.getDay();
+
+    const activeItems = cutiData.filter(item =>
+        String(item.role || "").toUpperCase() === role && item.status !== "DITOLAK"
+    );
+
+    let html = `
+        <div class="calendar-weekday">Min</div><div class="calendar-weekday">Sen</div>
+        <div class="calendar-weekday">Sel</div><div class="calendar-weekday">Rab</div>
+        <div class="calendar-weekday">Kam</div><div class="calendar-weekday">Jum</div>
+        <div class="calendar-weekday">Sab</div>
+    `;
+
+    for (let i = 0; i < firstDayIndex; i++) {
+        html += `<div class="calendar-day outside"></div>`;
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+        const cellDate = startOfCutiVisualDay_(new Date(year, month, day));
+
+        const dayItems = activeItems.filter(item => {
+            const start = parseCutiVisualDate_(item.tanggalMulaiInput);
+            const end = parseCutiVisualDate_(item.tanggalSelesaiInput);
+            return start && end && cellDate >= start && cellDate <= end;
+        });
+
+        const quota = CUTI_ROLE_CONCURRENT_QUOTA[role] || 1;
+        const isFull = dayItems.length >= quota;
+        const hasData = dayItems.length > 0;
+
+        const stateClass = !hasData ? "" : isFull ? "full" : "has-off";
+
+        html += `
+            <button
+                type="button"
+                class="calendar-day ${stateClass}"
+                ${hasData ? "" : "disabled"}
+                title="${role}, ${day} ${formatCutiMonthYear_(calendarViewDate)} — ${hasData ? dayItems.length + " orang cuti" : "Tidak ada cuti"}"
+                onclick="showCutiDayDetail('${role}', ${year}, ${month}, ${day})"
+            >
+                <span class="calendar-day-number">${day}</span>
+                ${dayItems.length > 1 ? `<small>${dayItems.length}</small>` : ""}
+            </button>
+        `;
+    }
+
+    container.innerHTML = html;
+}
+
+function showCutiDayDetail(role, year, month, day) {
+    const cellDate = startOfCutiVisualDay_(new Date(year, month, day));
+
+    const items = cutiData.filter(item => {
+        if (String(item.role || "").toUpperCase() !== role || item.status === "DITOLAK") return false;
+        const start = parseCutiVisualDate_(item.tanggalMulaiInput);
+        const end = parseCutiVisualDate_(item.tanggalSelesaiInput);
+        return start && end && cellDate >= start && cellDate <= end;
+    });
+
+    const modal = document.getElementById("cutiDayDetailModal");
+    const title = document.getElementById("cutiDayDetailTitle");
+    const body = document.getElementById("cutiDayDetailBody");
+    if (!modal || !title || !body) return;
+
+    title.textContent = `${role} — ${day} ${formatCutiMonthYear_(calendarViewDate)}`;
+
+    const quota = CUTI_ROLE_CONCURRENT_QUOTA[role] || 1;
+    const warning = items.length >= quota
+        ? `<p class="cuti-detail-warning">⚠️ Kuota role ${role} pada tanggal ini sudah penuh (${items.length}/${quota}).</p>`
+        : "";
+
+    body.innerHTML = warning + (items.length ? items.map(item => `
+        <div class="calendar-detail-item">
+            <div class="calendar-detail-name">${escapeCutiHtml(item.nama)}</div>
+            <div class="calendar-detail-meta">
+                <span>${escapeCutiHtml(item.jenisCuti)}</span>
+                <span>${escapeCutiHtml(item.tanggalMulai)} &ndash; ${escapeCutiHtml(item.tanggalSelesai)}</span>
+                <span>${escapeCutiHtml(item.status)}</span>
+            </div>
+            <div class="calendar-detail-reason">${escapeCutiHtml(item.alasan)}</div>
+        </div>
+    `).join("") : `<p class="cuti-detail-empty">Tidak ada staff ${role} yang cuti pada tanggal ini.</p>`);
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeCutiDayDetail() {
+    const modal = document.getElementById("cutiDayDetailModal");
+    if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
+function startOfCutiVisualDay_(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function parseCutiVisualDate_(value) {
+    const text = String(value || "").trim();
+    if (!text) return null;
+
+    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return null;
+
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+function formatCutiMonthYear_(date) {
+    return date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
 }

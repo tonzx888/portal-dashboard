@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="animation.css">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="cuti-pengajuan.css">
+  <link rel="stylesheet" href="cuti.css">
 </head>
 <body class="oc-dashboard-body">
 <div class="oc-shell">
@@ -50,6 +51,31 @@
         <div class="summary-icon">×</div>
         <div><span>Ditolak</span><strong id="summaryRejected">0</strong><small>Pengajuan ditolak</small></div>
       </article>
+    </section>
+
+    <section class="cuti-calendar-card oc-enter">
+      <div class="cuti-calendar-head">
+        <div><span class="oc-section-kicker">KALENDER VISUAL</span><h2>Jadwal Cuti Bulan Ini</h2></div>
+        <div class="cuti-calendar-nav">
+          <button type="button" id="calendarPrev" class="oc-btn oc-btn-secondary">&lsaquo;</button>
+          <strong id="calendarMonthLabel">-</strong>
+          <button type="button" id="calendarNext" class="oc-btn oc-btn-secondary">&rsaquo;</button>
+        </div>
+        <div class="cuti-calendar-legend">
+          <span><i class="dot cs"></i> CS</span>
+          <span><i class="dot kapten"></i> KAPTEN</span>
+          <span><i class="dot kasir"></i> KASIR</span>
+          <span><i class="dot full"></i> Penuh</span>
+        </div>
+      </div>
+
+      <div class="cuti-calendar-grid">
+        <div class="cuti-role-calendar" id="calendarCS"><h3 class="role-cs">CS</h3><div class="calendar-body"></div></div>
+        <div class="cuti-role-calendar" id="calendarKAPTEN"><h3 class="role-kapten">KAPTEN</h3><div class="calendar-body"></div></div>
+        <div class="cuti-role-calendar" id="calendarKASIR"><h3 class="role-kasir">KASIR</h3><div class="calendar-body"></div></div>
+      </div>
+
+      <p class="cuti-calendar-hint">ℹ️ Klik tanggal berwarna untuk melihat siapa yang cuti pada tanggal tersebut.</p>
     </section>
 
     <section class="cuti-table-card oc-enter">
@@ -191,6 +217,16 @@
       <button type="button" class="oc-btn oc-btn-secondary" onclick="closeCutiRejectModal()">Batal</button>
       <button type="button" class="oc-btn oc-btn-danger" onclick="confirmCutiReject()">Tolak Pengajuan</button>
     </div>
+  </div>
+</div>
+
+<div id="cutiDayDetailModal" class="calendar-detail-modal" aria-hidden="true">
+  <div class="calendar-detail-panel" role="dialog" aria-modal="true">
+    <div class="calendar-detail-head">
+      <strong id="cutiDayDetailTitle">Detail Cuti</strong>
+      <button type="button" onclick="closeCutiDayDetail()" aria-label="Tutup">&times;</button>
+    </div>
+    <div id="cutiDayDetailBody"></div>
   </div>
 </div>
 
