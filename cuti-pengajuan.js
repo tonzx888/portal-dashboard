@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typeof ocInitCustomSelect === "function") {
         ocInitCustomSelect(document.getElementById("jenisCuti"));
+        ocInitCustomSelect(document.getElementById("statusPaspor"));
     }
 
     document.getElementById("calendarPrev")?.addEventListener("click", () => changeCutiMonth(-1));
@@ -427,6 +428,7 @@ function openCutiDetailModal(filteredIndex) {
                 <span>${formatCutiLongDate_(item.tanggalMulaiInput)} &ndash; ${formatCutiLongDate_(item.tanggalSelesaiInput)} (${escapeCutiHtml(item.totalHari)} hari)</span>
                 <span>${cutiStatusBadge(item.status)}</span>
             </div>
+            <p><strong>Status Paspor:</strong> ${escapeCutiHtml(item.statusPaspor || "-")}</p>
             <p><strong>Alasan:</strong> ${escapeCutiHtml(item.alasan || "(tidak diisi)")}</p>
             <p><strong>Diproses oleh:</strong> ${escapeCutiHtml(item.approvedBy || "-")} ${item.approvedDate ? `(${escapeCutiHtml(item.approvedDate)})` : ""}</p>
             <p><strong>Catatan:</strong> ${escapeCutiHtml(item.catatan || "-")}</p>
@@ -475,6 +477,7 @@ async function submitCuti() {
     const jenisCuti = document.getElementById("jenisCuti")?.value || "";
     const isCombo = jenisCuti === "CUTI LOKAL + CUTI KERJA";
     const jumlahHari = document.getElementById("jumlahHari")?.value || "";
+    const statusPaspor = document.getElementById("statusPaspor")?.value || "";
     const alasan = document.getElementById("alasan")?.value.trim() || "";
     const urgent = document.getElementById("urgentToggle")?.checked || false;
 
@@ -488,6 +491,11 @@ async function submitCuti() {
         return;
     }
 
+    if (!statusPaspor) {
+        showToast("Status paspor wajib dipilih (Ambil Paspor / Tidak Ambil Paspor).", "error");
+        return;
+    }
+
     if (urgent && !alasan) {
         showToast("Alasan wajib diisi untuk Cuti Urgent.", "error");
         return;
@@ -497,6 +505,7 @@ async function submitCuti() {
         type: "submitCuti",
         token: getLoginToken(),
         jenisCuti,
+        statusPaspor,
         alasan,
         urgent: String(urgent)
     });
@@ -551,6 +560,7 @@ async function submitCuti() {
 
         if (result.success) {
             document.getElementById("jenisCuti").value = "";
+            document.getElementById("statusPaspor").value = "";
             document.getElementById("tanggalMulai").value = "";
             document.getElementById("tanggalMulaiLokal").value = "";
             document.getElementById("tanggalMulaiKerja").value = "";
@@ -566,6 +576,7 @@ async function submitCuti() {
 
             if (typeof ocRefreshCustomSelect === "function") {
                 ocRefreshCustomSelect(document.getElementById("jenisCuti"));
+                ocRefreshCustomSelect(document.getElementById("statusPaspor"));
             }
 
             updateCutiDayLock();
@@ -680,9 +691,13 @@ function copyCutiReportB(filteredIndex) {
     const item = cutiData[indexMap[filteredIndex]];
     if (!item) return;
 
+    const statusPasporLabel = item.statusPaspor
+        ? ` (${item.statusPaspor === "TIDAK AMBIL PASPOR" ? "TIDAK AMBIL PASPOR" : "AMBIL PASPOR"})`
+        : "";
+
     const text =
 `Info : Togelup
-Perihal : ${item.jenisCuti}
+Perihal : ${item.jenisCuti}${statusPasporLabel}
 
 NO PASPOR : ${getPassportFor(item.nama)}
 NAMA STAFF : ${item.nama}
