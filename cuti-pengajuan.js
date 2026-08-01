@@ -671,15 +671,15 @@ function copyCutiReportB(filteredIndex) {
     if (!item) return;
 
     const text =
-`Info : 
+`Info : Togelup
 Perihal : ${item.jenisCuti}
 
 NO PASPOR : ${getPassportFor(item.nama)}
 NAMA STAFF : ${item.nama}
 START CUTI S/D : ${formatCutiLongDate_(item.tanggalMulaiInput)} S/D ${formatCutiLongDate_(item.tanggalSelesaiInput)}
+
 TOTAL CUTI : ${item.totalHari} hari
 
-Ket : 
 Keterangan : Untuk kelengkapan SIM CARD dan token sudah di check aman. Untuk admin, dan email sudah serah terima ke Leader. Untuk passport sudah berada di tangan staff.`;
 
     copyCutiToClipboard(text, "Laporan grup admin disalin.");
