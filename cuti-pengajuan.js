@@ -12,6 +12,7 @@ let cutiData = [];
 let staffPassportMap = {};
 let staffProfile = null;
 let pendingRejectRow = null;
+let staffHasCutiHistory = null; // null = belum diketahui, diisi loadEligibility()
 
 const CUTI_ROLE_QUOTA_DAYS = { KASIR: 12, KAPTEN: 14, CS: 14 };
 
@@ -137,7 +138,8 @@ function updateCutiDayLock() {
     document.getElementById("sharedJumlahHariField").hidden = isCombo;
 
     const role = staffProfile?.jabatan || "";
-    const lockedDays = jenisCuti === "SETAHUN" ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
+    const isFirstCuti = staffHasCutiHistory === false;
+    const lockedDays = jenisCuti === "SETAHUN" ? 25 : (isFirstCuti ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12));
 
     // Mode tunggal: terkunci ke role KECUALI urgent aktif (boleh manual).
     // Mode kombinasi: jumlah hari diisi manual per periode (lihat updateCutiComboTotal).
@@ -187,7 +189,8 @@ function updateCutiComboTotal() {
     const total = hariLokal + hariKerja;
 
     const role = staffProfile?.jabatan || "";
-    const target = CUTI_ROLE_QUOTA_DAYS[role] || 12;
+    const isFirstCuti = staffHasCutiHistory === false;
+    const target = isFirstCuti ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
 
     hint.textContent = `Total: ${total} / ${target} hari`;
     hint.classList.toggle("match", total === target && total > 0);
@@ -228,10 +231,12 @@ async function loadEligibility() {
         if (!result.success) return;
 
         banner.hidden = false;
+        staffHasCutiHistory = !!result.hasHistory;
+        updateCutiDayLock();
 
         if (!result.hasHistory) {
             banner.className = "cuti-eligibility-banner neutral";
-            banner.textContent = "Belum ada riwayat cuti sebelumnya. Cuti reguler boleh diajukan (syarat masa kerja minimal 1 tahun tetap berlaku).";
+            banner.textContent = result.message || "Belum ada riwayat cuti sebelumnya. Cuti reguler boleh diajukan (syarat masa kerja minimal 1 tahun tetap berlaku).";
             return;
         }
 
@@ -508,9 +513,10 @@ async function submitCuti() {
         }
 
         const role = staffProfile?.jabatan || "";
-        const target = CUTI_ROLE_QUOTA_DAYS[role] || 12;
+        const isFirstCuti = staffHasCutiHistory === false;
+        const target = isFirstCuti ? 25 : (CUTI_ROLE_QUOTA_DAYS[role] || 12);
         if (Number(hariLokal) + Number(hariKerja) !== target) {
-            showToast(`Total hari Cuti Lokal + Cuti Kerja harus pas ${target} hari sesuai jatah role ${role}.`, "error");
+            showToast(`Total hari Cuti Lokal + Cuti Kerja harus pas ${target} hari${isFirstCuti ? " (jatah cuti reguler pertama)." : ` sesuai jatah role ${role}.`}`, "error");
             return;
         }
 
