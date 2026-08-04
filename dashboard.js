@@ -12,27 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnLogout")
         ?.addEventListener("click", logout);
-
-    document.querySelectorAll(".oc-doc-tab").forEach(tab => {
-        tab.addEventListener("click", () => {
-            document.querySelectorAll(".oc-doc-tab").forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-
-            const target = tab.dataset.docTab;
-            document.getElementById("passportWarningList").hidden = target !== "passport";
-            document.getElementById("visaWarningList").hidden = target !== "visa";
-        });
-    });
 });
 
 function setupDashboardHeader() {
     const username = String(dashboardUser?.username || "").trim();
     const role = String(dashboardUser?.role || "").trim();
 
-    setText(
-        "welcomeTitle",
-        username ? `Selamat Datang, ${username}` : "Selamat Datang"
-    );
+    setText("heroName", username || "Pengguna");
 
     setText(
         "userInfo",
@@ -49,13 +35,13 @@ function setupDashboardHeader() {
     setText("userInitial", initials || "OC");
 
     setText(
-        "dashboardDate",
-        new Intl.DateTimeFormat("id-ID", {
+        "heroEyebrow",
+        `STATUS OPERASIONAL · ${new Intl.DateTimeFormat("id-ID", {
             weekday: "long",
             day: "2-digit",
             month: "long",
             year: "numeric"
-        }).format(new Date())
+        }).format(new Date())}`
     );
 }
 
@@ -147,188 +133,233 @@ async function loadDashboard(useCache = false) {
     }
 }
 
+/* ==========================================================
+   RENDER UTAMA
+========================================================== */
+
 function renderDashboard(data) {
     const roles = data.roles || {};
-    const passportWarnings = Array.isArray(data.passportWarnings)
-        ? data.passportWarnings
-        : [];
-    const visaWarnings = Array.isArray(data.visaWarnings)
-        ? data.visaWarnings
-        : [];
-
     const totalStaff = Number(data.totalStaff || 0);
     const staffCuti = Number(data.staffCuti || 0);
     const offdayHariIni = Number(data.offdayHariIni || 0);
     const activeToday = Number(data.activeToday || 0);
 
-    const passportCount = Number(
-        data.passportWarning ?? passportWarnings.length
-    );
+    const passportWarnings = Array.isArray(data.passportWarnings) ? data.passportWarnings : [];
+    const visaWarnings = Array.isArray(data.visaWarnings) ? data.visaWarnings : [];
+    const passportCount = Number(data.passportWarning ?? passportWarnings.length);
+    const visaCount = Number(data.visaWarning ?? visaWarnings.length);
 
-    const visaCount = Number(
-        data.visaWarning ?? visaWarnings.length
-    );
-
-    setText("totalStaff", totalStaff);
-    setText("staffCuti", staffCuti);
-    setText("offdayHariIni", offdayHariIni);
-    setText("documentWarning", passportCount + visaCount);
-
-    setText(
-        "roleSummary",
-        `CS ${roles.cs || 0} · Kapten ${roles.kapten || 0} · Kasir ${roles.kasir || 0}`
-    );
-
-    setText(
-        "documentWarningText",
-        `Passport ${passportCount} · Visa ${visaCount}`
-    );
-
-    setText("passportWarningBadge", passportCount);
-    setText("visaWarningBadge", visaCount);
-    setText("averageAge", `${data.averageAge || 0} Tahun`);
-    setText("activeToday", activeToday);
-    setText("topDomicile", data.topDomicile || "-");
-    setText("longestServing", data.longestServing || "-");
-
-    renderRoleChart(roles, totalStaff);
-    renderActivity(data);
-    renderActivityDonut({ activeToday, staffCuti, offdayHariIni, totalStaff });
-    renderWarningList("passportWarningList", passportWarnings);
-    renderWarningList("visaWarningList", visaWarnings);
-    renderNewStaff(data.newStaff || []);
-    renderAttentionSection(data);
+    renderHeroSummary({ totalStaff, staffCuti, offdayHariIni, activeToday, docCount: passportCount + visaCount });
+    renderHeroApproval(data);
+    renderKpi({ totalStaff, staffCuti, offdayHariIni, roles, docCount: passportCount + visaCount, passportCount, visaCount });
+    renderTimeline(data);
+    renderComposition(roles, totalStaff);
+    renderStaffOverview(data.newStaff || []);
+    renderWarningCenter(passportWarnings, visaWarnings);
+    renderInsights(data);
 }
 
-/**
- * Section "Perlu Diproses" & "Belum Ada Username" -- cuma untuk
- * MASTER (yang memang bertanggung jawab approve & lengkapi Data
- * Staff). Section ini tersembunyi total buat ADMIN/STAFF supaya
- * tidak membingungkan (bukan urusan mereka).
- */
-function renderAttentionSection(data) {
-    const section = document.getElementById("attentionSection");
-    if (!section) return;
+/* ---------- 1. HERO ---------- */
 
-    const currentRole = String(loginUser?.role || "").toUpperCase();
-    if (currentRole !== "MASTER") {
-        section.hidden = true;
+function renderHeroSummary({ totalStaff, staffCuti, offdayHariIni, activeToday, docCount }) {
+    setText("heroActive", activeToday);
+    setText("heroCuti", staffCuti);
+    setText("heroOffday", offdayHariIni);
+
+    const subEl = document.getElementById("heroSub");
+    if (!subEl) return;
+
+    if (docCount > 0) {
+        subEl.innerHTML = `Dari <strong>${totalStaff} staff</strong>, <strong>${activeToday} aktif</strong> hari ini. Ada <strong>${docCount} dokumen</strong> yang butuh perhatian.`;
+    } else {
+        subEl.innerHTML = `Dari <strong>${totalStaff} staff</strong>, <strong>${activeToday} aktif</strong> hari ini. Semua dokumen dalam kondisi aman.`;
+    }
+}
+
+function renderHeroApproval(data) {
+    const card = document.getElementById("heroApprovalCard");
+    if (!card) return;
+
+    const role = String(dashboardUser?.role || "").toUpperCase();
+    const pending = data.pending || {};
+
+    const categories = role === "MASTER"
+        ? [
+            { key: "cuti", label: "Pengajuan Cuti", href: "cuti-pengajuan.html" },
+            { key: "offday", label: "Pengajuan Offday", href: "offday.html" },
+            { key: "rekening", label: "Req Ganti Rekening", href: "rekening.html" },
+            { key: "banding", label: "Banding Kesalahan", href: "banding.html" }
+          ]
+        : role === "ADMIN"
+            ? [{ key: "banding", label: "Banding Kesalahan", href: "banding.html" }]
+            : [];
+
+    const items = categories
+        .map(cat => ({ ...cat, count: Number(pending[cat.key] || 0) }))
+        .filter(cat => cat.count > 0);
+
+    const total = items.reduce((sum, item) => sum + item.count, 0);
+
+    if (role !== "MASTER" && role !== "ADMIN") {
+        card.innerHTML = `
+            <span class="hub-approval-kicker">STATUS SAYA</span>
+            <div class="hub-approval-clear">
+                <span>👋</span>
+                <span>Cek status pengajuan cuti/offday kamu di menu masing-masing.</span>
+            </div>
+        `;
         return;
     }
 
-    const pending = data.pending || {};
-    const pendingItems = [
-        { key: "cuti", label: "Pengajuan Cuti", href: "cuti-pengajuan.html", icon: "🌴" },
-        { key: "offday", label: "Pengajuan Offday", href: "offday.html", icon: "📅" },
-        { key: "rekening", label: "Req Ganti Rekening", href: "rekening.html", icon: "🏦" },
-        { key: "banding", label: "Banding Kesalahan", href: "banding.html", icon: "🛡️" }
-    ].filter(item => Number(pending[item.key] || 0) > 0);
-
-    const totalPending = pendingItems.reduce((sum, item) => sum + Number(pending[item.key] || 0), 0);
-
-    setText("attentionPendingBadge", totalPending);
-
-    const pendingListEl = document.getElementById("attentionPendingList");
-    if (pendingListEl) {
-        pendingListEl.innerHTML = pendingItems.length
-            ? pendingItems.map(item => `
-                <a class="oc-attention-item" href="${item.href}">
-                    <span class="oc-attention-icon" aria-hidden="true">${item.icon}</span>
-                    <span class="oc-attention-text">${item.label}</span>
-                    <span class="oc-attention-count">${pending[item.key]}</span>
-                </a>
-            `).join("")
-            : `<p class="oc-attention-empty">✓ Tidak ada pengajuan yang menunggu. Semua sudah diproses.</p>`;
-    }
-
-    const usernamePanel = document.getElementById("attentionUsernamePanel");
-    const missingUsernameNames = Array.isArray(data.missingUsernameNames) ? data.missingUsernameNames : [];
-    const missingUsernameCount = Number(data.missingUsernameCount || missingUsernameNames.length || 0);
-
-    if (usernamePanel) {
-        usernamePanel.hidden = missingUsernameCount === 0;
-    }
-
-    setText("attentionUsernameBadge", missingUsernameCount);
-
-    const usernameListEl = document.getElementById("attentionUsernameList");
-    if (usernameListEl) {
-        usernameListEl.innerHTML = missingUsernameNames.map(nama => `
-            <a class="oc-attention-item" href="staff.html">
-                <span class="oc-attention-icon" aria-hidden="true">⚠️</span>
-                <span class="oc-attention-text">${escapeDashboardHtml_(nama)}</span>
-            </a>
-        `).join("");
-    }
-
-    section.hidden = pendingItems.length === 0 && missingUsernameCount === 0;
-}
-
-function escapeDashboardHtml_(value) {
-    return String(value ?? "-")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-/**
- * Grafik donat kecil di header "Aktivitas Operasional": proporsi
- * staff Aktif vs Cuti vs Offday hari ini, sebagai ringkasan visual
- * cepat tanpa perlu baca angka satu-satu.
- */
-function renderActivityDonut({ activeToday, staffCuti, offdayHariIni, totalStaff }) {
-    const container = document.getElementById("activityDonut");
-    if (!container) return;
-
-    const total = Math.max(totalStaff, 1);
-    const radius = 30;
-    const circumference = 2 * Math.PI * radius;
-
-    const segments = [
-        { value: activeToday, color: "var(--oc-primary)" },
-        { value: staffCuti, color: "var(--oc-blue)" },
-        { value: offdayHariIni, color: "var(--oc-purple)" }
-    ];
-
-    let offset = 0;
-    const circles = segments.map(segment => {
-        const fraction = segment.value / total;
-        const dash = Math.max(fraction * circumference, segment.value > 0 ? 3 : 0);
-        const circle = `
-            <circle
-                cx="36" cy="36" r="${radius}"
-                fill="none" stroke="${segment.color}" stroke-width="8"
-                stroke-dasharray="${dash} ${circumference - dash}"
-                stroke-dashoffset="${-offset}"
-                stroke-linecap="round"
-                transform="rotate(-90 36 36)"
-            />
+    if (!items.length) {
+        card.innerHTML = `
+            <span class="hub-approval-kicker">PERLU DIPROSES</span>
+            <div class="hub-approval-clear">
+                <span>✓</span>
+                <span>Semua pengajuan sudah diproses. Kerja bagus!</span>
+            </div>
         `;
-        offset += dash;
-        return circle;
-    }).join("");
+        return;
+    }
 
-    container.innerHTML = `
-        <svg viewBox="0 0 72 72" width="72" height="72">
-            <circle cx="36" cy="36" r="${radius}" fill="none" stroke="var(--oc-line)" stroke-width="8"/>
-            ${circles}
-        </svg>
-        <div class="activity-donut-center">
-            <strong>${activeToday}</strong>
-            <small>Aktif</small>
+    card.innerHTML = `
+        <span class="hub-approval-kicker">PERLU DIPROSES</span>
+        <div class="hub-approval-count"><strong>${total}</strong><span>pengajuan menunggu</span></div>
+        <p class="hub-approval-desc">Ringkasan dari semua modul yang butuh persetujuanmu.</p>
+        <div class="hub-approval-list">
+            ${items.map(item => `
+                <a class="hub-approval-row" href="${item.href}">
+                    <span>${escapeDashboardHtml(item.label)}</span>
+                    <b>${item.count}</b>
+                </a>
+            `).join("")}
         </div>
     `;
 }
 
-/**
- * Bagi 100% ke beberapa nilai secara proporsional, TAPI hasil
- * pembulatannya dijamin totalnya selalu tepat 100% (metode largest
- * remainder / Hamilton) -- bukan Math.round() tiap item sendiri-
- * sendiri, yang bisa jadi 101% atau 99% kalau ada beberapa nilai
- * yang kebetulan pas di angka ,5.
- */
+/* ---------- 2. KPI ---------- */
+
+function renderKpi({ totalStaff, staffCuti, offdayHariIni, roles, docCount, passportCount, visaCount }) {
+    setText("kpiStaffValue", totalStaff);
+    setText("kpiCutiValue", staffCuti);
+    setText("kpiOffdayValue", offdayHariIni);
+    setText("kpiDocsValue", docCount);
+
+    const percent = totalStaff > 0 ? Math.round((staffCuti / totalStaff) * 100) : 0;
+    setText("kpiCutiTrend", staffCuti > 0 ? `${percent}% dari total staff sedang cuti` : "Tidak ada staff cuti hari ini");
+
+    const bars = document.getElementById("kpiStaffBars");
+    if (bars) {
+        const roleData = [
+            { label: "CS", value: Number(roles.cs || 0), color: "var(--oc-blue)" },
+            { label: "Kapten", value: Number(roles.kapten || 0), color: "var(--oc-purple)" },
+            { label: "Kasir", value: Number(roles.kasir || 0), color: "var(--oc-warning)" }
+        ];
+        const max = Math.max(...roleData.map(r => r.value), 1);
+
+        bars.innerHTML = roleData.map(r => {
+            const heightPct = Math.max((r.value / max) * 100, 8);
+            return `
+                <div class="hub-kpi-mini-bar" style="height:${heightPct}%;background:${r.color}">
+                    <span>${r.value}</span>
+                </div>
+            `;
+        }).join("");
+    }
+
+    setText("kpiDocsValue", docCount);
+    const docsCard = document.getElementById("kpiDocsCard");
+    if (docsCard) {
+        const label = docsCard.querySelector(".hub-kpi-label");
+        if (label) label.textContent = `Passport ${passportCount} · Visa ${visaCount}`;
+    }
+}
+
+/* ---------- 3. TIMELINE AKTIVITAS ---------- */
+
+function renderTimeline(data) {
+    const container = document.getElementById("activityTimeline");
+    if (!container) return;
+
+    const staffCuti = Number(data.staffCuti || 0);
+    const offdayHariIni = Number(data.offdayHariIni || 0);
+    const activeToday = Number(data.activeToday || 0);
+    const birthdayNames = Array.isArray(data.birthdayNames) ? data.birthdayNames : [];
+    const passportWarning = Number(data.passportWarning || 0);
+    const visaWarning = Number(data.visaWarning || 0);
+
+    const iconLeave = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>`;
+    const iconOffday = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
+    const iconActive = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
+    const iconAlert = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>`;
+    const iconBirthday = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2 1 3.5 1 2-1 3.5-1 2 1 3.5 1 2-1 2-1"/><path d="M12 4v3"/></svg>`;
+
+    const items = [
+        {
+            variant: "active",
+            icon: iconActive,
+            title: "Staff Aktif Bekerja",
+            sub: `${activeToday} staff tidak cuti maupun offday hari ini`,
+            badge: `${activeToday} orang`,
+            time: "Real-time"
+        },
+        {
+            variant: "leave",
+            icon: iconLeave,
+            title: "Staff Sedang Cuti",
+            sub: staffCuti > 0 ? `${staffCuti} staff sedang menjalani cuti` : "Tidak ada staff yang cuti hari ini",
+            badge: `${staffCuti} orang`,
+            time: "Hari ini"
+        },
+        {
+            variant: "offday",
+            icon: iconOffday,
+            title: "Staff Offday",
+            sub: offdayHariIni > 0 ? `${offdayHariIni} staff mengambil offday hari ini` : "Tidak ada offday hari ini",
+            badge: `${offdayHariIni} orang`,
+            time: "Hari ini"
+        }
+    ];
+
+    if (birthdayNames.length) {
+        items.push({
+            variant: "active",
+            icon: iconBirthday,
+            title: "Ulang Tahun Hari Ini",
+            sub: birthdayNames.slice(0, 3).join(", ") + (birthdayNames.length > 3 ? ` +${birthdayNames.length - 3} lagi` : ""),
+            badge: `${birthdayNames.length} staff`,
+            time: "Hari ini"
+        });
+    }
+
+    if (passportWarning + visaWarning > 0) {
+        items.push({
+            variant: "alert",
+            icon: iconAlert,
+            title: "Dokumen Perlu Perhatian",
+            sub: `Passport ${passportWarning} · Visa ${visaWarning} mendekati kedaluwarsa`,
+            badge: "Perlu tindakan",
+            time: "Berkelanjutan"
+        });
+    }
+
+    container.innerHTML = items.map(item => `
+        <div class="hub-timeline-item ${item.variant}">
+            <div class="hub-timeline-node">${item.icon}</div>
+            <div class="hub-timeline-body">
+                <div class="hub-timeline-top">
+                    <strong>${escapeDashboardHtml(item.title)}</strong>
+                    <span class="hub-timeline-time">${escapeDashboardHtml(item.time)}</span>
+                </div>
+                <p class="hub-timeline-sub">${escapeDashboardHtml(item.sub)}</p>
+                <span class="hub-timeline-badge">${escapeDashboardHtml(item.badge)}</span>
+            </div>
+        </div>
+    `).join("");
+}
+
+/* ---------- 4. KOMPOSISI TIM ---------- */
+
 function calculateRoundedPercentages_(values, total) {
     if (!total) return values.map(() => 0);
 
@@ -349,163 +380,161 @@ function calculateRoundedPercentages_(values, total) {
     return result;
 }
 
-function renderRoleChart(roles, totalStaff) {
-    const container = document.getElementById("roleChart");
+function renderComposition(roles, totalStaff) {
+    const container = document.getElementById("compositionBody");
     if (!container) return;
 
     const items = [
-        { label: "CS", value: Number(roles.cs || 0), color: "var(--oc-blue, #2269dd)" },
-        { label: "Kapten", value: Number(roles.kapten || 0), color: "var(--oc-purple, #8f4ce8)" },
-        { label: "Kasir", value: Number(roles.kasir || 0), color: "#e99800" }
+        { label: "CS", value: Number(roles.cs || 0), color: "var(--oc-blue)" },
+        { label: "Kapten", value: Number(roles.kapten || 0), color: "var(--oc-purple)" },
+        { label: "Kasir", value: Number(roles.kasir || 0), color: "var(--oc-warning)" }
     ];
 
     const total = Math.max(totalStaff, 1);
-    const radius = 52;
+    const radius = 40;
     const circumference = 2 * Math.PI * radius;
+    const percentages = calculateRoundedPercentages_(items.map(i => i.value), totalStaff);
 
     let offset = 0;
     const circles = items.map(item => {
         const fraction = item.value / total;
         const dash = Math.max(fraction * circumference, item.value > 0 ? 3 : 0);
         const circle = `
-            <circle
-                cx="60" cy="60" r="${radius}"
-                fill="none" stroke="${item.color}" stroke-width="16"
-                stroke-dasharray="${dash} ${circumference - dash}"
-                stroke-dashoffset="${-offset}"
-                stroke-linecap="round"
-                transform="rotate(-90 60 60)"
-            />
+            <circle cx="52" cy="52" r="${radius}" fill="none" stroke="${item.color}" stroke-width="13"
+                stroke-dasharray="${dash} ${circumference - dash}" stroke-dashoffset="${-offset}"
+                stroke-linecap="round" transform="rotate(-90 52 52)" />
         `;
         offset += dash;
         return circle;
     }).join("");
 
-    const percentages = calculateRoundedPercentages_(items.map(item => item.value), totalStaff);
+    const legend = items.map((item, i) => `
+        <div class="hub-composition-legend-item">
+            <span class="hub-composition-dot" style="background:${item.color}"></span>
+            <span>${escapeDashboardHtml(item.label)}</span>
+            <strong>${item.value} &middot; ${percentages[i]}%</strong>
+        </div>
+    `).join("");
 
-    const legend = items.map((item, index) => {
-        return `
-            <div class="role-legend-item">
-                <span class="role-legend-dot" style="background:${item.color}"></span>
-                <span class="role-legend-label">${escapeDashboardHtml(item.label)}</span>
-                <strong class="role-legend-value">${item.value}</strong>
-                <small class="role-legend-percent">${percentages[index]}%</small>
-            </div>
-        `;
-    }).join("");
+    const bars = items.map((item, i) => `
+        <div class="hub-composition-bar-row">
+            <div class="hub-composition-bar-label"><span>${escapeDashboardHtml(item.label)}</span><span>${percentages[i]}%</span></div>
+            <div class="hub-composition-bar-track"><div class="hub-composition-bar-fill" style="width:${percentages[i]}%;background:${item.color}"></div></div>
+        </div>
+    `).join("");
 
     container.innerHTML = `
-        <div class="role-donut-wrap">
-            <svg viewBox="0 0 120 120" width="120" height="120">
-                <circle cx="60" cy="60" r="${radius}" fill="none" stroke="var(--oc-line)" stroke-width="16"/>
-                ${circles}
-            </svg>
-            <div class="role-donut-center">
-                <strong>${totalStaff}</strong>
-                <small>Staff</small>
+        <div class="hub-composition-top">
+            <div class="hub-composition-donut">
+                <svg viewBox="0 0 104 104" width="104" height="104">
+                    <circle cx="52" cy="52" r="${radius}" fill="none" stroke="var(--oc-line)" stroke-width="13"/>
+                    ${circles}
+                </svg>
+                <div class="hub-composition-donut-center"><strong>${totalStaff}</strong><small>Staff</small></div>
             </div>
+            <div class="hub-composition-legend">${legend}</div>
         </div>
-        <div class="role-legend">${legend}</div>
+        <div class="hub-composition-bars">${bars}</div>
     `;
 }
 
-const dashboardIcons = {
-  leave: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 15l2 2 4-4"/></svg>`,
-  offday: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
-  active: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
-  birthday: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 21h16"/><path d="M12 11V7"/><path d="M12 7c-1 0-1.5-.7-1.5-1.5S11 3 12 3s1.5.8 1.5 1.5S13 7 12 7Z"/><path d="M4 15.5h16"/></svg>`,
-  passport: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17h8"/></svg>`,
-  visa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/></svg>`
-};
+/* ---------- 5. STAFF OVERVIEW ---------- */
 
-function renderActivity(data) {
-    const container = document.getElementById("todayActivity");
+function renderStaffOverview(items) {
+    const container = document.getElementById("staffOverviewCards");
     if (!container) return;
 
-    const birthdayNames = Array.isArray(data.birthdayNames)
-        ? data.birthdayNames
-        : [];
-
-    const activities = [
-        {
-            icon: dashboardIcons.leave,
-            variant: "leave",
-            title: "Staff Cuti",
-            subtitle: "Sedang cuti hari ini",
-            value: Number(data.staffCuti || 0)
-        },
-        {
-            icon: dashboardIcons.offday,
-            variant: "offday",
-            title: "Staff Offday",
-            subtitle: "Offday disetujui hari ini",
-            value: Number(data.offdayHariIni || 0)
-        },
-        {
-            icon: dashboardIcons.active,
-            variant: "active",
-            title: "Staff Aktif",
-            subtitle: "Tidak cuti dan tidak offday",
-            value: Number(data.activeToday || 0)
-        },
-        {
-            icon: dashboardIcons.birthday,
-            variant: "birthday",
-            title: "Ulang Tahun",
-            subtitle: birthdayNames.length
-                ? birthdayNames.join(", ")
-                : "Tidak ada ulang tahun hari ini",
-            value: Number(data.birthdayCount || 0)
-        }
-    ];
-
-    container.innerHTML = activities.map(item => `
-        <div class="activity-item">
-            <span class="activity-icon activity-icon-${item.variant}">${item.icon}</span>
-            <div class="activity-left">
-                <strong>${escapeDashboardHtml(item.title)}</strong>
-                <small>${escapeDashboardHtml(item.subtitle)}</small>
-            </div>
-            <span class="activity-count">${item.value}</span>
-        </div>
-    `).join("");
-}
-
-let dashboardWarningData = { passport: [], visa: [] };
-
-function renderWarningList(containerId, items) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    const type = containerId === "visaWarningList" ? "visa" : "passport";
-    dashboardWarningData[type] = items;
-
-    if (!items.length) {
-        container.innerHTML = `
-            <div class="dashboard-empty">
-                Tidak ada dokumen dalam periode warning.
-            </div>
-        `;
+    if (!Array.isArray(items) || !items.length) {
+        container.innerHTML = `<div class="hub-warning-empty">Belum ada data tanggal join.</div>`;
         return;
     }
 
-    container.innerHTML = `
-        <div class="warning-chip-row">
-            ${items.map((item, index) => {
-                const days = Number(item.daysLeft);
-                const expired = days < 0;
-                const urgent = !expired && days <= 30;
-                const urgencyClass = expired ? "expired" : urgent ? "urgent" : "";
+    const roleColors = {
+        CS: ["var(--oc-blue)", "var(--oc-blue-soft)"],
+        KAPTEN: ["var(--oc-purple)", "var(--oc-purple-soft)"],
+        KASIR: ["var(--oc-warning)", "var(--oc-warning-soft)"]
+    };
 
-                return `
-                    <button type="button" class="warning-chip ${urgencyClass}" onclick="openDashboardWarningDetail('${type}', ${index})">
-                        <span class="warning-chip-dot ${urgencyClass}"></span>
-                        ${escapeDashboardHtml(item.nama || "-")}
-                    </button>
-                `;
-            }).join("")}
-        </div>
-    `;
+    const iconPin = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+    const iconClock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
+    const iconCalendar = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>`;
+
+    container.innerHTML = items.map(item => {
+        const nama = String(item.nama || "-");
+        const jabatan = String(item.jabatan || "-").toUpperCase();
+        const [roleColor, roleSoft] = roleColors[jabatan] || roleColors.CS;
+        const initials = nama.split(/\s+/).filter(Boolean).slice(0, 2).map(p => p.charAt(0).toUpperCase()).join("") || "?";
+
+        return `
+            <div class="hub-staff-card">
+                <div class="hub-staff-card-top">
+                    <span class="hub-staff-avatar" style="background:${roleColor}">${escapeDashboardHtml(initials)}</span>
+                    <span class="hub-staff-status">Aktif</span>
+                </div>
+                <strong>${escapeDashboardHtml(nama)}</strong>
+                <span class="hub-staff-role-badge" style="background:${roleSoft};color:${roleColor}">${escapeDashboardHtml(item.jabatan || "-")}</span>
+                <div class="hub-staff-meta">
+                    <div class="hub-staff-meta-row">${iconCalendar} Join ${escapeDashboardHtml(item.tanggalJoin || "-")}</div>
+                    <div class="hub-staff-meta-row">${iconClock} ${escapeDashboardHtml(item.masaKerja || "-")}</div>
+                    ${item.domisili ? `<div class="hub-staff-meta-row">${iconPin} ${escapeDashboardHtml(item.domisili)}</div>` : ""}
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+/* ---------- 6. WARNING CENTER ---------- */
+
+let dashboardWarningData = { passport: [], visa: [] };
+
+function renderWarningCenter(passportWarnings, visaWarnings) {
+    dashboardWarningData = { passport: passportWarnings, visa: visaWarnings };
+
+    const container = document.getElementById("warningCenterBody");
+    if (!container) return;
+
+    const groups = [
+        { type: "passport", label: "Passport", items: passportWarnings },
+        { type: "visa", label: "Visa", items: visaWarnings }
+    ];
+
+    const allEmpty = passportWarnings.length === 0 && visaWarnings.length === 0;
+
+    if (allEmpty) {
+        container.innerHTML = `<div class="hub-warning-empty">✓ Tidak ada dokumen dalam periode warning. Semua aman.</div>`;
+        return;
+    }
+
+    container.innerHTML = groups.map(group => {
+        if (!group.items.length) return "";
+
+        const sorted = [...group.items].sort((a, b) => Number(a.daysLeft) - Number(b.daysLeft));
+
+        return `
+            <div class="hub-warning-group">
+                <div class="hub-warning-group-label">${escapeDashboardHtml(group.label)} <span class="count">${group.items.length}</span></div>
+                ${sorted.slice(0, 5).map((item, i) => {
+                    const days = Number(item.daysLeft);
+                    const expired = days < 0;
+                    const critical = expired || days <= 14;
+                    const priority = critical ? "critical" : "upcoming";
+                    const daysText = expired ? `Lewat ${Math.abs(days)}h` : `${days} hari`;
+                    const originalIndex = group.items.indexOf(item);
+
+                    return `
+                        <div class="hub-warning-row ${priority}" onclick="openDashboardWarningDetail('${group.type}', ${originalIndex})" style="cursor:pointer">
+                            <span class="hub-warning-dot"></span>
+                            <div class="hub-warning-row-body">
+                                <strong>${escapeDashboardHtml(item.nama)}</strong>
+                                <small>${escapeDashboardHtml(item.expiryDate || "-")}</small>
+                            </div>
+                            <span class="hub-warning-row-days">${escapeDashboardHtml(daysText)}</span>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }).join("");
 }
 
 function openDashboardWarningDetail(type, index) {
@@ -574,49 +603,43 @@ function createDashboardWarningModal_() {
     return modal;
 }
 
-function renderNewStaff(items) {
-    const container = document.getElementById("newStaffList");
+/* ---------- 7. QUICK INSIGHTS ---------- */
+
+function renderInsights(data) {
+    const container = document.getElementById("insightsBody");
     if (!container) return;
 
-    if (!Array.isArray(items) || !items.length) {
-        container.innerHTML = `
-            <div class="dashboard-empty">
-                Belum ada data tanggal join.
-            </div>
-        `;
-        return;
-    }
+    const staffCuti = Number(data.staffCuti || 0);
+    const totalStaff = Number(data.totalStaff || 0);
+    const cutiTrendPct = totalStaff > 0 ? Math.round((staffCuti / totalStaff) * 100) : 0;
+    const birthdayNames = Array.isArray(data.birthdayNames) ? data.birthdayNames : [];
 
-    container.innerHTML = items.map(item => {
-        const nama = String(item.nama || "-");
-        const jabatan = String(item.jabatan || "-").toUpperCase();
-        const initials = nama
-            .split(/\s+/)
-            .filter(Boolean)
-            .slice(0, 2)
-            .map(part => part.charAt(0).toUpperCase())
-            .join("") || "?";
+    const icons = {
+        age: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+        city: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>`,
+        longest: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`,
+        birthday: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M12 4v3"/></svg>`,
+        trend: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>`
+    };
 
-        const roleVariant = jabatan === "KAPTEN"
-            ? "kapten"
-            : jabatan === "KASIR"
-                ? "kasir"
-                : "cs";
+    const insights = [
+        { icon: icons.age, value: `${data.averageAge || 0} Tahun`, label: "Rata-rata Usia Staff" },
+        { icon: icons.city, value: data.topDomicile || "-", label: "Domisili Terbanyak" },
+        { icon: icons.longest, value: data.longestServing || "-", label: "Masa Kerja Terlama" },
+        { icon: icons.birthday, value: birthdayNames.length ? `${birthdayNames.length} Staff` : "Tidak ada", label: "Ulang Tahun Hari Ini" },
+        { icon: icons.trend, value: `${cutiTrendPct}%`, label: "Proporsi Staff Cuti Hari Ini" }
+    ];
 
-        return `
-            <div class="new-staff-item">
-                <span class="new-staff-avatar role-${roleVariant}">${escapeDashboardHtml(initials)}</span>
-                <div class="new-staff-left">
-                    <strong>${escapeDashboardHtml(nama)}</strong>
-                    <small>Join ${escapeDashboardHtml(item.tanggalJoin || "-")}</small>
-                </div>
-                <span class="new-staff-role role-${roleVariant}">
-                    ${escapeDashboardHtml(item.jabatan || "-")}
-                </span>
-            </div>
-        `;
-    }).join("");
+    container.innerHTML = insights.map(item => `
+        <div class="hub-insight-card">
+            <span class="hub-insight-icon">${item.icon}</span>
+            <strong>${escapeDashboardHtml(item.value)}</strong>
+            <span>${escapeDashboardHtml(item.label)}</span>
+        </div>
+    `).join("");
 }
+
+/* ---------- Util ---------- */
 
 function setText(id, value) {
     const element = document.getElementById(id);
@@ -624,7 +647,7 @@ function setText(id, value) {
 }
 
 function escapeDashboardHtml(value) {
-    return String(value ?? "")
+    return String(value ?? "-")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")

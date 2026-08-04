@@ -1,0 +1,432 @@
+/* =====================================================================
+   HOME.CSS — Command Center redesign untuk halaman Home.
+   Filosofi: hierarki berdasarkan kepentingan (bukan tumpukan kotak
+   seragam), whitespace yang disengaja, ukuran kartu bervariasi,
+   storytelling dari atas ke bawah. Dipakai HANYA oleh index.html.
+   ===================================================================== */
+
+.oc-main { max-width: 1360px; margin: 0 auto; }
+
+/* ---------------------------------------------------------------------
+   1. HERO
+--------------------------------------------------------------------- */
+.hub-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 28px;
+  overflow: hidden;
+  padding: 40px 44px;
+  margin-bottom: 22px;
+  border: 1px solid var(--oc-line);
+  border-radius: 28px;
+  background:
+    linear-gradient(150deg, #ffffff 0%, var(--oc-surface-soft) 60%, #eef4fb 100%);
+  box-shadow: var(--oc-shadow-md);
+}
+
+.hub-hero-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 88% -10%, rgba(33, 201, 166, .18), transparent 45%),
+    radial-gradient(circle at 4% 120%, rgba(255, 107, 129, .12), transparent 40%);
+}
+
+.hub-hero-main { position: relative; min-width: 0; }
+
+.hub-hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+
+.hub-hero-eyebrow {
+  color: var(--oc-muted);
+  font-family: var(--oc-font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.hub-hero-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border: 1px solid rgba(33, 201, 166, .3);
+  border-radius: 999px;
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.hub-pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--oc-primary);
+  box-shadow: 0 0 0 0 rgba(33, 201, 166, .55);
+  animation: hubPulse 1.8s infinite;
+}
+
+@keyframes hubPulse {
+  0% { box-shadow: 0 0 0 0 rgba(33, 201, 166, .5); }
+  70% { box-shadow: 0 0 0 8px rgba(33, 201, 166, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(33, 201, 166, 0); }
+}
+
+.hub-hero-title {
+  margin: 0 0 10px;
+  color: var(--oc-text);
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+}
+
+.hub-hero-title span { color: var(--oc-primary-strong); }
+
+.hub-hero-sub {
+  max-width: 46ch;
+  margin: 0 0 30px;
+  color: var(--oc-text-soft);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.hub-hero-sub strong { color: var(--oc-text); }
+
+.hub-hero-metrics {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-bottom: 30px;
+}
+
+.hub-hero-metric { display: flex; flex-direction: column; gap: 3px; }
+.hub-hero-metric strong { color: var(--oc-text); font-size: 30px; font-weight: 800; line-height: 1; }
+.hub-hero-metric span { color: var(--oc-muted); font-size: 12px; font-weight: 600; }
+.hub-hero-metric-divider { width: 1px; height: 34px; background: var(--oc-line-strong); }
+
+.hub-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.hub-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 18px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 12px;
+  background: var(--oc-surface);
+  color: var(--oc-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+.hub-hero-btn:hover { transform: translateY(-1px); border-color: rgba(33, 201, 166, .4); box-shadow: var(--oc-shadow-sm); }
+
+.hub-hero-btn.primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--oc-primary-strong), var(--oc-primary));
+  color: #ffffff;
+  box-shadow: var(--oc-glow-primary);
+}
+
+/* Approval card — sisi kanan hero */
+.hub-hero-approval {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  padding: 22px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.hub-approval-kicker {
+  color: var(--oc-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+
+.hub-approval-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.hub-approval-count strong { font-size: 40px; font-weight: 800; color: var(--oc-text); line-height: 1; }
+.hub-approval-count span { color: var(--oc-muted); font-size: 12px; font-weight: 700; }
+
+.hub-approval-desc { margin: 0 0 16px; color: var(--oc-text-soft); font-size: 12.5px; line-height: 1.5; }
+
+.hub-approval-list { display: grid; gap: 8px; margin-bottom: auto; }
+
+.hub-approval-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 9px 12px; border-radius: 10px; background: var(--oc-surface-soft);
+  text-decoration: none; color: var(--oc-text); font-size: 12.5px; font-weight: 600;
+  transition: background .15s ease;
+}
+.hub-approval-row:hover { background: var(--oc-primary-soft); }
+.hub-approval-row b { color: #fff; background: var(--oc-accent-strong); border-radius: 999px; padding: 2px 8px; font-size: 11px; }
+
+.hub-approval-clear {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; flex: 1; text-align: center; color: var(--oc-muted); font-size: 12.5px;
+}
+.hub-approval-clear span:first-child { font-size: 30px; }
+
+.hub-approval-cta {
+  display: block; margin-top: 14px; padding: 10px; border-radius: 10px;
+  background: var(--oc-text); color: #fff; text-align: center;
+  font-size: 12.5px; font-weight: 700; text-decoration: none;
+}
+
+/* ---------------------------------------------------------------------
+   2. KPI — ukuran campuran (large / medium / small / small)
+--------------------------------------------------------------------- */
+.hub-kpi {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.hub-kpi-card {
+  position: relative;
+  overflow: hidden;
+  padding: 22px;
+  border: 1px solid var(--oc-line);
+  border-radius: 20px;
+  background: linear-gradient(150deg, #ffffff, var(--oc-surface-soft));
+  box-shadow: var(--oc-shadow-sm);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.hub-kpi-card:hover { transform: translateY(-2px); box-shadow: var(--oc-shadow-md); }
+
+.hub-kpi-large { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; }
+.hub-kpi-medium { grid-column: 2 / 4; grid-row: 1; }
+.hub-kpi-small { grid-column: auto; grid-row: 2; display: flex; flex-direction: column; justify-content: center; }
+
+.hub-kpi-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+
+.hub-kpi-icon {
+  display: grid; place-items: center; width: 42px; height: 42px;
+  border-radius: 13px; background: var(--oc-primary-soft); color: var(--oc-primary-strong);
+}
+.hub-kpi-icon svg { width: 20px; height: 20px; }
+.hub-kpi-icon.small { width: 34px; height: 34px; margin-bottom: 10px; }
+.hub-kpi-icon.small svg { width: 16px; height: 16px; }
+
+.hub-kpi-tag {
+  padding: 4px 10px; border-radius: 999px; background: var(--oc-surface-soft);
+  color: var(--oc-muted); font-size: 10px; font-weight: 800; letter-spacing: .05em;
+}
+.hub-kpi-tag.leave { background: var(--oc-blue-soft); color: var(--oc-blue); }
+
+.hub-kpi-value { display: block; color: var(--oc-text); font-size: 40px; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.hub-kpi-large .hub-kpi-value { font-size: 52px; }
+.hub-kpi-small .hub-kpi-value { font-size: 30px; }
+
+.hub-kpi-label { display: block; margin-top: 6px; color: var(--oc-muted); font-size: 12px; font-weight: 600; }
+
+.hub-kpi-trend { display: inline-block; margin-top: 12px; color: var(--oc-text-soft); font-size: 12px; font-weight: 600; }
+
+.hub-kpi-mini-bars { display: flex; gap: 5px; align-items: flex-end; height: 40px; margin-top: auto; padding-top: 18px; }
+.hub-kpi-mini-bar { flex: 1; border-radius: 6px 6px 2px 2px; min-height: 6px; position: relative; }
+.hub-kpi-mini-bar span {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  margin-bottom: 4px; font-size: 10px; font-weight: 800; color: var(--oc-text-soft); white-space: nowrap;
+}
+
+.hub-kpi-alert { border-color: rgba(255, 107, 129, .25); }
+.hub-kpi-alert .hub-kpi-icon.small { background: var(--oc-danger-soft); color: var(--oc-danger); }
+
+/* ---------------------------------------------------------------------
+   Modul generik (dipakai timeline, komposisi, staff overview, dst)
+--------------------------------------------------------------------- */
+.hub-row-60-40, .hub-row-50-50 {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 18px;
+  align-items: start;
+}
+.hub-row-60-40 { grid-template-columns: 1.5fr 1fr; }
+.hub-row-50-50 { grid-template-columns: 1fr 1fr; }
+
+.hub-module {
+  padding: 24px;
+  border: 1px solid var(--oc-line);
+  border-radius: 22px;
+  background: var(--oc-surface);
+  box-shadow: var(--oc-shadow-sm);
+}
+.hub-module-wide { margin-bottom: 18px; }
+
+.hub-module-head { margin-bottom: 18px; }
+.hub-module-kicker { display: block; margin-bottom: 4px; color: var(--oc-primary-strong); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.hub-module-head h2 { margin: 0; color: var(--oc-text); font-size: 18px; font-weight: 800; }
+
+/* ---------------------------------------------------------------------
+   3. TIMELINE aktivitas
+--------------------------------------------------------------------- */
+.hub-timeline { position: relative; display: grid; gap: 4px; padding-left: 6px; }
+
+.hub-timeline-item { position: relative; display: flex; gap: 14px; padding: 12px 4px; }
+
+.hub-timeline-item::before {
+  content: ""; position: absolute; left: 15px; top: 38px; bottom: -8px; width: 1.5px;
+  background: var(--oc-line-strong);
+}
+.hub-timeline-item:last-child::before { display: none; }
+
+.hub-timeline-node {
+  position: relative; z-index: 1; display: grid; place-items: center;
+  width: 32px; height: 32px; flex: 0 0 auto; border-radius: 50%;
+  background: var(--oc-surface); border: 2px solid var(--oc-line-strong); color: var(--oc-text-soft);
+}
+.hub-timeline-node svg { width: 15px; height: 15px; }
+
+.hub-timeline-item.leave .hub-timeline-node { border-color: var(--oc-blue); color: var(--oc-blue); background: var(--oc-blue-soft); }
+.hub-timeline-item.offday .hub-timeline-node { border-color: var(--oc-purple); color: var(--oc-purple); background: var(--oc-purple-soft); }
+.hub-timeline-item.active .hub-timeline-node { border-color: var(--oc-primary); color: var(--oc-primary-strong); background: var(--oc-primary-soft); }
+.hub-timeline-item.alert .hub-timeline-node { border-color: var(--oc-danger); color: var(--oc-danger); background: var(--oc-danger-soft); }
+
+.hub-timeline-body { flex: 1; min-width: 0; padding-top: 2px; }
+.hub-timeline-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.hub-timeline-top strong { color: var(--oc-text); font-size: 13.5px; font-weight: 700; }
+.hub-timeline-time { color: var(--oc-muted); font-size: 11px; font-weight: 700; font-family: var(--oc-font-mono); white-space: nowrap; }
+.hub-timeline-sub { margin: 3px 0 8px; color: var(--oc-text-soft); font-size: 12.5px; }
+
+.hub-timeline-badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 800; }
+.hub-timeline-item.leave .hub-timeline-badge { background: var(--oc-blue-soft); color: var(--oc-blue); }
+.hub-timeline-item.offday .hub-timeline-badge { background: var(--oc-purple-soft); color: var(--oc-purple); }
+.hub-timeline-item.active .hub-timeline-badge { background: var(--oc-primary-soft); color: var(--oc-primary-strong); }
+.hub-timeline-item.alert .hub-timeline-badge { background: var(--oc-danger-soft); color: var(--oc-danger); }
+
+/* ---------------------------------------------------------------------
+   4. KOMPOSISI TIM — chart + legend + progress bars
+--------------------------------------------------------------------- */
+.hub-composition { display: flex; flex-direction: column; gap: 18px; }
+.hub-composition-top { display: flex; align-items: center; gap: 18px; }
+
+.hub-composition-donut { position: relative; flex: 0 0 auto; width: 104px; height: 104px; }
+.hub-composition-donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.hub-composition-donut-center strong { font-size: 22px; font-weight: 800; color: var(--oc-text); line-height: 1; }
+.hub-composition-donut-center small { margin-top: 3px; color: var(--oc-muted); font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+
+.hub-composition-legend { flex: 1; display: grid; gap: 8px; }
+.hub-composition-legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.hub-composition-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.hub-composition-legend-item span:nth-child(2) { flex: 1; color: var(--oc-text-soft); font-weight: 600; }
+.hub-composition-legend-item strong { color: var(--oc-text); font-weight: 800; }
+
+.hub-composition-bars { display: grid; gap: 12px; padding-top: 4px; border-top: 1px dashed var(--oc-line); }
+.hub-composition-bar-row { display: grid; gap: 5px; }
+.hub-composition-bar-label { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: var(--oc-text-soft); }
+.hub-composition-bar-track { height: 7px; border-radius: 999px; background: var(--oc-surface-soft); overflow: hidden; }
+.hub-composition-bar-fill { height: 100%; border-radius: inherit; }
+
+/* ---------------------------------------------------------------------
+   5. STAFF OVERVIEW — kartu karyawan
+--------------------------------------------------------------------- */
+.hub-staff-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+
+.hub-staff-card {
+  padding: 18px; border: 1px solid var(--oc-line); border-radius: 18px;
+  background: linear-gradient(150deg, #ffffff, var(--oc-surface-soft));
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.hub-staff-card:hover { transform: translateY(-2px); box-shadow: var(--oc-shadow-sm); border-color: rgba(33, 201, 166, .3); }
+
+.hub-staff-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+
+.hub-staff-avatar {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px;
+  color: #fff; font-size: 14px; font-weight: 800;
+}
+
+.hub-staff-status { display: inline-flex; align-items: center; gap: 5px; color: var(--oc-primary-strong); font-size: 10px; font-weight: 800; }
+.hub-staff-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--oc-primary); }
+
+.hub-staff-card strong { display: block; color: var(--oc-text); font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+
+.hub-staff-role-badge {
+  display: inline-block; margin-bottom: 12px; padding: 3px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 800; letter-spacing: .03em;
+}
+
+.hub-staff-meta { display: grid; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--oc-line); }
+.hub-staff-meta-row { display: flex; align-items: center; gap: 6px; color: var(--oc-muted); font-size: 11px; }
+.hub-staff-meta-row svg { width: 12px; height: 12px; flex: 0 0 auto; }
+
+/* ---------------------------------------------------------------------
+   6. WARNING CENTER — passport & visa dengan prioritas warna
+--------------------------------------------------------------------- */
+.hub-warning-center { display: grid; gap: 16px; }
+.hub-warning-group { display: grid; gap: 8px; }
+.hub-warning-group-label { display: flex; align-items: center; gap: 7px; color: var(--oc-text); font-size: 12px; font-weight: 800; }
+.hub-warning-group-label .count { padding: 1px 8px; border-radius: 999px; background: var(--oc-surface-soft); color: var(--oc-muted); font-size: 10.5px; }
+
+.hub-warning-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px;
+  border: 1px solid var(--oc-line); background: var(--oc-surface-soft);
+}
+.hub-warning-row.critical { border-color: rgba(244, 100, 95, .35); background: var(--oc-danger-soft); }
+.hub-warning-row.upcoming { border-color: rgba(255, 159, 67, .3); background: var(--oc-warning-soft); }
+
+.hub-warning-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.hub-warning-row.critical .hub-warning-dot { background: var(--oc-danger); }
+.hub-warning-row.upcoming .hub-warning-dot { background: var(--oc-warning); }
+
+.hub-warning-row-body { flex: 1; min-width: 0; }
+.hub-warning-row-body strong { display: block; color: var(--oc-text); font-size: 12.5px; font-weight: 700; }
+.hub-warning-row-body small { color: var(--oc-muted); font-size: 10.5px; }
+
+.hub-warning-row-days { font-size: 11px; font-weight: 800; white-space: nowrap; }
+.hub-warning-row.critical .hub-warning-row-days { color: var(--oc-danger); }
+.hub-warning-row.upcoming .hub-warning-row-days { color: var(--oc-warning); }
+
+.hub-warning-empty { padding: 24px; text-align: center; color: var(--oc-muted); font-size: 12px; }
+
+/* ---------------------------------------------------------------------
+   7. QUICK INSIGHTS
+--------------------------------------------------------------------- */
+.hub-insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.hub-insight-card {
+  padding: 15px; border: 1px solid var(--oc-line); border-radius: 15px;
+  background: var(--oc-surface-soft);
+}
+.hub-insight-icon { display: grid; place-items: center; width: 30px; height: 30px; margin-bottom: 10px; border-radius: 9px; background: var(--oc-surface); color: var(--oc-primary-strong); }
+.hub-insight-icon svg { width: 15px; height: 15px; }
+.hub-insight-card strong { display: block; color: var(--oc-text); font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+.hub-insight-card span { color: var(--oc-muted); font-size: 11px; font-weight: 600; }
+
+/* ---------------------------------------------------------------------
+   Responsif
+--------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .hub-hero { grid-template-columns: 1fr; }
+  .hub-kpi { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
+  .hub-kpi-large { grid-column: 1 / 3; grid-row: 1; }
+  .hub-kpi-medium { grid-column: 1 / 3; grid-row: 2; }
+  .hub-row-60-40, .hub-row-50-50 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .hub-hero { padding: 26px 22px; }
+  .hub-hero-metrics { flex-wrap: wrap; gap: 16px; }
+  .hub-kpi { grid-template-columns: 1fr; }
+  .hub-kpi-large, .hub-kpi-medium, .hub-kpi-small { grid-column: 1; grid-row: auto; }
+  .hub-insights-grid { grid-template-columns: 1fr; }
+}
