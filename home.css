@@ -213,7 +213,7 @@
 }
 .hub-kpi-card:hover { transform: translateY(-2px); box-shadow: var(--oc-shadow-md); }
 
-.hub-kpi-large { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; }
+.hub-kpi-large { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; justify-content: center; }
 .hub-kpi-medium { grid-column: 2 / 4; grid-row: 1; }
 .hub-kpi-small { grid-column: auto; grid-row: 2; display: flex; flex-direction: column; justify-content: center; }
 
@@ -241,13 +241,6 @@
 
 .hub-kpi-trend { display: inline-block; margin-top: 12px; color: var(--oc-text-soft); font-size: 12px; font-weight: 600; }
 
-.hub-kpi-mini-bars { display: flex; gap: 5px; align-items: flex-end; height: 40px; margin-top: auto; padding-top: 18px; }
-.hub-kpi-mini-bar { flex: 1; border-radius: 6px 6px 2px 2px; min-height: 6px; position: relative; }
-.hub-kpi-mini-bar span {
-  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-  margin-bottom: 4px; font-size: 10px; font-weight: 800; color: var(--oc-text-soft); white-space: nowrap;
-}
-
 .hub-kpi-alert { border-color: rgba(255, 107, 129, .25); }
 .hub-kpi-alert .hub-kpi-icon.small { background: var(--oc-danger-soft); color: var(--oc-danger); }
 
@@ -262,6 +255,16 @@
 }
 .hub-row-60-40 { grid-template-columns: 1.5fr 1fr; }
 .hub-row-50-50 { grid-template-columns: 1fr 1fr; }
+
+/* Baris 3 kolom sejajar: Staff Overview, Warning Center, Quick Insights
+   -- disatukan dalam 1 baris supaya halaman tidak terlalu panjang. */
+.hub-row-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+  align-items: start;
+}
 
 .hub-module {
   padding: 24px;
@@ -336,6 +339,20 @@
 .hub-composition-bar-track { height: 7px; border-radius: 999px; background: var(--oc-surface-soft); overflow: hidden; }
 .hub-composition-bar-fill { height: 100%; border-radius: inherit; }
 
+/* Versi ringkas (dipakai di panel campuran samping Aktivitas Operasional) */
+.hub-composition.compact .hub-composition-top { gap: 14px; }
+.hub-composition.compact .hub-composition-donut { width: 84px; height: 84px; }
+.hub-composition.compact .hub-composition-donut-center strong { font-size: 18px; }
+.hub-composition.compact .hub-composition-bars { display: none; }
+
+.hub-side-mixed { display: flex; flex-direction: column; }
+.hub-side-divider { height: 1px; margin: 16px 0; background: var(--oc-line); }
+
+.hub-side-insight-list { display: grid; gap: 10px; }
+.hub-side-insight-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
+.hub-side-insight-row span:first-child { color: var(--oc-muted); font-weight: 600; }
+.hub-side-insight-row strong { color: var(--oc-text); font-weight: 800; }
+
 /* ---------------------------------------------------------------------
    5. STAFF OVERVIEW — kartu karyawan
 --------------------------------------------------------------------- */
@@ -368,6 +385,18 @@
 .hub-staff-meta { display: grid; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--oc-line); }
 .hub-staff-meta-row { display: flex; align-items: center; gap: 6px; color: var(--oc-muted); font-size: 11px; }
 .hub-staff-meta-row svg { width: 12px; height: 12px; flex: 0 0 auto; }
+
+/* Versi list ringkas untuk kolom sempit (baris 3-kolom) */
+.hub-staff-list { display: grid; gap: 10px; }
+.hub-staff-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--oc-line);
+  border-radius: 13px; background: var(--oc-surface-soft);
+}
+.hub-staff-row .hub-staff-avatar { width: 36px; height: 36px; font-size: 12px; flex: 0 0 auto; }
+.hub-staff-row-body { flex: 1; min-width: 0; }
+.hub-staff-row-body strong { display: block; color: var(--oc-text); font-size: 12.5px; font-weight: 700; }
+.hub-staff-row-body small { color: var(--oc-muted); font-size: 10.5px; }
+.hub-staff-row-role { padding: 3px 8px; border-radius: 999px; font-size: 9.5px; font-weight: 800; flex: 0 0 auto; }
 
 /* ---------------------------------------------------------------------
    6. WARNING CENTER — passport & visa dengan prioritas warna
@@ -402,6 +431,7 @@
    7. QUICK INSIGHTS
 --------------------------------------------------------------------- */
 .hub-insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hub-insights-grid.compact { grid-template-columns: 1fr; gap: 10px; }
 
 .hub-insight-card {
   padding: 15px; border: 1px solid var(--oc-line); border-radius: 15px;
@@ -420,7 +450,7 @@
   .hub-kpi { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
   .hub-kpi-large { grid-column: 1 / 3; grid-row: 1; }
   .hub-kpi-medium { grid-column: 1 / 3; grid-row: 2; }
-  .hub-row-60-40, .hub-row-50-50 { grid-template-columns: 1fr; }
+  .hub-row-60-40, .hub-row-50-50, .hub-row-3col { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {

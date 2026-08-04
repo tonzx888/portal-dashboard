@@ -154,6 +154,7 @@ function renderDashboard(data) {
     renderKpi({ totalStaff, staffCuti, offdayHariIni, roles, docCount: passportCount + visaCount, passportCount, visaCount });
     renderTimeline(data);
     renderComposition(roles, totalStaff);
+    renderSideInsightList(data);
     renderStaffOverview(data.newStaff || []);
     renderWarningCenter(passportWarnings, visaWarnings);
     renderInsights(data);
@@ -247,25 +248,6 @@ function renderKpi({ totalStaff, staffCuti, offdayHariIni, roles, docCount, pass
 
     const percent = totalStaff > 0 ? Math.round((staffCuti / totalStaff) * 100) : 0;
     setText("kpiCutiTrend", staffCuti > 0 ? `${percent}% dari total staff sedang cuti` : "Tidak ada staff cuti hari ini");
-
-    const bars = document.getElementById("kpiStaffBars");
-    if (bars) {
-        const roleData = [
-            { label: "CS", value: Number(roles.cs || 0), color: "var(--oc-blue)" },
-            { label: "Kapten", value: Number(roles.kapten || 0), color: "var(--oc-purple)" },
-            { label: "Kasir", value: Number(roles.kasir || 0), color: "var(--oc-warning)" }
-        ];
-        const max = Math.max(...roleData.map(r => r.value), 1);
-
-        bars.innerHTML = roleData.map(r => {
-            const heightPct = Math.max((r.value / max) * 100, 8);
-            return `
-                <div class="hub-kpi-mini-bar" style="height:${heightPct}%;background:${r.color}">
-                    <span>${r.value}</span>
-                </div>
-            `;
-        }).join("");
-    }
 
     setText("kpiDocsValue", docCount);
     const docsCard = document.getElementById("kpiDocsCard");
@@ -438,6 +420,37 @@ function renderComposition(roles, totalStaff) {
     `;
 }
 
+/**
+ * Panel "campuran" di samping Aktivitas Operasional -- muncul di
+ * bawah donut Komposisi Tim, isinya data lain yang belum ditonjolkan
+ * di tempat lain (bukan komposisi lagi), supaya sisi kanan tidak
+ * cuma berisi satu jenis info.
+ */
+function renderSideInsightList(data) {
+    const container = document.getElementById("sideInsightList");
+    if (!container) return;
+
+    const birthdayCount = Array.isArray(data.birthdayNames) ? data.birthdayNames.length : Number(data.birthdayCount || 0);
+    const missingUsername = Number(data.missingUsernameCount || 0);
+
+    const rows = [
+        { label: "Domisili Terbanyak", value: data.topDomicile || "-" },
+        { label: "Masa Kerja Terlama", value: data.longestServing || "-" },
+        { label: "Ulang Tahun Hari Ini", value: birthdayCount ? `${birthdayCount} staff` : "Tidak ada" }
+    ];
+
+    if (missingUsername > 0) {
+        rows.push({ label: "Belum Ada Username", value: `${missingUsername} staff` });
+    }
+
+    container.innerHTML = rows.map(row => `
+        <div class="hub-side-insight-row">
+            <span>${escapeDashboardHtml(row.label)}</span>
+            <strong>${escapeDashboardHtml(row.value)}</strong>
+        </div>
+    `).join("");
+}
+
 /* ---------- 5. STAFF OVERVIEW ---------- */
 
 function renderStaffOverview(items) {
@@ -455,29 +468,20 @@ function renderStaffOverview(items) {
         KASIR: ["var(--oc-warning)", "var(--oc-warning-soft)"]
     };
 
-    const iconPin = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
-    const iconClock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
-    const iconCalendar = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>`;
-
-    container.innerHTML = items.map(item => {
+    container.innerHTML = items.slice(0, 5).map(item => {
         const nama = String(item.nama || "-");
         const jabatan = String(item.jabatan || "-").toUpperCase();
         const [roleColor, roleSoft] = roleColors[jabatan] || roleColors.CS;
         const initials = nama.split(/\s+/).filter(Boolean).slice(0, 2).map(p => p.charAt(0).toUpperCase()).join("") || "?";
 
         return `
-            <div class="hub-staff-card">
-                <div class="hub-staff-card-top">
-                    <span class="hub-staff-avatar" style="background:${roleColor}">${escapeDashboardHtml(initials)}</span>
-                    <span class="hub-staff-status">Aktif</span>
+            <div class="hub-staff-row">
+                <span class="hub-staff-avatar" style="background:${roleColor}">${escapeDashboardHtml(initials)}</span>
+                <div class="hub-staff-row-body">
+                    <strong>${escapeDashboardHtml(nama)}</strong>
+                    <small>Join ${escapeDashboardHtml(item.tanggalJoin || "-")} &middot; ${escapeDashboardHtml(item.masaKerja || "-")}</small>
                 </div>
-                <strong>${escapeDashboardHtml(nama)}</strong>
-                <span class="hub-staff-role-badge" style="background:${roleSoft};color:${roleColor}">${escapeDashboardHtml(item.jabatan || "-")}</span>
-                <div class="hub-staff-meta">
-                    <div class="hub-staff-meta-row">${iconCalendar} Join ${escapeDashboardHtml(item.tanggalJoin || "-")}</div>
-                    <div class="hub-staff-meta-row">${iconClock} ${escapeDashboardHtml(item.masaKerja || "-")}</div>
-                    ${item.domisili ? `<div class="hub-staff-meta-row">${iconPin} ${escapeDashboardHtml(item.domisili)}</div>` : ""}
-                </div>
+                <span class="hub-staff-row-role" style="background:${roleSoft};color:${roleColor}">${escapeDashboardHtml(item.jabatan || "-")}</span>
             </div>
         `;
     }).join("");
