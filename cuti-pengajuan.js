@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("calendarNext")?.addEventListener("click", () => changeCutiMonth(1));
 
     loadCuti();
+    loadCutiQuotaSettings();
     loadEligibility();
     loadStaffProfileAndPassportMap();
 
@@ -785,7 +786,26 @@ function escapeCutiHtml(value) {
    fetch ulang ke server)
 ========================================================== */
 
-const CUTI_ROLE_CONCURRENT_QUOTA = { CS: 2, KAPTEN: 1, KASIR: 2 };
+let CUTI_ROLE_CONCURRENT_QUOTA = { CS: 2, KAPTEN: 1, KASIR: 2 };
+
+async function loadCutiQuotaSettings() {
+    try {
+        const params = new URLSearchParams({ type: "cutiQuotaSettings", token: getLoginToken() });
+        const response = await fetch(`${API_BASE}?${params.toString()}`);
+        const result = await response.json();
+
+        if (result && typeof result === "object" && !Array.isArray(result)) {
+            CUTI_ROLE_CONCURRENT_QUOTA = {
+                CS: Number(result.CS) || CUTI_ROLE_CONCURRENT_QUOTA.CS,
+                KAPTEN: Number(result.KAPTEN) || CUTI_ROLE_CONCURRENT_QUOTA.KAPTEN,
+                KASIR: Number(result.KASIR) || CUTI_ROLE_CONCURRENT_QUOTA.KASIR
+            };
+            renderCalendar(); // render ulang kalau data sebelumnya pakai angka default
+        }
+    } catch (error) {
+        console.error("Gagal memuat kuota cuti terbaru, pakai angka default:", error);
+    }
+}
 
 let calendarViewDate = new Date();
 
