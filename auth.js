@@ -93,6 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupAccountMenu_();
     setupNotificationBell_();
+    setupLiveClock_();
+    setupQuickCreate_();
 });
 
 /**
@@ -485,4 +487,89 @@ async function submitChangePassword_() {
             button.textContent = "Simpan Password";
         }
     }
+}
+
+/**
+ * Jam & tanggal real-time di topbar. Disuntikkan lewat JS (bukan
+ * ditulis di tiap HTML) supaya otomatis muncul di semua halaman,
+ * sama seperti bell notifikasi & dropdown akun.
+ */
+function setupLiveClock_() {
+    const actions = document.querySelector(".oc-topbar-actions");
+    if (!actions || document.getElementById("ocLiveClock")) return;
+
+    const clock = document.createElement("div");
+    clock.id = "ocLiveClock";
+    clock.className = "oc-live-clock";
+    clock.innerHTML = `
+        <span class="oc-live-clock-dot"></span>
+        <div class="oc-live-clock-copy">
+            <strong id="ocLiveClockTime">--:--</strong>
+            <small id="ocLiveClockDate">-</small>
+        </div>
+    `;
+
+    actions.insertBefore(clock, actions.firstChild);
+
+    const tick = () => {
+        const now = new Date();
+        const timeEl = document.getElementById("ocLiveClockTime");
+        const dateEl = document.getElementById("ocLiveClockDate");
+
+        if (timeEl) {
+            timeEl.textContent = now.toLocaleTimeString("id-ID", {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        if (dateEl) {
+            dateEl.textContent = now.toLocaleDateString("id-ID", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short"
+            });
+        }
+    };
+
+    tick();
+    setInterval(tick, 15000);
+}
+
+/**
+ * Tombol "Quick Create" di topbar -- akses cepat ke aksi yang
+ * paling sering dilakukan, tanpa perlu buka menu sidebar dulu.
+ */
+function setupQuickCreate_() {
+    const actions = document.querySelector(".oc-topbar-actions");
+    if (!actions || document.getElementById("ocQuickCreate")) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.id = "ocQuickCreate";
+    wrapper.className = "oc-quick-create";
+    wrapper.innerHTML = `
+        <button type="button" class="oc-quick-create-btn" aria-haspopup="true">
+            <span aria-hidden="true">+</span> Buat Baru
+        </button>
+        <div class="oc-quick-create-menu">
+            <a href="cuti-pengajuan.html">🌴 Ajukan Cuti</a>
+            <a href="offday.html">📅 Ajukan Offday</a>
+            <a href="rekening.html">🏦 Req Ganti Rekening</a>
+            <a href="banding.html">🛡️ Ajukan Banding</a>
+        </div>
+    `;
+
+    actions.insertBefore(wrapper, actions.firstChild);
+
+    const button = wrapper.querySelector(".oc-quick-create-btn");
+    const menu = wrapper.querySelector(".oc-quick-create-menu");
+
+    button.addEventListener("click", event => {
+        event.stopPropagation();
+        menu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", () => {
+        menu.classList.remove("open");
+    });
 }

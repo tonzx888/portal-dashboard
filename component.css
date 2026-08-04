@@ -710,3 +710,101 @@
   color: var(--oc-muted);
   font-size: 12px;
 }
+
+/* ===== Jam real-time & Quick Create di topbar ===== */
+.oc-live-clock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  border: 1px solid var(--oc-line);
+  border-radius: 12px;
+  background: var(--oc-surface-soft);
+}
+
+.oc-live-clock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--oc-primary);
+  box-shadow: 0 0 0 0 rgba(33, 201, 166, .5);
+  animation: ocLiveClockPulse 2s infinite;
+}
+
+@keyframes ocLiveClockPulse {
+  0% { box-shadow: 0 0 0 0 rgba(33, 201, 166, .5); }
+  70% { box-shadow: 0 0 0 6px rgba(33, 201, 166, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(33, 201, 166, 0); }
+}
+
+.oc-live-clock-copy { display: flex; flex-direction: column; line-height: 1.25; }
+.oc-live-clock-copy strong { color: var(--oc-text); font-size: 12px; font-weight: 800; font-family: var(--oc-font-mono); }
+.oc-live-clock-copy small { color: var(--oc-muted); font-size: 10px; font-weight: 600; }
+
+.oc-quick-create { position: relative; }
+
+.oc-quick-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--oc-primary-strong), var(--oc-primary));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--oc-glow-primary);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+.oc-quick-create-btn span { font-size: 16px; line-height: 1; }
+.oc-quick-create-btn:hover { transform: translateY(-1px); }
+
+.oc-quick-create-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: var(--oc-z-dropdown, 9999);
+  display: none;
+  min-width: 200px;
+  padding: 6px;
+  border: 1px solid var(--oc-line-strong);
+  border-radius: 12px;
+  background: var(--oc-surface);
+  box-shadow: var(--oc-shadow-md);
+}
+
+.oc-quick-create-menu.open {
+  display: block;
+  animation: ocSelectPop .16s var(--oc-ease);
+}
+
+.oc-quick-create-menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--oc-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease;
+}
+
+.oc-quick-create-menu a:hover {
+  background: var(--oc-primary-soft);
+  color: var(--oc-primary-strong);
+}
+
+@media (max-width: 920px) {
+  .oc-live-clock-copy small { display: none; }
+}
+
+@media (max-width: 700px) {
+  .oc-live-clock { display: none; }
+}

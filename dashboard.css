@@ -6,22 +6,25 @@
 .oc-shell {
   display: grid;
   grid-template-columns: var(--oc-sidebar-width) minmax(0, 1fr);
+  gap: 18px;
   min-height: 100vh;
+  padding: 18px 22px 18px 18px;
 }
 
 .oc-sidebar {
   position: sticky;
-  top: 0;
+  top: 18px;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 36px);
   padding: 22px 16px 16px;
   overflow-y: auto;
-  border-right: 1px solid var(--oc-line);
+  border: 1px solid var(--oc-line);
+  border-radius: 26px;
   background: linear-gradient(180deg, #ffffff, var(--oc-surface-soft));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 1px 0 0 rgba(33, 201, 166, .08), 8px 0 30px rgba(30, 39, 73, .06);
+  box-shadow: var(--oc-shadow-md);
 }
 
 .oc-brand {
@@ -130,12 +133,20 @@
 .oc-nav a.active::before {
   position: absolute;
   left: -5px;
-  width: 3px;
-  height: 24px;
+  top: 50%;
+  width: 4px;
+  height: 20px;
+  transform: translateY(-50%);
   border-radius: 999px;
-  background: var(--oc-primary);
-  box-shadow: 0 0 14px rgba(255, 93, 162, .38);
+  background: linear-gradient(180deg, var(--oc-accent), var(--oc-accent-strong));
+  box-shadow: 0 0 10px rgba(255, 107, 129, .4);
   content: "";
+  animation: hubNavSlideIn .2s var(--oc-ease);
+}
+
+@keyframes hubNavSlideIn {
+  from { opacity: 0; transform: translateY(-50%) scaleY(.3); }
+  to { opacity: 1; transform: translateY(-50%) scaleY(1); }
 }
 
 .oc-nav-icon {
@@ -358,24 +369,25 @@
 
 .oc-main {
   min-width: 0;
-  padding: 0 28px 42px;
+  padding: 0 0 32px;
 }
 
 .oc-topbar {
   position: sticky;
-  top: 0;
+  top: 18px;
   z-index: var(--oc-z-topbar);
   display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: var(--oc-topbar-height);
-  margin: 0 -28px 26px;
-  padding: 0 28px;
-  border-bottom: 1px solid var(--oc-line);
-  background: rgba(255, 255, 255, .82);
+  margin: 0 0 22px;
+  padding: 0 24px;
+  border: 1px solid var(--oc-line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 1px 0 rgba(46, 230, 214, .08);
+  box-shadow: var(--oc-shadow-sm);
 }
 
 .oc-topbar-eyebrow,
@@ -1032,15 +1044,6 @@
     grid-template-columns: 220px minmax(0, 1fr);
   }
 
-  .oc-main {
-    padding-inline: 20px;
-  }
-
-  .oc-topbar {
-    margin-inline: -20px;
-    padding-inline: 20px;
-  }
-
   .oc-topbar-actions {
     gap: 7px;
   }
@@ -1053,28 +1056,26 @@
 @media (max-width: 760px) {
   .oc-shell {
     display: block;
+    padding: 12px;
   }
 
   .oc-sidebar {
     position: relative;
+    top: 0;
     width: 100%;
     height: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--oc-line);
+    margin-bottom: 12px;
+    border-radius: 20px;
   }
 
   .oc-sidebar-footer {
     margin-top: 10px;
   }
 
-  .oc-main {
-    padding-inline: 16px;
-  }
-
   .oc-topbar {
     position: relative;
+    top: 0;
     align-items: flex-start;
-    margin-inline: -16px;
     padding: 14px 16px;
   }
 

@@ -80,7 +80,19 @@
         <div class="hub-hero-main">
           <div class="hub-hero-top">
             <span class="hub-hero-eyebrow" id="heroEyebrow">STATUS OPERASIONAL</span>
-            <span class="hub-hero-live"><span class="hub-pulse-dot"></span>Live</span>
+            <div class="hub-hero-top-right">
+              <div class="hub-health-score" id="heroHealthScore">
+                <svg viewBox="0 0 44 44" width="34" height="34">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="var(--oc-line)" stroke-width="4"/>
+                  <circle id="heroHealthRing" cx="22" cy="22" r="18" fill="none" stroke="var(--oc-primary)" stroke-width="4" stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="113" transform="rotate(-90 22 22)"/>
+                </svg>
+                <div class="hub-health-score-copy">
+                  <strong id="heroHealthValue">-</strong>
+                  <small id="heroHealthLabel">Memuat&hellip;</small>
+                </div>
+              </div>
+              <span class="hub-hero-live"><span class="hub-pulse-dot"></span>Live</span>
+            </div>
           </div>
 
           <h1 class="hub-hero-title">Selamat datang, <span id="heroName">-</span></h1>

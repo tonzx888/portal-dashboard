@@ -150,6 +150,7 @@ function renderDashboard(data) {
     const visaCount = Number(data.visaWarning ?? visaWarnings.length);
 
     renderHeroSummary({ totalStaff, staffCuti, offdayHariIni, activeToday, docCount: passportCount + visaCount });
+    renderHealthScore(data, passportWarnings, visaWarnings);
     renderHeroApproval(data);
     renderKpi({ totalStaff, staffCuti, offdayHariIni, roles, docCount: passportCount + visaCount, passportCount, visaCount });
     renderTimeline(data);
@@ -158,6 +159,49 @@ function renderDashboard(data) {
     renderStaffOverview(data.newStaff || []);
     renderWarningCenter(passportWarnings, visaWarnings);
     renderInsights(data);
+}
+
+/**
+ * Operational Health Score -- skor 0-100 yang merangkum kondisi
+ * operasional hari ini dalam satu angka, supaya manajer bisa lihat
+ * "sehat atau tidak" dalam hitungan detik tanpa perlu baca semua
+ * angka satu-satu. Dihitung dari: dokumen kritis (passport/visa
+ * lewat atau <=7 hari), total pending yang menumpuk, dan staff
+ * yang belum bisa ajukan cuti/offday (belum ada username).
+ */
+function renderHealthScore(data, passportWarnings, visaWarnings) {
+    const ring = document.getElementById("heroHealthRing");
+    const valueEl = document.getElementById("heroHealthValue");
+    const labelEl = document.getElementById("heroHealthLabel");
+    if (!ring || !valueEl || !labelEl) return;
+
+    const pending = data.pending || {};
+    const totalPending = Object.values(pending).reduce((sum, v) => sum + Number(v || 0), 0);
+    const missingUsername = Number(data.missingUsernameCount || 0);
+
+    const criticalDocs = [...passportWarnings, ...visaWarnings]
+        .filter(item => Number(item.daysLeft) <= 7).length;
+    const upcomingDocs = [...passportWarnings, ...visaWarnings].length - criticalDocs;
+
+    let score = 100;
+    score -= Math.min(criticalDocs * 8, 40);
+    score -= Math.min(upcomingDocs * 2, 15);
+    score -= Math.min(totalPending * 1.5, 20);
+    score -= Math.min(missingUsername * 2, 15);
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    const circumference = 113;
+    ring.setAttribute("stroke-dashoffset", String(circumference * (1 - score / 100)));
+
+    let color, label;
+    if (score >= 85) { color = "var(--oc-primary)"; label = "Sehat"; }
+    else if (score >= 60) { color = "var(--oc-warning)"; label = "Perlu Perhatian"; }
+    else { color = "var(--oc-danger)"; label = "Butuh Tindakan"; }
+
+    ring.setAttribute("stroke", color);
+    valueEl.textContent = `${score}`;
+    valueEl.style.color = color;
+    labelEl.textContent = label;
 }
 
 /* ---------- 1. HERO ---------- */

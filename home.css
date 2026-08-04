@@ -38,6 +38,16 @@
 
 .hub-hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 
+.hub-hero-top-right { display: flex; align-items: center; gap: 12px; }
+
+.hub-health-score { position: relative; display: flex; align-items: center; gap: 9px; }
+.hub-health-score svg { flex: 0 0 auto; transform: rotate(0); }
+#heroHealthRing { transition: stroke-dashoffset .6s var(--oc-ease), stroke .3s ease; }
+
+.hub-health-score-copy { display: flex; flex-direction: column; line-height: 1.2; }
+.hub-health-score-copy strong { color: var(--oc-text); font-size: 15px; font-weight: 800; }
+.hub-health-score-copy small { color: var(--oc-muted); font-size: 10px; font-weight: 700; letter-spacing: .02em; }
+
 .hub-hero-eyebrow {
   color: var(--oc-muted);
   font-family: var(--oc-font-mono);
