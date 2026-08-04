@@ -468,7 +468,7 @@ function renderStaffOverview(items) {
         KASIR: ["var(--oc-warning)", "var(--oc-warning-soft)"]
     };
 
-    container.innerHTML = items.slice(0, 5).map(item => {
+    container.innerHTML = items.slice(0, 12).map(item => {
         const nama = String(item.nama || "-");
         const jabatan = String(item.jabatan || "-").toUpperCase();
         const [roleColor, roleSoft] = roleColors[jabatan] || roleColors.CS;
@@ -517,7 +517,7 @@ function renderWarningCenter(passportWarnings, visaWarnings) {
         return `
             <div class="hub-warning-group">
                 <div class="hub-warning-group-label">${escapeDashboardHtml(group.label)} <span class="count">${group.items.length}</span></div>
-                ${sorted.slice(0, 5).map((item, i) => {
+                ${sorted.slice(0, 20).map((item, i) => {
                     const days = Number(item.daysLeft);
                     const expired = days < 0;
                     const critical = expired || days <= 14;
