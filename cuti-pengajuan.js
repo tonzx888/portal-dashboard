@@ -350,12 +350,12 @@ function renderCutiTable() {
     const statusFilter = cutiActiveStatusTab;
 
     const filtered = cutiData.filter(item => {
-        const matchesKeyword = !keyword || [item.nama, item.role, item.status, item.jenisCuti]
+        const matchesKeyword = !keyword || [item.nama, item.role, item.displayStatus, item.jenisCuti]
             .map(value => String(value || "").toLowerCase())
             .join(" ")
             .includes(keyword);
 
-        const matchesStatus = !statusFilter || item.status === statusFilter;
+        const matchesStatus = !statusFilter || item.displayStatus === statusFilter;
 
         return matchesKeyword && matchesStatus;
     });
@@ -387,7 +387,7 @@ function renderCutiTable() {
                 <td>${escapeCutiHtml(item.jenisCuti)}</td>
                 <td>${formatCutiLongDate_(item.tanggalMulaiInput)} &ndash; ${formatCutiLongDate_(item.tanggalSelesaiInput)}</td>
                 <td>${escapeCutiHtml(item.totalHari)}</td>
-                <td>${cutiStatusBadge(item.status)}</td>
+                <td>${cutiStatusBadge(item.displayStatus)}</td>
                 <td>${escapeCutiHtml(item.approvedBy || "-")}</td>
                 <td><button type="button" class="cuti-detail-btn" onclick="openCutiDetailModal(${index})" title="Lihat detail">👁</button></td>
                 <td class="cuti-report-cell">
@@ -407,7 +407,13 @@ function normalizeCutiNameCompare_(value) {
 }
 
 function cutiStatusBadge(status) {
-    const className = status === "DISETUJUI" ? "approved" : status === "DITOLAK" ? "rejected" : "pending";
+    const classMap = {
+        "DISETUJUI": "approved",
+        "SEDANG CUTI": "ongoing",
+        "SELESAI CUTI": "done",
+        "DITOLAK": "rejected"
+    };
+    const className = classMap[status] || "pending";
     return `<span class="cuti-status-badge ${className}">${escapeCutiHtml(status)}</span>`;
 }
 
@@ -426,7 +432,7 @@ function openCutiDetailModal(filteredIndex) {
             <div class="calendar-detail-meta">
                 <span>${escapeCutiHtml(item.jenisCuti)}</span>
                 <span>${formatCutiLongDate_(item.tanggalMulaiInput)} &ndash; ${formatCutiLongDate_(item.tanggalSelesaiInput)} (${escapeCutiHtml(item.totalHari)} hari)</span>
-                <span>${cutiStatusBadge(item.status)}</span>
+                <span>${cutiStatusBadge(item.displayStatus)}</span>
             </div>
             <p><strong>Status Paspor:</strong> ${escapeCutiHtml(item.statusPaspor || "-")}</p>
             <p><strong>Alasan:</strong> ${escapeCutiHtml(item.alasan || "(tidak diisi)")}</p>
@@ -880,7 +886,7 @@ function showCutiDayDetail(role, year, month, day) {
             <div class="calendar-detail-meta">
                 <span>${escapeCutiHtml(item.jenisCuti)}</span>
                 <span>${escapeCutiHtml(item.tanggalMulai)} &ndash; ${escapeCutiHtml(item.tanggalSelesai)}</span>
-                <span>${escapeCutiHtml(item.status)}</span>
+                <span>${escapeCutiHtml(item.displayStatus)}</span>
             </div>
             <div class="calendar-detail-reason">${escapeCutiHtml(item.alasan)}</div>
         </div>

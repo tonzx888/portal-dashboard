@@ -136,6 +136,8 @@
 .cuti-status-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.03em;color:#fff;white-space:nowrap}
 .cuti-status-badge.pending{background:#ffab2e}
 .cuti-status-badge.approved{background:#22c55e}
+.cuti-status-badge.ongoing{background:var(--oc-blue);color:#08122c}
+.cuti-status-badge.done{background:var(--oc-muted);color:#10163a}
 .cuti-status-badge.rejected{background:var(--oc-danger)}
 
 .cuti-urgent-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:var(--oc-danger);color:#fff;font-size:9px;font-weight:800;letter-spacing:.03em;vertical-align:middle}
